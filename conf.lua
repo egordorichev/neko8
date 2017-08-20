@@ -13,6 +13,7 @@ config.window.height = 384
 config.canvas = {}
 config.canvas.width = 196
 config.canvas.height = 128
+config.fps = 30
 
 function love.conf(t)
 	t.window.width = config.window.width
@@ -21,6 +22,8 @@ function love.conf(t)
 	t.window.title =
 		"neko8 " .. config.version.string
 	t.console = true
+	t.window.minwidth = config.canvas.width
+	t.window.minheight = config.canvas.height
 
 	return t
 end
