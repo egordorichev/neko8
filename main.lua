@@ -28,28 +28,7 @@ function love.draw()
 	)
 
 	neko.draw()
-
-	love.graphics.setShader(
-		colors.displayShader
-	)
-
-	colors.displayShader:send(
-		"palette",
-		shaderUnpack(colors.display)
-	)
-
-	love.graphics.setCanvas()
-	love.graphics.clear()
-
-	love.graphics.draw(
-		canvas.renderable,
-		canvas.x, canvas.y, 0,
-		canvas.scaleX, canvas.scaleY
-	)
-
-	love.graphics.present()
-	love.graphics.setShader(colors.drawShader)
-	love.graphics.setCanvas(canvas.renderable)
+	api.flip()
 end
 
 function love.resize(w, h)
@@ -58,6 +37,72 @@ function love.resize(w, h)
 		"new window size: " .. w
 		.. "x" .. h .. "px"
 	)
+end
+
+function love.keypressed(
+	key, scancode, isRepeat
+)
+	for p = 0, 1 do
+		for i = 0, #api.keyMap[p] do
+			for _, k
+				in pairs(api.keyMap[p][i]) do
+				if key == k then
+					api.keyPressed[p][i] = -1
+					break
+				end
+			end
+		end
+	end
+
+	if neko.cart
+		and neko.cart.sandbox._keydown then
+		cart.sandbox._keydown(key, isRepeat)
+	else
+		neko.core.sandbox._keydown(
+			key, isRepeat
+		)
+	end
+end
+
+function love.keyreleased(key)
+	for p = 0, 1 do
+		for i = 0, #api.keyMap[p] do
+			for _, k
+				in pairs(api.keyMap[p][i]) do
+				if key == k then
+					api.keyPressed[p][i] = nil
+					break
+				end
+			end
+		end
+	end
+
+	if neko.cart
+		and neko.cart.sandbox._keyup then
+		return cart.sandbox._keyup(key)
+	else
+		neko.core.sandbox._keyup(key)
+	end
+end
+
+function love.textinput(text)
+	text = text:lower()
+	local validChar = false
+	for i = 1,#config.font.letters do
+		if config.font.letters:sub(i,i)
+			== text then
+			validChar = true
+			break
+		end
+	end
+	if validChar then
+		if neko.cart
+			and neko.cart.sandbox._text then
+			return neko.cart.sandbox._text(text)
+		else
+			neko.core.sandbox._text(text)
+		end
+	end
 end
 
 function love.run()
@@ -176,6 +221,7 @@ end
 neko = {}
 
 function neko.init()
+	initFont()
 	initPalette()
 	initApi()
 	neko.core = loadCart("neko")
@@ -183,6 +229,21 @@ function neko.init()
 end
 
 function neko.update()
+	for p = 0, 1 do
+		for i = 0, #api.keyMap[p] do
+			for _, key in pairs(
+				api.keyMap[p][i]
+			) do
+				local v = api.keyPressed[p][i]
+				if v then
+					v = v + 1
+					api.keyPressed[p][i] = v
+					break
+				end
+			end
+		end
+	end
+
 	if neko.cart then
 		neko.cart.sandbox._update()
 	else
@@ -199,6 +260,18 @@ function neko.draw()
 end
 
 -----------------------------------------
+-- font
+-----------------------------------------
+
+function initFont()
+	font = love.graphics.newFont(
+		config.font.file, 5
+	)
+
+	love.graphics.setFont(font)
+end
+
+-----------------------------------------
 -- carts
 -----------------------------------------
 
@@ -207,11 +280,11 @@ function loadCart(name)
 	log.debug("loading cart " .. name)
 
 	local pureName = name
-	local extensions = { "" }
+	local extensions = { "", ".n8" }
 
 	if name:sub(-3) == ".n8" then
 		extensions = { ".n8" }
-		pureName = name:sub(1, - 4)
+		pureName = name:sub(1, -4)
 	end
 
 	local found = false
@@ -225,13 +298,13 @@ function loadCart(name)
 		end
 	end
 
+	cart.name = name
+	cart.pureName = pureName
+
 	if not found then
 		log.error("failed to load cart")
 		return cart
 	end
-
-	cart.name = name
-	cart.pureName = pureName
 
 	local data, size =
 		love.filesystem.read(name)
@@ -344,9 +417,17 @@ function runCart(cart)
 		return
 	end
 
+	love.graphics.setCanvas(
+		canvas.renderable
+	)
+
+	love.graphics.setShader(
+		colors.drawShader
+	)
 	if cart.sandbox._init then
 		cart.sandbox._init()
 	end
+	api.flip()
 end
 
 -----------------------------------------
@@ -358,7 +439,33 @@ api = {}
 function initApi()
 	love.graphics.setLineWidth(1)
 	love.graphics.setLineStyle("rough")
+	love.mouse.setVisible(false)
+	love.keyboard.setKeyRepeat(true)
 	api.color()
+
+	api.keyPressed = {
+		[0] = {},
+		[1] = {}
+	}
+
+	api.keyMap = {
+		[0] = {
+			[0] = { "left" },
+			[1] = { "right" },
+			[2] = { "up" },
+			[3] = { "down" },
+			[4] = { "z", "n" },
+			[5] = { "x", "m" }
+		},
+		[1] = {
+			[0] = { "s" },
+			[1] = { "f" },
+			[2] = { "e" },
+			[3] = { "d" },
+			[4] = { "tab", "lshift" },
+			[5] = { "q", "a" }
+		}
+	}
 end
 
 function createSandbox()
@@ -373,6 +480,15 @@ function createSandbox()
 		cls = api.cls,
 		circ = api.circ,
 		circfill = api.circfill,
+		pset = api.pset,
+		pget = api.pget,
+		line = api.line,
+		print = api.print,
+		flip = api.flip,
+
+		btn = api.btn,
+		btnp = api.btnp,
+		key = api.key,
 
 		flr = api.flr,
 		ceil = api.ceil,
@@ -447,7 +563,11 @@ function api.brectfill(x, y, w, h, c)
 end
 
 function api.color(c)
-	c = c and api.flr(c % 16) or 7
+	if not c then
+		c = 7
+	else
+		c = api.flr(c % 16)
+	end
 
 	love.graphics.setColor(
 		c * 16, 0, 0, 255
@@ -551,14 +671,132 @@ function api.circfill(cx, cy, r, c)
 	end
 end
 
+function api.pget(x, y, c)
+	return 0 -- todo
+end
+
+function api.pset(x, y, c)
+	if not c then
+		return
+	end
+
+	api.color(c)
+	love.graphics.point(
+		flr(x), flr(y),
+		c * 16, 0, 0, 255
+	)
+end
+
+function api.line(x1, y1, x2, y2, c)
+	if c then
+		api.color(c)
+	end
+
+	love.graphics.line(x1, y1, x2, y2)
+end
+
+cursor = {
+	x = 0,
+	y = 0
+}
+
+function api.print(s, x, y, c)
+	if c then
+		api.color(c)
+	end
+	local scroll = (y == nil)
+
+	if scroll then
+		y = cursor.y
+	 	cursor.y = cursor.y + 6
+	end
+
+	if x == nil then
+		x = cursor.x
+	end
+
+	if scroll and y > 121 then
+		local c = colors.current
+		scroll(6)
+		y = 120
+		rectfill(0, y, 127, y + 6, 0)
+		color(c)
+		cursor(0, y + 6)
+	end
+
+	love.graphics.setShader(
+		colors.textShader
+	)
+
+	love.graphics.print(
+		s, api.flr(x), api.flr(y) + 1
+		-- watch out that +1!
+	)
+end
+
+function api.flip()
+	love.graphics.setShader(
+		colors.displayShader
+	)
+
+	colors.displayShader:send(
+		"palette",
+		shaderUnpack(colors.display)
+	)
+
+	love.graphics.setCanvas()
+	love.graphics.clear()
+
+	love.graphics.draw(
+		canvas.renderable,
+		canvas.x, canvas.y, 0,
+		canvas.scaleX, canvas.scaleY
+	)
+
+	love.graphics.present()
+	love.graphics.setShader(colors.drawShader)
+	love.graphics.setCanvas(canvas.renderable)
+end
+
+function api.btn(b, p)
+	p = p or 0
+
+	if api.keyMap[p][b] then
+		return api.keyPressed[p][b] ~= nil
+	end
+
+	return false
+end
+
+function api.btnp(b, p)
+	p = p or 0
+
+	if api.keyMap[p][b] then
+		local v = api.keyPressed[p][b]
+		if v and (v == 0 or (v >= 12 and v % 4 == 0)) then
+			return true
+		end
+	end
+
+	return false
+end
+
+function api.key(k)
+	return love.keyboard.isDown(k)
+end
+
 function api.cls(c)
 	if c then
 		api.color(c)
 	end
 
-	love.graphics.clear(unpack(
-		colors.palette[colors.current]
-	))
+	c = c or 0
+
+	love.graphics.clear(
+		(c + 1) * 16, 0, 0, 255
+	)
+
+	cursor.x, cursor.y = 0, 0
 end
 
 function api.flr(n)

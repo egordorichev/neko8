@@ -13,7 +13,13 @@ config.window.height = 384
 config.canvas = {}
 config.canvas.width = 196
 config.canvas.height = 128
-config.fps = 30
+config.fps = 60
+config.font = {}
+config.font.file = "font.ttf"
+config.font.letters = "abcdefghijklmnopqr"
+	.. "stuvwxyz1"
+	.. "234567890!?[](){}.,;:<>+=%#^*~/\\|$"
+	.. "@&`\"'-_ "
 
 function love.conf(t)
 	t.window.width = config.window.width
