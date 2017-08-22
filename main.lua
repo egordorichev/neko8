@@ -485,6 +485,11 @@ function createSandbox()
 		line = api.line,
 		print = api.print,
 		flip = api.flip,
+		cursor = api.cursor,
+		cget = api.cget,
+		scroll = api.scroll,
+
+		memcpy = api.memcpy,
 
 		btn = api.btn,
 		btnp = api.btnp,
@@ -504,7 +509,7 @@ function api.csize()
 		config.canvas.height
 end
 
-function api.rect(x1, y1, x2, y2, c)
+function api.rect(x0, y0, x1, y1, c)
 	if c then
 		api.color(c)
 	end
@@ -513,11 +518,14 @@ function api.rect(x1, y1, x2, y2, c)
 		api.flr(x0) + 1,
 		api.flr(y0) + 1,
 		api.flr(x1 - x0),
-		api.flr(y1 - y0))
+		api.flr(y1 - y0)
+	)
 end
 
-function api.rectfill(x1, y1, x2, y2, c)
-	if c then color(c) end
+function api.rectfill(x0, y0, x1, y1, c)
+	if c then
+		api.color(c)
+	end
 
 	local w = (x1 - x0) + 1
 	local h = (y1 - y0) + 1
@@ -533,8 +541,8 @@ function api.rectfill(x1, y1, x2, y2, c)
 	end
 
 	love.graphics.rectangle(
-		"fill", flr(x0),
-		flr(y0), w, h
+		"fill", api.flr(x0),
+		api.flr(y0), w, h
 	)
 end
 
@@ -547,7 +555,8 @@ function api.brect(x, y, w, h, c)
 		api.flr(x) + 1,
 		api.flr(y) + 1,
 		api.flr(w),
-		api.flr(h))
+		api.flr(h)
+	)
 end
 
 function api.brectfill(x, y, w, h, c)
@@ -681,8 +690,8 @@ function api.pset(x, y, c)
 	end
 
 	api.color(c)
-	love.graphics.point(
-		flr(x), flr(y),
+	love.graphics.points(
+		api.flr(x), api.flr(y),
 		c * 16, 0, 0, 255
 	)
 end
@@ -704,6 +713,7 @@ function api.print(s, x, y, c)
 	if c then
 		api.color(c)
 	end
+
 	local scroll = (y == nil)
 
 	if scroll then
@@ -717,11 +727,15 @@ function api.print(s, x, y, c)
 
 	if scroll and y > 121 then
 		local c = colors.current
-		scroll(6)
+		api.scroll(6)
 		y = 120
-		rectfill(0, y, 127, y + 6, 0)
-		color(c)
-		cursor(0, y + 6)
+		api.rectfill(0, y, 127, y + 6, 0)
+		api.color(c)
+		api.cursor(0, y + 6)
+		x = 0 -- todo: remove
+		y = 0 -- when scroll is fixed
+		cursor.x = 0 -- all
+		cursor.y = 0 -- this
 	end
 
 	love.graphics.setShader(
@@ -756,6 +770,26 @@ function api.flip()
 	love.graphics.present()
 	love.graphics.setShader(colors.drawShader)
 	love.graphics.setCanvas(canvas.renderable)
+end
+
+function api.cursor(x, y)
+	cursor.x = x or 0
+	cursor.y = y or 0
+end
+
+function api.cget()
+	return cursor.x, cursor.y
+end
+
+function api.scroll(pixels)
+	api.cls()
+	-- todo
+end
+
+function api.memcpy(
+	daddr, saddr, len
+)
+
 end
 
 function api.btn(b, p)
@@ -796,7 +830,8 @@ function api.cls(c)
 		(c + 1) * 16, 0, 0, 255
 	)
 
-	cursor.x, cursor.y = 0, 0
+	cursor.x = 0
+	cursor.y = 0
 end
 
 function api.flr(n)
