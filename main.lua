@@ -221,6 +221,7 @@ end
 neko = {}
 
 function neko.init()
+	neko.currentDirectory = ""
 	initFont()
 	initPalette()
 	initApi()
@@ -500,7 +501,27 @@ function createSandbox()
 		cos = api.cos,
 		sin = api.sin,
 		rnd = api.rnd,
-		srand = api.srand
+		srand = api.srand,
+
+		help = commands.help,
+		folder = commands.folder,
+		ls = commands.ls,
+		cls = commands.cls,
+		run = commands.run,
+		new = commands.new,
+		mkdir = commands.mkdir,
+		load = commands.load,
+		reboot = commands.reboot,
+		shutdown = commands.shutdown,
+
+		pairs = pairs,
+		ipairs = ipairs,
+		string = string,
+		add = api.add,
+		del = api.del,
+		all = api.all,
+		count = api.count,
+		foreach = api.foreach
 	}
 end
 
@@ -865,6 +886,96 @@ end
 
 function api.srand(s)
 	math.randomseed(s or 0)
+end
+
+function api.add(a, v)
+	if a == nil then
+		return
+	end
+	table.insert(a, v)
+end
+
+function api.del(a, dv)
+	if a == nil then
+		return
+	end
+	for i, v in ipairs(a) do
+		if v == dv then
+			table.remove(a,i)
+		end
+	end
+end
+
+function api.foreach(a, f)
+	if not a then
+		return
+	end
+	for i, v in ipairs(a) do
+		f(v)
+	end
+end
+
+function api.count(a)
+	return #a
+end
+
+function api.all(a)
+	local i = 0
+	local n = table.getn(a)
+	return function()
+		i = i + 1
+		if i <= n then return a[i] end
+	end
+end
+
+-----------------------------------------
+-- commands
+-----------------------------------------
+
+commands = {}
+
+function commands.help(a)
+	api.foreach(a,function(b) api.print(b) end)
+end
+
+function commands.folder()
+	local cdir =
+		love.filesystem.getWorkingDirectory()
+	love.system.openURL("file://" .. cdir)
+end
+
+function commands.ls()
+
+end
+
+function commands.cls()
+	api.cls()
+end
+
+function commands.run()
+
+end
+
+function commands.new()
+
+end
+
+function commands.mkdir()
+	love.filesystem.createDirectory(
+		neko.currentDirectory .. name
+	)
+end
+
+function commands.load()
+
+end
+
+function commands.reboot()
+	neko.init()
+end
+
+function commands.shutdown()
+	love.event.quit()
 end
 
 -----------------------------------------
