@@ -221,7 +221,7 @@ end
 neko = {}
 
 function neko.init()
-	neko.currentDirectory = ""
+	neko.currentDirectory = "/"
 	initFont()
 	initPalette()
 	initApi()
@@ -517,6 +517,8 @@ function createSandbox()
 		load = commands.load,
 		reboot = commands.reboot,
 		shutdown = commands.shutdown,
+		cd = commands.cd,
+		rm = commands.rm,
 
 		pairs = pairs,
 		ipairs = ipairs,
@@ -949,11 +951,43 @@ end
 function commands.folder()
 	local cdir =
 		love.filesystem.getSaveDirectory()
+		.. neko.currentDirectory
 	love.system.openURL("file://" .. cdir)
 end
 
-function commands.ls()
-	api.print("todo: ls")
+function commands.ls(a)
+	local dir = neko.currentDirectory
+	if #a == 1 then
+		dir = dir .. a[1]
+	elseif #a > 1 then
+		api.print("ls (dir)")
+		return
+	end
+
+	if not love.filesystem
+		.isDirectory(dir) then
+		api.print(
+			"no such directory", nil, nil, 14
+		)
+		return
+	end
+
+	local files =
+		love.filesystem.getDirectoryItems(dir)
+
+	api.print(
+		dir, nil, nil, 12
+	)
+
+	api.color(7)
+
+	for f in api.all(files) do
+		api.print(f)
+	end
+
+	if #files == 0 then
+		api.print("total: 0", nil, nil, 12)
+	end
 end
 
 function commands.cls()
@@ -962,6 +996,7 @@ end
 
 function commands.run()
 	if neko.loadedCart ~= nil then
+		neko.cart = neko.loadedCart
 		runCart(neko.loadedCart)
 	else
 		api.print("no carts loaded")
@@ -1009,6 +1044,31 @@ end
 
 function commands.shutdown()
 	love.event.quit()
+end
+
+function commands.cd(a)
+	if #a ~= 1 then
+		api.print("cd [dir]")
+		return
+	end
+
+	local dir = neko.currentDirectory
+		.. a[1]
+
+	-- todo: fix /test//../ and stuff
+
+	if not love.filesystem.isDirectory(dir) then
+		api.print(
+			"no such directory", nil, nil, 14
+		)
+		return
+	end
+
+	neko.currentDirectory = dir
+end
+
+function commands.rm(a)
+
 end
 
 -----------------------------------------
