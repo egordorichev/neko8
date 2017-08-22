@@ -246,7 +246,9 @@ function neko.update()
 	end
 
 	if neko.cart then
-		neko.cart.sandbox._update()
+		if neko.cart._update then
+			neko.cart.sandbox._update()
+		end
 	else
 		neko.core.sandbox._update()
 	end
@@ -254,7 +256,9 @@ end
 
 function neko.draw()
 	if neko.cart then
-		neko.cart.sandbox._draw()
+		if neko.cart._update then
+			neko.cart.sandbox._draw()
+		end
 	else
 		neko.core.sandbox._draw()
 	end
@@ -304,7 +308,7 @@ function loadCart(name)
 
 	if not found then
 		log.error("failed to load cart")
-		return cart
+		return nil
 	end
 
 	local data, size =
@@ -935,17 +939,21 @@ end
 commands = {}
 
 function commands.help(a)
-	api.foreach(a,function(b) api.print(b) end)
+	if #a == 0 then
+		api.print("todo: help")
+	else
+		api.print("todo: find subject")
+	end
 end
 
 function commands.folder()
 	local cdir =
-		love.filesystem.getWorkingDirectory()
+		love.filesystem.getSaveDirectory()
 	love.system.openURL("file://" .. cdir)
 end
 
 function commands.ls()
-
+	api.print("todo: ls")
 end
 
 function commands.cls()
@@ -953,21 +961,46 @@ function commands.cls()
 end
 
 function commands.run()
-
+	if neko.loadedCart ~= nil then
+		runCart(neko.loadedCart)
+	else
+		api.print("no carts loaded")
+	end
 end
 
 function commands.new()
-
+	neko.loadedCart = createCart()
+	api.print("created new cart")
 end
 
-function commands.mkdir()
-	love.filesystem.createDirectory(
-		neko.currentDirectory .. name
-	)
+function commands.mkdir(a)
+	if #a == 0 then
+		api.print("mkdir [dir]")
+	else
+		api.foreach(a,function(name)
+			love.filesystem.createDirectory(
+				neko.currentDirectory .. name
+			)
+		end)
+	end
 end
 
-function commands.load()
-
+function commands.load(a)
+	if #a ~= 1 then
+		api.print("load [cart]")
+	else
+		local c = loadCart(a[1])
+		if not c then
+			api.print(
+				"failed to load " .. a[1]
+			)
+		else
+			api.print(
+				"loaded " .. c.pureName
+			)
+			neko.loadedCart = c
+		end
+	end
 end
 
 function commands.reboot()
