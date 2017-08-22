@@ -54,13 +54,34 @@ function love.keypressed(
 		end
 	end
 
-	if neko.cart
-		and neko.cart.sandbox._keydown then
-		cart.sandbox._keydown(key, isRepeat)
+	local handled = true
+
+	if love.keyboard.isDown("rctrl") or
+		love.keyboard.isDown("lctrl") then
+		if key == "r" then
+			if neko.loadedCart then
+				runCart(neko.loadedCart)
+			end
+		else
+			handled = false
+		end
 	else
-		neko.core.sandbox._keydown(
-			key, isRepeat
-		)
+		if key == "escape" then
+			neko.cart = nil
+		else
+			handled = false
+		end
+	end
+
+	if not handled then
+		if neko.cart
+			and neko.cart.sandbox._keydown then
+			cart.sandbox._keydown(key, isRepeat)
+		else
+			neko.core.sandbox._keydown(
+				key, isRepeat
+			)
+		end
 	end
 end
 
@@ -79,7 +100,7 @@ function love.keyreleased(key)
 
 	if neko.cart
 		and neko.cart.sandbox._keyup then
-		return cart.sandbox._keyup(key)
+		return neko.cart.sandbox._keyup(key)
 	else
 		neko.core.sandbox._keyup(key)
 	end
@@ -976,16 +997,37 @@ function commands.ls(a)
 		love.filesystem.getDirectoryItems(dir)
 
 	api.print(
-		dir, nil, nil, 12
+		"directory: " .. dir, nil, nil, 12
 	)
 
 	api.color(7)
+	local out = {}
 
-	for f in api.all(files) do
-		api.print(f)
+	for i, f in ipairs(files) do
+		if love.filesystem.isDirectory(f)
+		 	and f:sub(1, 1) ~= "." then
+			api.add(out, {
+				name = f:lower(),
+				color = 12
+			})
+		end
 	end
 
-	if #files == 0 then
+	for i, f in ipairs(files) do
+		if not love.filesystem.isDirectory(f) then
+			api.add(out, {
+				name = f:lower(),
+				color = f:sub(-3) == ".n8"
+					and 6 or 5
+			})
+		end
+	end
+
+	for f in api.all(out) do
+		api.print(f.name, nil, nil, f.color)
+	end
+
+	if #out == 0 then
 		api.print("total: 0", nil, nil, 12)
 	end
 end
@@ -1065,6 +1107,7 @@ function commands.cd(a)
 	end
 
 	neko.currentDirectory = dir
+	api.print(dir, nil, nil, 12)
 end
 
 function commands.rm(a)
