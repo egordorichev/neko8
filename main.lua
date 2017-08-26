@@ -2,7 +2,7 @@
 -- main callbacks
 -----------------------------------------
 
-frameTime = 1 / 60
+frameTime = 1 / config.fps
 hostTime = 0
 
 function love.load()
@@ -245,7 +245,6 @@ function neko.init()
 	neko.currentDirectory = "/"
 	initFont()
 	initPalette()
-	framebuffer.init()
 	initApi()
 	neko.core = loadCart("neko")
 	runCart(neko.core)
@@ -532,6 +531,7 @@ function createSandbox()
 		help = commands.help,
 		folder = commands.folder,
 		ls = commands.ls,
+		cls = commands.cls,
 		run = commands.run,
 		new = commands.new,
 		mkdir = commands.mkdir,
@@ -558,31 +558,40 @@ function api.csize()
 end
 
 function api.rect(x0, y0, x1, y1, c)
-	local x = api.flr(x0)
-	local y = api.flr(y0)
-	local w = x1 > x0
-		and api.flr(x1 - x0)
-		or api.flr(x0 - x1)
+	if c then
+		api.color(c)
+	end
 
-	local h = y1 > y1
-		and api.flr(y1 - y0)
-		or api.flr(x0 - x1)
-
-	api.brect(x, y, w, h, c)
+	love.graphics.rectangle("line",
+		api.flr(x0) + 1,
+		api.flr(y0) + 1,
+		api.flr(x1 - x0),
+		api.flr(y1 - y0)
+	)
 end
 
 function api.rectfill(x0, y0, x1, y1, c)
-	local x = api.flr(x0)
-	local y = api.flr(y0)
-	local w = x1 > x0
-		and api.flr(x1 - x0)
-		or api.flr(x0 - x1)
+	if c then
+		api.color(c)
+	end
 
-	local h = y1 > y1
-		and api.flr(y1 - y0)
-		or api.flr(x0 - x1)
+	local w = (x1 - x0) + 1
+	local h = (y1 - y0) + 1
 
-	api.brectfill(x, y, w, h, c)
+	if w < 0 then
+		w = -w
+		x0 = x0 - w
+	end
+
+	if h < 0 then
+		h = -h
+		y0 = y0 - h
+	end
+
+	love.graphics.rectangle(
+		"fill", api.flr(x0),
+		api.flr(y0), w, h
+	)
 end
 
 function api.brect(x, y, w, h, c)
@@ -616,6 +625,10 @@ function api.color(c)
 	else
 		c = api.flr(c % 16)
 	end
+
+	love.graphics.setColor(
+		c * 16, 0, 0, 255
+	)
 
 	colors.current = c
 end
@@ -715,17 +728,20 @@ function api.circfill(cx, cy, r, c)
 	end
 end
 
-function api.pget(x, y)
-	return framebuffer.safePget(x, y)
+function api.pget(x, y, c)
+	return 0 -- todo
 end
 
 function api.pset(x, y, c)
-	if c then
-		api.color(c)
+	if not c then
+		return
 	end
 
-	c = c or colors.current
-	framebuffer.safePset(x, y, c)
+	api.color(c)
+	love.graphics.points(
+		api.flr(x), api.flr(y),
+		c * 16, 0, 0, 255
+	)
 end
 
 function api.line(x1, y1, x2, y2, c)
@@ -821,7 +837,7 @@ end
 function api.memcpy(
 	daddr, saddr, len
 )
-	-- todo
+
 end
 
 function api.btn(b, p)
@@ -852,7 +868,15 @@ function api.key(k)
 end
 
 function api.cls(c)
-	framebuffer.clear(c)
+	if c then
+		api.color(c)
+	end
+
+	c = c or 0
+
+	love.graphics.clear(
+		(c + 1) * 16, 0, 0, 255
+	)
 
 	cursor.x = 0
 	cursor.y = 0
@@ -1064,20 +1088,18 @@ function commands.shutdown()
 	love.event.quit()
 end
 
-local function resolvePath(path)
-  return path -- todo
-end
-
 function commands.cd(a)
 	if #a ~= 1 then
 		api.print("cd [dir]")
 		return
 	end
 
-	local dir = resolvePath(a[1])
+	local dir = neko.currentDirectory
+		.. a[1]
 
-	if not love.filesystem.isDirectory(dir)
-		then
+	-- todo: fix /test//../ and stuff
+
+	if not love.filesystem.isDirectory(dir) then
 		api.print(
 			"no such directory", nil, nil, 14
 		)

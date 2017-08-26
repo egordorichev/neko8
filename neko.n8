@@ -1,0 +1,26 @@
+neko8 cart
+__lua__
+function _init()
+
+end
+
+function _draw()
+
+end
+
+function _update()
+
+end
+
+function _keydown()
+
+end
+
+function _keyup()
+
+end
+
+function _text()
+
+end
+__end__
