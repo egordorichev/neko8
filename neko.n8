@@ -1,26 +1,134 @@
 neko8 cart
 __lua__
-function _init()
+commads = {
+ help = help,
+  ls = ls,
+  cd = cd,
+  mkdir = mkdir,
+  rm = rm,
+  shutdown = shutdown,
+  reboot = reboot,
+  load = load,
+  new = new,
+  save = save,
+  cls = cls
+}
 
+function _init()
+ input=""
+ t=0
+ cx=0
+ start_screen()
+end
+
+function start_screen()
+ cls()
+ color(7)
+ print("neko8")
+ print("")
+ color(6)
+ print("by @egordorichev")
+ print("made with love")
+ color(7)
+ print("https://github.com/egordorichev/neko8")
+ print("")
+ print("type help for help")
+ print("")
+ redraw_prompt()
 end
 
 function _draw()
 
 end
 
+function redraw_prompt(noc)
+ local x,y=cget()
+
+ rectfill(0,y,(#input+2)*4+7,y+4,0)
+ print("> "..input,0,y,7)
+ if cursor_blink() and not noc then
+  rectfill((cx+2)*4,y,
+  (cx+2)*4+3,y+4,8)
+ end
+end
+
+function cursor_blink()
+  return t < 16 or t % 30 < 16
+end
+
 function _update()
+ local lb = cursor_blink()
+ t+=1
+ if cursor_blink() ~= lb then
+  redraw_prompt()
+ end
+end
+
+function _keydown(k)
+ if k == "backspace" then
+  if #input > 0 then
+   input=input:sub(1,cx-1)..input:sub(cx+1,#input)
+   cx=max(0,cx-1)
+   redraw_prompt()
+  end
+ elseif k == "delete" then
+   if #input > 0 then
+    input=input:sub(1,cx)..input:sub(cx+2,#input)
+    redraw_prompt()
+   end
+ elseif k == "left" then
+  cx=max(0,cx-1)
+  t=0
+  redraw_prompt()
+elseif k == "right" then
+  cx=min(#input,cx+1)
+  t=0
+  redraw_prompt()
+ elseif k == "return" or key == "kpenter "then
+  redraw_prompt(true)
+  print("")
+  run_command(input)
+  cx=0
+  input=""
+  redraw_prompt()
+ end
+end
+
+function run_command(c)
+ c=c:match("^%s*(.-)%s*$") -- remove spaces
+ if c=="" then
+  return
+ end
+
+ local args={}
+ local cmd=""
+
+ for a in c:gmatch("[^%s]+") do
+  add(args,a)
+ end
+
+ cmd=args[1]
+ del(args,cmd)
+
+ for k,v in pairs(commads) do
+  if k==cmd then
+   color(7)
+   v(args)
+   return
+  end
+ end
+ color(14)
+ print("unknown command")
+end
+
+function _keyup(k)
 
 end
 
-function _keydown()
-
-end
-
-function _keyup()
-
-end
-
-function _text()
-
+function _text(text)
+ input=input:sub(1,cx)..text..input:sub(cx+1,#input)
+ t=0
+ cx+=#text
+ redraw_prompt()
 end
 __end__

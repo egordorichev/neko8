@@ -291,8 +291,11 @@ end
 
 function initFont()
 	font = love.graphics.newFont(
-		config.font.file, 5
+		config.font.file, 4
 	)
+
+
+	font:setFilter("nearest", "nearest")
 
 	love.graphics.setFont(font)
 end
@@ -527,6 +530,9 @@ function createSandbox()
 		sin = api.sin,
 		rnd = api.rnd,
 		srand = api.srand,
+		max = api.max,
+		min = api.min,
+		mid = api.mid,
 
 		help = commands.help,
 		folder = commands.folder,
@@ -773,17 +779,18 @@ function api.print(s, x, y, c)
 		x = cursor.x
 	end
 
-	if scroll and y > 121 then
-		local c = colors.current
+	if scroll and y >= 120 then
+		local c = c or colors.current
 		api.scroll(6)
 		y = 120
-		api.rectfill(0, y, 127, y + 6, 0)
+
+		api.rectfill(
+			0, y, config.canvas.width, y + 6, 0
+		)
+
 		api.color(c)
-		api.cursor(0, y + 6)
-		x = 0 -- todo: remove
-		y = 0 -- when scroll is fixed
-		cursor.x = 0 -- all
-		cursor.y = 0 -- this
+		api.cursor(0, y)
+		api.flip()
 	end
 
 	love.graphics.setShader(
@@ -830,14 +837,36 @@ function api.cget()
 end
 
 function api.scroll(pixels)
-	api.cls()
-	-- todo
+	local base = 0x6000
+	local delta = base + pixels*0x40
+	local basehigh = 0x8000
+	api.memcpy(base, delta, basehigh-delta)
 end
 
 function api.memcpy(
-	daddr, saddr, len
+	dest_addr, source_addr, len
 )
+	if len <= 0 then
+		return
+	end
+	local img = canvas.renderable:newImageData()
+	for i=0,len-1 do
+		local x = api.flr(source_addr-0x6000+i)%64*2
+		local y = api.flr((source_addr-0x6000+i)/64)
+		local c = api.ceil(img:getPixel(x,y)/16)
+		local d = api.ceil(img:getPixel(x+1,y)/16)
+		if c ~= 0 then
+			c = c - 1
+		end
+		if d ~= 0 then
+			d = d - 1
+		end
 
+		local dx = api.flr(dest_addr-0x6000+i)%64*2
+		local dy = api.flr((dest_addr-0x6000+i)/64)
+		api.pset(dx+1,dy,c)
+		api.pset(dx+2,dy,d)
+	end
 end
 
 function api.btn(b, p)
@@ -915,6 +944,23 @@ function api.srand(s)
 	math.randomseed(s or 0)
 end
 
+function api.min(a, b)
+	return a < b and a or b
+end
+
+function api.max(a, b)
+	return a > b and a or b
+end
+
+function api.mid(x, y, z)
+	x, y, z = x or 0, y or 0, z or 0
+	if x > y then
+		x, y = y, x
+	end
+
+	return api.max(x, api.min(y, z))
+end
+
 function api.add(a, v)
 	if a == nil then
 		return
@@ -963,9 +1009,18 @@ commands = {}
 
 function commands.help(a)
 	if #a == 0 then
-		api.print("todo: help")
+		api.print("neko8 "
+			.. config.version.string)
+		api.print("")
+		api.color(6)
+		api.print("by @egordorichev")
+		api.print("made with love")
+		api.color(7)
+		api.print("https://github.com/egordorichev/neko8")
+		api.print("")
+		api.print("todo")
 	else
-		api.print("todo: find subject")
+		api.print("todo: help on a subject")
 	end
 end
 
@@ -1111,7 +1166,28 @@ function commands.cd(a)
 end
 
 function commands.rm(a)
+	if #a ~= 1 then
+		api.print("rm [file]")
+		return
+	end
 
+	local file = neko.currentDirectory
+		.. a[1]
+
+	-- todo: fix /test//../ and stuff
+
+	if not love.filesystem.exists(file) then
+		api.print(
+			"no such file", nil, nil, 14
+		)
+		return
+	end
+
+	if not love.filesystem.remove(file) then
+		api.print(
+			"failed to delete file", nil, nil, 14
+		)
+	end
 end
 
 -----------------------------------------
