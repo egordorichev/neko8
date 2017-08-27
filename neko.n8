@@ -11,34 +11,47 @@ commads = {
   load = load,
   new = new,
   save = save,
+  folder = folder,
   cls = cls
 }
 
 function _init()
  input=""
+ history={}
+ hindex=1
  t=0
  cx=0
  start_screen()
+end
+
+function delay()
+ for i=0,6 do
+  flip()
+ end
 end
 
 function start_screen()
  cls()
  color(7)
  print("neko8")
+ delay()
  print("")
+ delay()
  color(6)
  print("by @egordorichev")
+ delay()
  print("made with love")
+ delay()
  color(7)
  print("https://github.com/egordorichev/neko8")
+ delay()
  print("")
+ delay()
  print("type help for help")
+ delay()
  print("")
+ delay()
  redraw_prompt()
-end
-
-function _draw()
-
 end
 
 function redraw_prompt(noc)
@@ -65,32 +78,58 @@ function _update()
 end
 
 function _keydown(k)
- if k == "backspace" then
-  if #input > 0 then
-   input=input:sub(1,cx-1)..input:sub(cx+1,#input)
-   cx=max(0,cx-1)
-   redraw_prompt()
-  end
- elseif k == "delete" then
-   if #input > 0 then
-    input=input:sub(1,cx)..input:sub(cx+2,#input)
+ if key("rctrl") or key("lctrl") then
+   if k=="s" then
+     redraw_prompt(true)
+     print("")
+     run_command("save")
+   end
+ else
+   if k=="backspace" then
+    if #input > 0 then
+     input=input:sub(1,cx-1)..input:sub(cx+1,#input)
+     cx=max(0,cx-1)
+     redraw_prompt()
+    end
+   elseif k=="delete" then
+     if #input>0 then
+      input=input:sub(1,cx)..input:sub(cx+2,#input)
+      redraw_prompt()
+     end
+   elseif k == "left" then
+    cx=max(0,cx-1)
+    t=0
+    redraw_prompt()
+   elseif k == "right" then
+    cx=min(#input,cx+1)
+    t=0
+    redraw_prompt()
+   elseif k == "up" then
+    if hindex>1 then
+     hindex-=1
+     input=history[hindex]
+     cx=#input
+     redraw_prompt()
+    end
+   elseif k == "down" then
+    if hindex<#history then
+     hindex+=1
+     input=history[hindex]
+     redraw_prompt()
+    end
+    cx=#input
+   elseif k == "return" or key == "kpenter" then
+    if history[#history]~=input then
+     add(history,input)
+     hindex+=1
+    end
+    redraw_prompt(true)
+    print("")
+    run_command(input)
+    cx=0
+    input=""
     redraw_prompt()
    end
- elseif k == "left" then
-  cx=max(0,cx-1)
-  t=0
-  redraw_prompt()
-elseif k == "right" then
-  cx=min(#input,cx+1)
-  t=0
-  redraw_prompt()
- elseif k == "return" or key == "kpenter "then
-  redraw_prompt(true)
-  print("")
-  run_command(input)
-  cx=0
-  input=""
-  redraw_prompt()
  end
 end
 
@@ -121,8 +160,8 @@ function run_command(c)
  print("unknown command")
 end
 
-function _keyup(k)
-
+function _copy()
+  return input
 end
 
 function _text(text)

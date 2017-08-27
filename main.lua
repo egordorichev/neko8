@@ -11,6 +11,7 @@ function love.load()
 	)
 
 	initCanvas()
+	giflib = require "gif"
 	neko.init()
 end
 
@@ -62,26 +63,51 @@ function love.keypressed(
 			if neko.loadedCart then
 				runCart(neko.loadedCart)
 			end
+		elseif key == "v" then
+			love.textinput(
+				love.system.getClipboardText()
+			)
+		elseif key == "c" then
+			love.system.setClipboardText(
+				triggerCallback("_copy")
+			)
 		else
 			handled = false
 		end
 	else
 		if key == "escape" then
 			neko.cart = nil
+		elseif key == "f1" then
+			local s =
+				love.graphics.newScreenshot(false)
+			local file = "neko8-"
+				.. os.time() .. ".png"
+
+			s:encode("png", file)
+			log.info(
+				"saved screenshot to " .. file
+			)
+		elseif key == "f8" then
+			gif = giflib.new("neko8.gif")
+			log.info("recording gif..")
+		elseif key == "f9" then
+			if not gif then return end
+			gif:close()
+      gif = nil
+      love.filesystem.write(
+				"neko8-" .. os.time() .. ".gif",
+				love.filesystem.read("neko8.gif")
+			)
+      love.filesystem.remove("neko8.gif")
 		else
 			handled = false
 		end
 	end
 
 	if not handled then
-		if neko.cart
-			and neko.cart.sandbox._keydown then
-			cart.sandbox._keydown(key, isRepeat)
-		else
-			neko.core.sandbox._keydown(
-				key, isRepeat
-			)
-		end
+		triggerCallback(
+			"_keydown", key, isRepeat
+		)
 	end
 end
 
@@ -98,32 +124,37 @@ function love.keyreleased(key)
 		end
 	end
 
-	if neko.cart
-		and neko.cart.sandbox._keyup then
-		return neko.cart.sandbox._keyup(key)
-	else
-		neko.core.sandbox._keyup(key)
+	triggerCallback("_keyup", key)
+end
+
+function replaceChar(pos, str, r)
+    return str:sub(1, pos - 1)
+			.. r .. str:sub(pos + 1)
+end
+
+function validateText(text)
+	for i = 1, #text do
+		local c = text:sub(i, i)
+		local valid = false
+		for j = 1, #config.font.letters do
+			local ch = config.font.letters:sub(j, j)
+			if c == ch then
+				valid = true
+				break
+			end
+		end
+		if not valid then
+			print("Invalid " .. c)
+			text = replaceChar(i, text, "")
+		end
 	end
+
+	return text
 end
 
 function love.textinput(text)
-	text = text:lower()
-	local validChar = false
-	for i = 1,#config.font.letters do
-		if config.font.letters:sub(i,i)
-			== text then
-			validChar = true
-			break
-		end
-	end
-	if validChar then
-		if neko.cart
-			and neko.cart.sandbox._text then
-			return neko.cart.sandbox._text(text)
-		else
-			neko.core.sandbox._text(text)
-		end
-	end
+	text = validateText(text)
+	triggerCallback("_text", text)
 end
 
 function love.run()
@@ -184,6 +215,18 @@ function love.run()
 			love.timer.sleep(0.001)
 		end
 	end
+end
+
+function triggerCallback(c, ...)
+	if neko.cart
+		and neko.cart.sandbox[c] then
+
+		return cart.sandbox[c](...)
+	elseif neko.core.sandbox[c] then
+		return neko.core.sandbox[c](...)
+	end
+
+	return nil
 end
 
 -----------------------------------------
@@ -266,23 +309,11 @@ function neko.update()
 		end
 	end
 
-	if neko.cart then
-		if neko.cart._update then
-			neko.cart.sandbox._update()
-		end
-	else
-		neko.core.sandbox._update()
-	end
+	triggerCallback("_update")
 end
 
 function neko.draw()
-	if neko.cart then
-		if neko.cart._update then
-			neko.cart.sandbox._draw()
-		end
-	else
-		neko.core.sandbox._draw()
-	end
+	triggerCallback("_draw")
 end
 
 -----------------------------------------
@@ -459,6 +490,14 @@ function runCart(cart)
 	api.flip()
 end
 
+function saveCart()
+	if not neko.loadedCart then
+		return false
+	end
+
+	return true
+end
+
 -----------------------------------------
 -- api
 -----------------------------------------
@@ -542,6 +581,7 @@ function createSandbox()
 		new = commands.new,
 		mkdir = commands.mkdir,
 		load = commands.load,
+		save = commands.save,
 		reboot = commands.reboot,
 		shutdown = commands.shutdown,
 		cd = commands.cd,
@@ -824,6 +864,11 @@ function api.flip()
 
 	love.graphics.present()
 	love.graphics.setShader(colors.drawShader)
+
+	if gif then
+		gif:frame(canvas.renderable:newImageData())
+	end
+
 	love.graphics.setCanvas(canvas.renderable)
 end
 
@@ -1096,6 +1141,7 @@ function commands.run()
 		neko.cart = neko.loadedCart
 		runCart(neko.loadedCart)
 	else
+		api.color(14)
 		api.print("no carts loaded")
 	end
 end
@@ -1123,6 +1169,7 @@ function commands.load(a)
 	else
 		local c = loadCart(a[1])
 		if not c then
+			api.color(14)
 			api.print(
 				"failed to load " .. a[1]
 			)
@@ -1132,6 +1179,25 @@ function commands.load(a)
 			)
 			neko.loadedCart = c
 		end
+	end
+end
+
+function commands.save(a)
+	if not neko.loadedCart then
+		api.color(14)
+		api.print("no carts loaded")
+		return
+	end
+
+	if not saveCart() then
+		api.color(14)
+		api.print(
+			"failed to save cart"
+		)
+	else
+		api.print(
+			"saved " .. neko.loadedCart.pureName
+		)
 	end
 end
 
