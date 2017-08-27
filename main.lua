@@ -10,9 +10,9 @@ function love.load()
 		"neko 8 " .. config.version.string
 	)
 
-	initCanvas()
-	giflib = require "gif"
 	neko.init()
+
+	giflib = require "gif"
 end
 
 function love.update(dt)
@@ -76,7 +76,13 @@ function love.keypressed(
 		end
 	else
 		if key == "escape" then
-			neko.cart = nil
+			if neko.cart then
+				neko.cart = nil
+			elseif editors.opened then
+				editors.close()
+			else
+				editors.open()
+			end
 		elseif key == "f1" then
 			local s =
 				love.graphics.newScreenshot(false)
@@ -222,6 +228,10 @@ function triggerCallback(c, ...)
 		and neko.cart.sandbox[c] then
 
 		return cart.sandbox[c](...)
+	elseif editors.opened then
+		if editors.current[c] then
+			editors.current[c](...)
+		end
 	elseif neko.core.sandbox[c] then
 		return neko.core.sandbox[c](...)
 	end
@@ -286,9 +296,15 @@ neko = {}
 
 function neko.init()
 	neko.currentDirectory = "/"
+
+	initCanvas()
 	initFont()
 	initPalette()
 	initApi()
+
+	editors = require "editors"
+	editors.init()
+
 	neko.core = loadCart("neko")
 	runCart(neko.core)
 end
@@ -381,6 +397,7 @@ function loadCart(name)
 	end
 
 	cart.code = loadCode(data, cart)
+	editors.code.import(cart.code)
 
 	--
 	-- possible futures:
@@ -494,6 +511,13 @@ function saveCart()
 	if not neko.loadedCart then
 		return false
 	end
+
+	--
+	-- todo!
+	-- save cart
+	--
+
+	cart.code = editors.code.export()
 
 	return true
 end
@@ -813,12 +837,24 @@ function api.print(s, x, y, c)
 
 	local scroll = (y == nil)
 
+	if type(x) == "boolean" then
+		x = cursor.x
+		cursor.x = cursor.x + #s*4
+	end
+
+	if type(y) == "boolean" then
+		scroll = y
+		if not scroll then
+			y = cursor.y
+		end
+	end
+
 	if scroll then
 		y = cursor.y
 	 	cursor.y = cursor.y + 6
 	end
 
-	if x == nil then
+	if x == nil or type(x) == "boolean" then
 		x = cursor.x
 	end
 
@@ -876,8 +912,8 @@ function api.flip()
 end
 
 function api.cursor(x, y)
-	cursor.x = x or 0
-	cursor.y = y or 0
+	cursor.x = x or cursor.x
+	cursor.y = y or cursor.y
 end
 
 function api.cget()
@@ -886,9 +922,11 @@ end
 
 function api.scroll(pixels)
 	local sc = canvas.renderable:newImageData()
+
 	sc:mapPixel(function(x, y, r, g, b, a)
 		return r - 1, g, b, a
 	end)
+
 	local i = love.graphics.newImage(sc)
 	api.cls()
 	love.graphics.setShader(colors.spriteShader)

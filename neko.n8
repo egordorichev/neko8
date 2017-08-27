@@ -1,26 +1,27 @@
 neko8 cart
 __lua__
-commads = {
- help = help,
-  ls = ls,
-  cd = cd,
-  mkdir = mkdir,
-  rm = rm,
-  shutdown = shutdown,
-  reboot = reboot,
-  load = load,
-  new = new,
-  save = save,
-  folder = folder,
-  cls = cls
-}
-
 function _init()
  input=""
  history={}
  hindex=1
  t=0
  cx=0
+
+ commads={
+  help=help,
+  ls=ls,
+  cd=cd,
+  mkdir=mkdir,
+  rm=rm,
+  shutdown=shutdown,
+  reboot=reboot,
+  load=load,
+  new=new,
+  save=save,
+  folder=folder,
+  cls=cls
+ }
+
  start_screen()
 end
 
@@ -57,7 +58,7 @@ end
 function redraw_prompt(noc)
  local x,y=cget()
 
- rectfill(0,y,(#input+2)*4+7,y+4,0)
+ rectfill(0,y,(#input+2)*4+8,y+5,0)
  print("> "..input,0,y,7)
  if cursor_blink() and not noc then
   rectfill((cx+2)*4,y,
@@ -86,13 +87,13 @@ function _keydown(k)
    end
  else
    if k=="backspace" then
-    if #input > 0 then
+    if #input > 0 and cx > 0 then
      input=input:sub(1,cx-1)..input:sub(cx+1,#input)
      cx=max(0,cx-1)
      redraw_prompt()
     end
    elseif k=="delete" then
-     if #input>0 then
+     if #input>0 and cx < #input then
       input=input:sub(1,cx)..input:sub(cx+2,#input)
       redraw_prompt()
      end
@@ -118,7 +119,7 @@ function _keydown(k)
      redraw_prompt()
     end
     cx=#input
-   elseif k == "return" or key == "kpenter" then
+   elseif k == "return" or k == "kpenter" then
     if history[#history]~=input then
      add(history,input)
      hindex+=1

@@ -43,6 +43,29 @@ config = {
 		{ 131, 118, 156, 255 },
 		{ 255, 119, 168, 255 },
 		{ 255, 204, 170, 255 }
+	},
+
+	editors = {
+		code = {
+			bg = 5,
+			fg = 6,
+			cursor = 2,
+
+			colors = {
+				text = 6,
+				keyword = 10,
+				number = 12,
+				comment = 13,
+				str = 12,
+				selection = 7
+				-- todo: tokens
+			}
+		},
+
+		ui = {
+			bg = 9,
+			fg = 4
+		}
 	}
 }
 
