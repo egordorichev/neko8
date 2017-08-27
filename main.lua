@@ -538,6 +538,9 @@ end
 
 function createSandbox()
 	return {
+		pcall = pcall,
+		loadstring = loadstring,
+
 		printh = print,
 		csize = api.csize,
 		rect = api.rect,
@@ -822,14 +825,14 @@ function api.print(s, x, y, c)
 	if scroll and y >= 120 then
 		local c = c or colors.current
 		api.scroll(6)
-		y = 120
+		y = 114
 
 		api.rectfill(
-			0, y, config.canvas.width, y + 6, 0
+			0, y - 1, config.canvas.width, y + 7, 0
 		)
 
 		api.color(c)
-		api.cursor(0, y)
+		api.cursor(0, y + 6)
 		api.flip()
 	end
 
@@ -882,36 +885,21 @@ function api.cget()
 end
 
 function api.scroll(pixels)
-	local base = 0x6000
-	local delta = base + pixels*0x40
-	local basehigh = 0x8000
-	api.memcpy(base, delta, basehigh-delta)
+	local sc = canvas.renderable:newImageData()
+	sc:mapPixel(function(x, y, r, g, b, a)
+		return r - 1, g, b, a
+	end)
+	local i = love.graphics.newImage(sc)
+	api.cls()
+	love.graphics.setShader(colors.spriteShader)
+  love.graphics.draw(i, 0, -pixels)
+  love.graphics.setShader(colors.drawShader)
 end
 
 function api.memcpy(
 	dest_addr, source_addr, len
 )
-	if len <= 0 then
-		return
-	end
-	local img = canvas.renderable:newImageData()
-	for i=0,len-1 do
-		local x = api.flr(source_addr-0x6000+i)%64*2
-		local y = api.flr((source_addr-0x6000+i)/64)
-		local c = api.ceil(img:getPixel(x,y)/16)
-		local d = api.ceil(img:getPixel(x+1,y)/16)
-		if c ~= 0 then
-			c = c - 1
-		end
-		if d ~= 0 then
-			d = d - 1
-		end
 
-		local dx = api.flr(dest_addr-0x6000+i)%64*2
-		local dy = api.flr((dest_addr-0x6000+i)/64)
-		api.pset(dx+1,dy,c)
-		api.pset(dx+2,dy,d)
-	end
 end
 
 function api.btn(b, p)
