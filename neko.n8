@@ -26,7 +26,8 @@ function _init()
 end
 
 function delay()
- for i=0,6 do
+ -- for i=0,6 do
+ for i=0,-1 do
   flip()
  end
 end

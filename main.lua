@@ -69,7 +69,7 @@ function love.keypressed(
 			)
 		elseif key == "c" then
 			love.system.setClipboardText(
-				triggerCallback("_copy")
+				triggerCallback("_copy") or ""
 			)
 		else
 			handled = false
@@ -928,6 +928,8 @@ function api.scroll(pixels)
 	end)
 
 	local i = love.graphics.newImage(sc)
+	i:setFilter("nearest")
+
 	api.cls()
 	love.graphics.setShader(colors.spriteShader)
   love.graphics.draw(i, 0, -pixels)
@@ -937,7 +939,7 @@ end
 function api.memcpy(
 	dest_addr, source_addr, len
 )
-
+	-- todo
 end
 
 function api.btn(b, p)
