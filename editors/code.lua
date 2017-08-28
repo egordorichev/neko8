@@ -10,6 +10,7 @@ local th = 20
 function code.init()
   code.lines = {}
   code.lines[1] = ""
+  
   code.cursor = {
     x = 0,
     y = 0

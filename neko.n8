@@ -16,6 +16,7 @@ function _init()
   shutdown=shutdown,
   reboot=reboot,
   load=load,
+  run=run,
   new=new,
   save=save,
   folder=folder,
@@ -35,7 +36,7 @@ end
 function start_screen()
  cls()
  color(7)
- print("neko8")
+ print("neko8 "..nver())
  delay()
  print("")
  delay()
@@ -53,13 +54,12 @@ function start_screen()
  delay()
  print("")
  delay()
- redraw_prompt()
 end
 
 function redraw_prompt(noc)
  local x,y=cget()
 
- rectfill(0,y,196,y+5,0)
+ rectfill(0,y,(#input+2)*4+3,y+5,0)
  print("> "..input,0,y,6)
  if cursor_blink() and not noc then
   rectfill((cx+2)*4,y,
@@ -74,7 +74,7 @@ end
 function _update()
  local lb = cursor_blink()
  t+=1
- if cursor_blink() ~= lb then
+ if lb~=cursor_blink() then
   redraw_prompt()
  end
 end
@@ -130,6 +130,8 @@ function _keydown(k)
     run_command(input)
     cx=0
     input=""
+    redraw_prompt()
+   elseif k=="escape" then
     redraw_prompt()
    end
  end

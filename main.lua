@@ -76,6 +76,7 @@ function love.keypressed(
 		end
 	else
 		if key == "escape" then
+			handled = false
 			if neko.cart then
 				neko.cart = nil
 			elseif editors.opened then
@@ -90,16 +91,15 @@ function love.keypressed(
 				.. os.time() .. ".png"
 
 			s:encode("png", file)
-			log.info(
-				"saved screenshot to " .. file
-			)
+			api.smes("saved screenshot")
 		elseif key == "f8" then
 			gif = giflib.new("neko8.gif")
-			log.info("recording gif..")
+			api.smes("started recording gif")
 		elseif key == "f9" then
 			if not gif then return end
 			gif:close()
       gif = nil
+			api.smes("saved gif")
       love.filesystem.write(
 				"neko8-" .. os.time() .. ".gif",
 				love.filesystem.read("neko8.gif")
@@ -138,6 +138,27 @@ function replaceChar(pos, str, r)
 			.. r .. str:sub(pos + 1)
 end
 
+local function toUTF8(st)
+	if st <= 0x7F then
+		return string.char(st)
+	end
+
+	if st <= 0x7FF then
+		local byte0 = 0xC0 + math.floor(st / 0x40)
+		local byte1 = 0x80 + (st % 0x40)
+		return string.char(byte0, byte1)
+	end
+
+	if st <= 0xFFFF then
+		local byte0 = 0xE0 +  math.floor(st / 0x1000)
+		local byte1 = 0x80 + (math.floor(st / 0x40) % 0x40)
+		local byte2 = 0x80 + (st % 0x40)
+		return string.char(byte0, byte1, byte2)
+	end
+
+	return ""
+end
+
 function validateText(text)
 	for i = 1, #text do
 		local c = text:sub(i, i)
@@ -150,8 +171,19 @@ function validateText(text)
 			end
 		end
 		if not valid then
-			print("Invalid " .. c)
 			text = replaceChar(i, text, "")
+		end
+	end
+
+	if #text == 1 and api.key("ralt")
+		or api.key("lalt") then
+		local c = string.byte(text:sub(1, 1))
+
+		if c >= 97
+			and c <= 122 then
+			text = replaceChar(
+				1, text, toUTF8(c + 95)
+			)
 		end
 	end
 
@@ -226,8 +258,7 @@ end
 function triggerCallback(c, ...)
 	if neko.cart
 		and neko.cart.sandbox[c] then
-
-		return cart.sandbox[c](...)
+		return neko.cart.sandbox[c](...)
 	elseif editors.opened then
 		if editors.current[c] then
 			editors.current[c](...)
@@ -315,6 +346,8 @@ function neko.init()
 
 	neko.core = loadCart("neko")
 	runCart(neko.core)
+	neko.cart = nil
+	neko.loadedCart = createCart()
 end
 
 function neko.showMessage(s)
@@ -497,6 +530,8 @@ function runCart(cart)
 		return
 	end
 
+	saveCart(cart.pureName)
+
 	log.info(
 		"running cart " .. cart.pureName
 	)
@@ -528,16 +563,25 @@ function runCart(cart)
 	love.graphics.setShader(
 		colors.drawShader
 	)
+
 	if cart.sandbox._init then
 		cart.sandbox._init()
 	end
+
+	if cart.sandbox._draw or
+		cart.sandbox._update then
+		neko.cart = cart
+	end
+
 	api.flip()
 end
 
-function saveCart()
+function saveCart(name)
 	if not neko.loadedCart then
 		return false
 	end
+
+	name = name or neko.loadedCart.name
 
 	neko.loadedCart.code =
 		editors.code.export()
@@ -549,8 +593,10 @@ function saveCart()
 	data = data .. "__end__\n"
 
 	love.filesystem.write(
-		neko.loadedCart.name, data, #data
+		name, data, #data
 	)
+
+	neko.loadedCart.pureName = name
 
 	return true
 end
@@ -656,7 +702,8 @@ function createSandbox()
 		count = api.count,
 		foreach = api.foreach,
 
-		smes = api.smes
+		smes = api.smes,
+		nver = api.nver
 	}
 end
 
@@ -918,11 +965,9 @@ function api.print(s, x, y, c)
 end
 
 function api.flip()
-	-- todo
-
-	-- if gif then
-	-- gif:frame(canvas.renderable:newImageData())
-	-- end
+	if gif then
+		gif:frame(canvas.renderable:newImageData())
+	end
 
 	love.graphics.setCanvas(canvas.message)
 	love.graphics.clear()
@@ -1128,6 +1173,10 @@ function api.smes(s)
 	neko.showMessage(s)
 end
 
+function api.nver()
+	return config.version.string
+end
+
 function api.count(a)
 	return #a
 end
@@ -1233,7 +1282,6 @@ end
 
 function commands.run()
 	if neko.loadedCart ~= nil then
-		neko.cart = neko.loadedCart
 		runCart(neko.loadedCart)
 	else
 		api.color(14)
@@ -1243,6 +1291,7 @@ end
 
 function commands.new()
 	neko.loadedCart = createCart()
+	color(7)
 	api.print("created new cart")
 end
 
@@ -1278,12 +1327,27 @@ function commands.load(a)
 end
 
 function commands.save(a)
-	if not neko.loadedCart then
+	local name
+
+	if neko.loadedCart then
+		name = neko.loadedCart.pureName
+	end
+
+	if a then
+		if #a == 1 then
+			name = a[1]
+		elseif #a > 1 then
+			api.print("save (name)")
+			return
+		end
+	end
+
+	if not name then
 		api.smes("** no filename **")
 		return
 	end
 
-	if not saveCart() then
+	if not saveCart(name) then
 		api.smes(
 			"** failed to save cart **"
 		)
@@ -1295,7 +1359,7 @@ function commands.save(a)
 end
 
 function commands.reboot()
-	neko.init()
+	love.load()
 end
 
 function commands.shutdown()
