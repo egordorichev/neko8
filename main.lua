@@ -388,10 +388,12 @@ function loadCart(name)
 	local found = false
 	for i = 1, #extensions do
 		if love.filesystem.isFile(
-			pureName .. extensions[i]
+			neko.currentDirectory
+			.. pureName .. extensions[i]
 		) then
 			found = true
-			name = pureName .. extensions[i]
+			name = neko.currentDirectory
+				.. pureName .. extensions[i]
 			break
 		end
 	end
@@ -537,12 +539,18 @@ function saveCart()
 		return false
 	end
 
-	--
-	-- todo!
-	-- save cart
-	--
+	neko.loadedCart.code =
+		editors.code.export()
 
-	cart.code = editors.code.export()
+	local data = "neko8 cart\n"
+
+	data = data .. "__lua__\n"
+	data = data .. neko.loadedCart.code
+	data = data .. "__end__\n"
+
+	love.filesystem.write(
+		neko.loadedCart.name, data, #data
+	)
 
 	return true
 end

@@ -59,8 +59,8 @@ end
 function redraw_prompt(noc)
  local x,y=cget()
 
- rectfill(0,y,(#input+2)*4+8,y+5,0)
- print("> "..input,0,y,7)
+ rectfill(0,y,196,y+5,0)
+ print("> "..input,0,y,6)
  if cursor_blink() and not noc then
   rectfill((cx+2)*4,y,
   (cx+2)*4+3,y+4,8)
@@ -117,9 +117,9 @@ function _keydown(k)
     if hindex<#history then
      hindex+=1
      input=history[hindex]
-     redraw_prompt()
     end
     cx=#input
+    redraw_prompt()
    elseif k == "return" or k == "kpenter" then
     if history[#history]~=input then
      add(history,input)
