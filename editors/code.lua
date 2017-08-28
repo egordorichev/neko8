@@ -9,6 +9,7 @@ local th = 20
 
 function code.init()
   code.lines = {}
+  code.lines[1] = ""
   code.cursor = {
     x = 0,
     y = 0
@@ -126,7 +127,9 @@ end
 
 function code._keydown(k)
   if api.key("rctrl") or api.key("lctrl") then
-
+    if k == "s" then
+      commands.save()
+    end
   else
     if k == "left" then
       code.cursor.x = code.cursor.x - 1

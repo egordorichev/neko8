@@ -24,6 +24,11 @@ config = {
 		.. "@&`\"'-_ "
 	},
 
+	messages = {
+		fg = 7,
+		bg = 8
+	},
+
 	fps = 60,
 
 	palette = {

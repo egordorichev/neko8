@@ -247,8 +247,7 @@ canvas = {
 	x = 0,
 	y = 0,
 	scaleX = 1,
-	scaleY = 1,
-	renderable = nil
+	scaleY = 1
 }
 
 function initCanvas()
@@ -258,8 +257,17 @@ function initCanvas()
 			config.canvas.height
 		)
 
-
 	canvas.renderable:setFilter(
+		"nearest", "nearest"
+	)
+
+	canvas.message =
+		love.graphics.newCanvas(
+			config.canvas.width,
+			7
+		)
+
+	canvas.message:setFilter(
 		"nearest", "nearest"
 	)
 
@@ -309,6 +317,13 @@ function neko.init()
 	runCart(neko.core)
 end
 
+function neko.showMessage(s)
+	neko.message = {
+		text = s or "invalid message",
+		t = config.fps * 2
+	}
+end
+
 function neko.update()
 	for p = 0, 1 do
 		for i = 0, #api.keyMap[p] do
@@ -322,6 +337,13 @@ function neko.update()
 					break
 				end
 			end
+		end
+	end
+
+	if neko.message then
+		neko.message.t = neko.message.t - 1
+		if neko.message.t <= 0 then
+			neko.message = nil
 		end
 	end
 
@@ -397,7 +419,10 @@ function loadCart(name)
 	end
 
 	cart.code = loadCode(data, cart)
-	editors.code.import(cart.code)
+
+	if neko.core then
+		editors.code.import(cart.code)
+	end
 
 	--
 	-- possible futures:
@@ -621,7 +646,9 @@ function createSandbox()
 		del = api.del,
 		all = api.all,
 		count = api.count,
-		foreach = api.foreach
+		foreach = api.foreach,
+
+		smes = api.smes
 	}
 end
 
@@ -883,6 +910,30 @@ function api.print(s, x, y, c)
 end
 
 function api.flip()
+	-- todo
+
+	-- if gif then
+	-- gif:frame(canvas.renderable:newImageData())
+	-- end
+
+	love.graphics.setCanvas(canvas.message)
+	love.graphics.clear()
+
+	if neko.message then
+		api.rectfill(
+			0, 0,
+			config.canvas.width,
+			7,
+			config.messages.bg
+		)
+
+		api.print(
+			neko.message.text,
+			1, 1,
+			config.messages.fg
+		)
+	end
+
 	love.graphics.setShader(
 		colors.displayShader
 	)
@@ -901,13 +952,17 @@ function api.flip()
 		canvas.scaleX, canvas.scaleY
 	)
 
-	love.graphics.present()
-	love.graphics.setShader(colors.drawShader)
-
-	if gif then
-		gif:frame(canvas.renderable:newImageData())
+	if neko.message then
+		love.graphics.draw(
+			canvas.message, canvas.x,
+			canvas.y + (config.canvas.height - 7)
+			* canvas.scaleY,
+			0, canvas.scaleX, canvas.scaleY
+		)
 	end
 
+	love.graphics.present()
+	love.graphics.setShader(colors.drawShader)
 	love.graphics.setCanvas(canvas.renderable)
 end
 
@@ -1061,6 +1116,10 @@ function api.foreach(a, f)
 	end
 end
 
+function api.smes(s)
+	neko.showMessage(s)
+end
+
 function api.count(a)
 	return #a
 end
@@ -1212,18 +1271,16 @@ end
 
 function commands.save(a)
 	if not neko.loadedCart then
-		api.color(14)
-		api.print("no carts loaded")
+		api.smes("** no filename **")
 		return
 	end
 
 	if not saveCart() then
-		api.color(14)
-		api.print(
-			"failed to save cart"
+		api.smes(
+			"** failed to save cart **"
 		)
 	else
-		api.print(
+		api.smes(
 			"saved " .. neko.loadedCart.pureName
 		)
 	end
