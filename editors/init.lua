@@ -3,9 +3,11 @@ local editors = {}
 function editors.init()
   editors.opened = false
   editors.code = require "editors.code"
+  editors.sprites = require "editors.sprites"
 
   editors.modes = {
-    editors.code
+    editors.code,
+		editors.sprites
   }
 
   editors.current = editors.modes[1]
@@ -54,6 +56,32 @@ function editors.drawUI()
     config.canvas.height,
     config.editors.ui.bg
   )
+
+	for i = 1, #editors.modes do
+		local m = editors.modes[i]
+		local c = m == editors.current and
+			config.editors.sprites.bg or
+			config.editors.sprites.fg
+
+		local x = config.canvas.width -
+			(#editors.modes + 1 - i) * 7
+		api.brectfill(x, 0, 7, 7, c)
+	end
+end
+
+function editors._update()
+	local mx, my, mb = api.mstat(1)
+	for i = 1, #editors.modes do
+		local m = editors.modes[i]
+		local x = config.canvas.width -
+			(#editors.modes + 1 - i) * 7
+		if mb and mx >= x and mx <= x + 7 and
+			my >= 0 and my <= 7 then
+			editors.current.close()
+			editors.current = m
+			m.open()
+		end
+	end
 end
 
 return editors

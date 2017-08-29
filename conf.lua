@@ -67,6 +67,11 @@ config = {
 			}
 		},
 
+		sprites = {
+			bg = 5,
+			fg = 4
+		},
+
 		ui = {
 			bg = 9,
 			fg = 4

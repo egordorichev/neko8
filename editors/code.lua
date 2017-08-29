@@ -23,7 +23,14 @@ function code.init()
 end
 
 function code.open()
-  code.redraw()
+  code.forceDraw = true
+end
+
+function code._draw()
+	if code.forceDraw then
+		code.redraw()
+		code.forceDraw = false
+	end
 end
 
 local function cursorBlink()

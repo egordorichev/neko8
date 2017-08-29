@@ -74,9 +74,9 @@ function love.keypressed(
 			handled = false
 		end
 	else
-		if key == "escape" then
+		if key == "escape" and not isRepeat then
 			handled = false
-			if neko.cart and neko.cart ~= neko.core then
+			if neko.cart then
 				neko.cart = nil
 			elseif editors.opened then
 				editors.close()
@@ -333,6 +333,7 @@ end
 neko = {}
 
 function neko.init()
+	neko.core = nil
 	neko.currentDirectory = "/"
 
 	initCanvas()
@@ -345,6 +346,7 @@ function neko.init()
 
 	neko.core = loadCart("neko")
 	runCart(neko.core)
+	neko.cart = nil
 	neko.loadedCart = createCart()
 end
 
@@ -379,6 +381,9 @@ function neko.update()
 	end
 
 	triggerCallback("_update")
+	if editors.opened then
+		editors._update()
+	end
 end
 
 function neko.draw()
@@ -445,6 +450,7 @@ function loadCart(name)
 		return cart
 	end
 
+	local loadData = neko.core
 	local header = "neko8 cart"
 
 	if not data:find(header) then
@@ -458,17 +464,15 @@ function loadCart(name)
 		return cart
 	end
 
-	if neko.core then
+	if loadData then
 		editors.code.import(cart.code)
 	end
 
 	cart.sprites = loadSprites(data, cart)
 
-	-- todo:
-
-	-- if neko.core then
-	-- 	editors.sprites.import(cart.sprites)
-	-- end
+	if loadData then
+		editors.sprites.import(cart.sprites)
+	end
 
 	if not cart.sprites then
 		log.error("failed to load sprites")
@@ -830,7 +834,8 @@ function createSandbox()
 		foreach = api.foreach,
 
 		smes = api.smes,
-		nver = api.nver
+		nver = api.nver,
+		mstat = api.mstat
 	}
 end
 
@@ -1114,14 +1119,12 @@ function api.flip()
 		)
 	end
 
-	love.graphics.setShader(
-		colors.displayShader
-	)
-
 	colors.displayShader:send(
 		"palette",
 		shaderUnpack(colors.display)
 	)
+
+	love.graphics.setShader(colors.displayShader)
 
 	love.graphics.setCanvas()
 	love.graphics.clear()
@@ -1140,6 +1143,18 @@ function api.flip()
 			0, canvas.scaleX, canvas.scaleY
 		)
 	end
+
+	local mx, my = love.mouse.getPosition()
+	neko.cart, neko.core = neko.core, neko.cart
+
+	-- fixme! broken colors
+
+	api.sspr(
+		40, 0, 8, 8, mx, my, 8 * canvas.scaleX,
+		8 * canvas.scaleY
+	)
+
+	neko.cart, neko.core = neko.core, neko.cart
 
 	love.graphics.present()
 	love.graphics.setShader(colors.drawShader)
@@ -1379,6 +1394,12 @@ end
 
 function api.nver()
 	return config.version.string
+end
+
+function api.mstat(b)
+	return (love.mouse.getX() - canvas.x)
+		/ canvas.scaleX, (love.mouse.getY() - canvas.y)
+		/ canvas.scaleY, love.mouse.isDown(b or 1)
 end
 
 function api.count(a)
