@@ -2,6 +2,7 @@
 -- main callbacks
 -----------------------------------------
 
+giflib = require "gif"
 frameTime = 1 / config.fps
 hostTime = 0
 
@@ -11,8 +12,6 @@ function love.load()
 	)
 
 	neko.init()
-
-	giflib = require "gif"
 end
 
 function love.update(dt)
@@ -77,7 +76,7 @@ function love.keypressed(
 	else
 		if key == "escape" then
 			handled = false
-			if neko.cart then
+			if neko.cart and neko.cart ~= neko.core then
 				neko.cart = nil
 			elseif editors.opened then
 				editors.close()
@@ -134,8 +133,8 @@ function love.keyreleased(key)
 end
 
 function replaceChar(pos, str, r)
-    return str:sub(1, pos - 1)
-			.. r .. str:sub(pos + 1)
+	return str:sub(1, pos - 1)
+		.. r .. str:sub(pos + 1)
 end
 
 local function toUTF8(st)
@@ -346,7 +345,6 @@ function neko.init()
 
 	neko.core = loadCart("neko")
 	runCart(neko.core)
-	neko.cart = nil
 	neko.loadedCart = createCart()
 end
 
@@ -392,10 +390,10 @@ end
 -----------------------------------------
 
 function initFont()
+	love.graphics.setDefaultFilter("nearest")
 	font = love.graphics.newFont(
 		config.font.file, 4
 	)
-
 
 	font:setFilter("nearest", "nearest")
 
@@ -455,13 +453,30 @@ function loadCart(name)
 
 	cart.code = loadCode(data, cart)
 
+	if not cart.code then
+		log.error("failed to load code")
+		return cart
+	end
+
 	if neko.core then
 		editors.code.import(cart.code)
 	end
 
+	cart.sprites = loadSprites(data, cart)
+
+	-- todo:
+
+	-- if neko.core then
+	-- 	editors.sprites.import(cart.sprites)
+	-- end
+
+	if not cart.sprites then
+		log.error("failed to load sprites")
+		return cart
+	end
+
 	--
 	-- possible futures:
-	-- sprites
 	-- maps
 	-- music
 	-- sfx
@@ -484,7 +499,7 @@ end
 function loadCode(data, cart)
 	local codeStart = data:find("__lua__")
 		+ 8
-	local codeEnd = data:find("__end__")
+	local codeEnd = data:find("__gfx__")
 		- 1
 
 	local code = data:sub(
@@ -519,10 +534,117 @@ function loadCode(data, cart)
 
 	code = code:gsub(
 		"(%S+)%s*([%+-%*/%%])=",
-		"%1 = %1 %2 "
+		"%1=%1%2 "
 	)
 
 	return code
+end
+
+function loadSprites(cdata, cart)
+	local sprites = {}
+
+	sprites.data =
+		love.image.newImageData(128, 256)
+
+	sprites.quads = {}
+	sprites.flags = {}
+
+	local gfxStart = cdata:find("__gfx__")
+		+ 8
+	local gfxEnd = cdata:find("__gff__")
+		- 1
+
+	local data = cdata:sub(gfxStart, gfxEnd)
+
+	local row = 0
+	local col = 0
+	local sprite = 0
+	local shared = 0
+	local nextLine = 1
+
+	while nextLine do
+		local lineEnd = data:find("\n", nextLine)
+
+		if lineEnd == nil then
+			break
+		end
+
+		lineEnd = lineEnd - 1
+		local line = data:sub(nextLine, lineEnd)
+
+		for i = 1, #line do
+			local v = line:sub(i,i)
+			v = tonumber(v, 16)
+			sprites.data:setPixel(
+				col, row, v * 16, v * 16,
+				v * 16, 255
+			)
+
+			col = col + 1
+
+			if col == 128 then
+				col = 0
+				row = row + 1
+			end
+		end
+
+		nextLine = data:find("\n", lineEnd) + 1
+	end
+
+	for y = 0, 31 do
+		for x = 0, 15 do
+			sprites.quads[sprite] =
+				love.graphics.newQuad(
+					8 * x, 8 * y, 8, 8, 128, 256
+			)
+
+			sprite = sprite + 1
+		end
+	end
+
+	if sprite ~= 512 then
+		return nil
+	end
+
+	sprites.sheet =
+		love.graphics.newImage(sprites.data)
+
+	local flagsStart = cdata:find("__gff__")
+		+ 8
+	local flagsEnd = cdata:find("__end__")
+		- 1
+	local data = cdata:sub(
+		flagsStart, flagsEnd
+	)
+
+	local sprite = 0
+	local nextLine = 1
+
+	while nextLine do
+		local lineEnd = data:find("\n", nextLine)
+
+		if lineEnd == nil then
+			break
+		end
+
+		lineEnd = lineEnd - 1
+		local line = data:sub(nextLine, lineEnd)
+
+		for i = 1, #line, 2 do
+			local v = line:sub(i, i + 1)
+			v = tonumber(v, 16)
+			sprites.flags[sprite] = v
+			sprite = sprite + 1
+		end
+
+		nextLine = data:find("\n", lineEnd) + 1
+	end
+
+	if sprite ~= 512 then
+		return nil
+	end
+
+	return sprites
 end
 
 function runCart(cart)
@@ -531,6 +653,7 @@ function runCart(cart)
 	end
 
 	saveCart(cart.pureName)
+	neko.cart = cart
 
 	log.info(
 		"running cart " .. cart.pureName
@@ -546,6 +669,14 @@ function runCart(cart)
 		return
 	end
 
+	love.graphics.setCanvas(
+		canvas.renderable
+	)
+
+	love.graphics.setShader(
+		colors.drawShader
+	)
+
 	local result
 	setfenv(f, cart.sandbox)
 	ok, result = pcall(f)
@@ -555,14 +686,6 @@ function runCart(cart)
 		log.error(result)
 		return
 	end
-
-	love.graphics.setCanvas(
-		canvas.renderable
-	)
-
-	love.graphics.setShader(
-		colors.drawShader
-	)
 
 	if cart.sandbox._init then
 		cart.sandbox._init()
@@ -662,6 +785,10 @@ function createSandbox()
 		cursor = api.cursor,
 		cget = api.cget,
 		scroll = api.scroll,
+		spr = api.spr,
+		sspr = api.sspr,
+		sget = api.sget,
+		sset = api.sset,
 
 		memcpy = api.memcpy,
 
@@ -1042,6 +1169,83 @@ function api.scroll(pixels)
 	love.graphics.setShader(colors.spriteShader)
   love.graphics.draw(i, 0, -pixels)
   love.graphics.setShader(colors.drawShader)
+end
+
+function api.spr(n, x, y, w, h, fx, fy)
+	n = api.flr(n)
+	love.graphics.setShader(colors.spriteShader)
+	colors.spriteShader:send(
+		"transparent", shaderUnpack(colors.transparent)
+	)
+
+	w = w or 1
+	h = h or 1
+
+	local q
+	if w == 1 and h == 1 then
+		q = neko.cart.sprites.quads[n]
+	else
+		local id = string.format('%d-%d-%d', n, w, h)
+		if neko.cart.sprites.quads[id] then
+			q = neko.cart.sprites.quads[id]
+		else
+			q = love.graphics.newQuad(
+				api.flr(n % 16) * 8,
+				api.flr(n / 32) * 8, 8 * w,
+				8 * h, 128, 256
+			)
+
+			neko.cart.sprites.quads[id] = q
+		end
+	end
+
+	love.graphics.draw(
+		neko.cart.sprites.sheet, q,
+		api.flr(x) + (w * 8 * (fx and 1 or 0)),
+		api.flr(y) + (h * 8 * (fy and 1 or 0)),
+		0, fx and -1 or 1,
+		fy and -1 or 1
+	)
+
+	love.graphics.setShader(colors.drawShader)
+end
+
+function api.sspr(
+	sx, sy, sw, sh, dx, dy, dw, dh, fx,fy
+)
+	dw = dw or sw
+	dh = dh or sh
+
+	-- todo: cache this quad
+
+	local q = love.graphics.newQuad(
+		sx, sy, sw, sh,
+		neko.cart.sprites.sheet:getDimensions()
+	)
+
+	love.graphics.setShader(colors.spriteShader)
+	colors.spriteShader:send(
+		"transparent",
+		shaderUnpack(colors.transparent)
+	)
+
+	love.graphics.draw(
+		neko.cart.sprites.sheet, q,
+		api.flr(dx) + (dw * (fx and 1 or 0)),
+		api.flr(dy) + (dh * (fy and 1 or 0)),
+		0, fx and -1 or 1 * (dw / sw),
+		fy and -1 or 1 * (dh / sh)
+	)
+
+	love.graphics.setShader(colors.drawShader)
+end
+
+function api.sget(x, y)
+
+end
+
+function api.sset(x, y, c)
+
 end
 
 function api.memcpy(

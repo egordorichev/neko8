@@ -56,13 +56,4 @@ function editors.drawUI()
   )
 end
 
-function editors.drawMouse()
-  local mx, my = love.mouse.getPosition()
-  mx = mx / 3
-  my = my / 3
-  api.rectfill(
-    mx, my, mx + 4, my + 4, 1
-  )
-end
-
 return editors

@@ -10,7 +10,7 @@ local th = 20
 function code.init()
   code.lines = {}
   code.lines[1] = ""
-  
+
   code.cursor = {
     x = 0,
     y = 0
@@ -26,10 +26,6 @@ function code.open()
   code.redraw()
 end
 
-function code._draw()
-  code.redraw()
-end
-
 local function cursorBlink()
   return t < 16 or t % 30 < 16
 end
@@ -38,7 +34,7 @@ function code._update()
   local lb = cursorBlink()
   t = t + 1
   if cursorBlink() ~= lb then
-    -- code.redraw()
+    code.redraw()
   end
 end
 
@@ -118,8 +114,6 @@ function code.redraw()
     1, config.canvas.height - 6,
     config.editors.ui.fg
   )
-
-  editors.drawMouse()
 end
 
 function code.close()
@@ -246,7 +240,7 @@ function code._keydown(k)
       t = 0
     end
   end
-  -- code.redraw()
+  code.redraw()
 end
 
 function code._text(text)
@@ -261,7 +255,7 @@ function code._text(text)
 
   code.cursor.x = code.cursor.x + 1
   t = 0
-  -- code.redraw()
+  code.redraw()
 end
 
 function code.checkCursorY()
