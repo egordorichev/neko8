@@ -346,8 +346,6 @@ function neko.init()
 
 	neko.core = loadCart("neko")
 	runCart(neko.core)
-	neko.cart = nil
-	neko.loadedCart = createCart()
 end
 
 function neko.showMessage(s)
@@ -450,7 +448,8 @@ function loadCart(name)
 		return cart
 	end
 
-	local loadData = neko.core
+	-- local loadData = neko.core
+	local loadData = true
 	local header = "neko8 cart"
 
 	if not data:find(header) then
@@ -464,19 +463,15 @@ function loadCart(name)
 		return cart
 	end
 
-	if loadData then
-		editors.code.import(cart.code)
-	end
-
 	cart.sprites = loadSprites(data, cart)
-
-	if loadData then
-		editors.sprites.import(cart.sprites)
-	end
 
 	if not cart.sprites then
 		log.error("failed to load sprites")
 		return cart
+	end
+
+	if loadData then
+		import(cart)
 	end
 
 	--
@@ -490,12 +485,29 @@ function loadCart(name)
 		colors.drawShader
 	)
 
+	neko.loadedCart = cart
+
 	return cart
+end
+
+function import(cart)
+	editors.code.import(cart.code)
+	editors.sprites.import(cart.sprites)
+end
+
+function export()
+	neko.loadedCart.code =
+		editors.code.export()
+
+	neko.loadedCart.sprites =
+		editors.sprites.export()
 end
 
 function createCart()
 	local cart = {}
 	cart.sandbox = createSandbox()
+
+	-- fixme: init sprites
 
 	return cart
 end
@@ -607,6 +619,7 @@ function loadSprites(cdata, cart)
 	end
 
 	if sprite ~= 512 then
+		log.error("invalid sprite count: " .. sprite)
 		return nil
 	end
 
@@ -645,6 +658,7 @@ function loadSprites(cdata, cart)
 	end
 
 	if sprite ~= 512 then
+		log.error("invalid flag count: " .. sprite)
 		return nil
 	end
 
@@ -709,14 +723,18 @@ function saveCart(name)
 	end
 
 	name = name or neko.loadedCart.name
+	log.info("saving " .. name)
 
-	neko.loadedCart.code =
-		editors.code.export()
+	export()
 
 	local data = "neko8 cart\n"
 
 	data = data .. "__lua__\n"
 	data = data .. neko.loadedCart.code
+	data = data .. "__gfx__\n"
+	data = data .. editors.sprites.exportGFX()
+	data = data .. "__gff__\n"
+	data = data .. editors.sprites.exportGFF()
 	data = data .. "__end__\n"
 
 	love.filesystem.write(
@@ -1187,6 +1205,11 @@ function api.scroll(pixels)
 end
 
 function api.spr(n, x, y, w, h, fx, fy)
+	if neko.cart == nil then
+		neko.cart = {}
+		neko.cart.sprites = editors.sprites.data
+	end
+
 	n = api.flr(n)
 	love.graphics.setShader(colors.spriteShader)
 	colors.spriteShader:send(
@@ -1228,6 +1251,11 @@ end
 function api.sspr(
 	sx, sy, sw, sh, dx, dy, dw, dh, fx,fy
 )
+	if neko.cart == nil then
+		neko.cart = {}
+		neko.cart.sprites = editors.sprites.data
+	end
+
 	dw = dw or sw
 	dh = dh or sh
 
@@ -1397,9 +1425,9 @@ function api.nver()
 end
 
 function api.mstat(b)
-	return (love.mouse.getX() - canvas.x)
-		/ canvas.scaleX, (love.mouse.getY() - canvas.y)
-		/ canvas.scaleY, love.mouse.isDown(b or 1)
+	return api.flr((love.mouse.getX() - canvas.x)
+		/ canvas.scaleX), api.flr((love.mouse.getY() - canvas.y)
+		/ canvas.scaleY), love.mouse.isDown(b or 1)
 end
 
 function api.count(a)

@@ -110,10 +110,6 @@ function code.redraw()
   editors.drawUI()
 
   api.print(
-    "neko8", 1, 1, config.editors.ui.fg
-  )
-
-  api.print(
     "line " .. code.cursor.y .. "/"
     .. #code.lines .. ", char "
     .. code.cursor.x .. "/"

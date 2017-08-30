@@ -10,7 +10,8 @@ function editors.init()
 		editors.sprites
   }
 
-  editors.current = editors.modes[1]
+  -- editors.current = editors.modes[1]
+  editors.current = editors.modes[2]
 
   for e in api.all(editors.modes) do
     e.init()
@@ -60,12 +61,10 @@ function editors.drawUI()
 	for i = 1, #editors.modes do
 		local m = editors.modes[i]
 		local c = m == editors.current and
-			config.editors.sprites.bg or
+			config.editors.ui.bg or
 			config.editors.sprites.fg
 
-		local x = config.canvas.width -
-			(#editors.modes + 1 - i) * 7
-		api.brectfill(x, 0, 7, 7, c)
+		api.brectfill(i * 7 - 7, 0, 7, 7, c)
 	end
 end
 
@@ -73,8 +72,7 @@ function editors._update()
 	local mx, my, mb = api.mstat(1)
 	for i = 1, #editors.modes do
 		local m = editors.modes[i]
-		local x = config.canvas.width -
-			(#editors.modes + 1 - i) * 7
+		local x = i * 7 - 7
 		if mb and mx >= x and mx <= x + 7 and
 			my >= 0 and my <= 7 then
 			editors.current.close()
