@@ -43,13 +43,13 @@ function sprites.redraw()
 		for y = 0, 3 do
 			local c = x + y * 4
 			api.brectfill(
-				71 + x * 8, 10 + y * 8,
-				8, 8, c
+				71 + x * 12, 10 + y * 12,
+				12, 12, c
 			)
 		end
 	end
 
-	api.brect(71, 10, 32, 32, 0)
+	api.brect(71, 10, 48, 48, 0)
 
 	-- current color
 
@@ -57,13 +57,13 @@ function sprites.redraw()
 	local y = api.flr(sprites.color / 4)
 
 	api.brect(
-		71 + x * 8, 10 + y * 8,
-		8, 8, 0
+		71 + x * 12, 10 + y * 12,
+		12, 12, 0
 	)
 
 	api.brect(
-		70 + x * 8, 9 + y * 8,
-		10, 10, 7
+		70 + x * 12, 9 + y * 12,
+		14, 14, 7
 	)
 
 	-- sprite select
@@ -96,6 +96,16 @@ function sprites.redraw()
 		)
 	end
 
+	-- sprite flags
+	for i = 0, 7 do
+	local f = sprites.data.flags[sprites.sprite]
+		local c =	bit.band(bit.rshift(f, i), 1) == 1
+			and i + 8 or 0
+
+		api.circfill(74 + i * 6, 65, 2, c)
+		api.circ(74 + i * 6, 65, 2, 0)
+	end
+
 	-- sprites
 	api.brectfill(
 		0, 88, 129,
@@ -125,14 +135,18 @@ function sprites.redraw()
 	neko.cart = nil -- see spr and sspr
 end
 
+local function flip(byte, b)
+  b = 2 ^ b
+  return bit.bxor(byte, b)
+end
+
 function sprites._update()
-	local mx, my, mb = api.mstat(1)
+	lmb = mb
+	mx, my, mb = api.mstat(1)
 
 	if mb then
 		if mx >= 0 and mx <= 128
 			and my >= 88 and my <= 88 + 32 then
-
-			log.info("down")
 
 			my = my - 88
 			sprites.sprite = api.flr(mx / 8)
@@ -155,14 +169,23 @@ function sprites._update()
 
 			sprites.data.sheet:refresh()
 			sprites.forceDraw = true
-		elseif mx >= 71 and mx <= 103 and
-			my >= 10 and my <= 42 then
+		elseif mx >= 71 and mx <= 119 and
+			my >= 10 and my <= 58 then
 
-			mx = api.flr((mx - 71) / 8)
-			my = api.flr((my - 10) / 8)
+			mx = api.flr((mx - 71) / 12)
+			my = api.flr((my - 10) / 12)
 
 			sprites.color = mx + my * 4
 			sprites.forceDraw = true
+		elseif lmb == false and my >= 61 and my <= 65 then
+			for i = 0, 7 do
+				if mx >= 70 + i * 6 and mx <= 74 + i * 6 then
+					local b = sprites.data.flags[sprites.sprite]
+					sprites.data.flags[sprites.sprite] = flip(b, i)
+					sprites.forceDraw = true
+					return
+				end
+			end
 		end
 	end
 end
@@ -199,7 +222,6 @@ function sprites.exportGFF()
 		if s ~= 1 and (s + 1) % 128 == 0 then
 			d = d .. "\n"
 		end
-		-- fixme: nil value
 	end
 
 	return d
