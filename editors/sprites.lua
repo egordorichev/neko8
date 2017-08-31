@@ -1,5 +1,4 @@
 local sprites = {}
-local editors = require "editors"
 
 function sprites.init()
 	sprites.color = 7

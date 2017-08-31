@@ -77,7 +77,6 @@ function love.keypressed(
 		if key == "escape" and not isRepeat then
 			handled = false
 			if neko.cart then
-				log.debug("nil")
 				neko.cart = nil
 			elseif editors.opened then
 				editors.close()

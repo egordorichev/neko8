@@ -4,10 +4,16 @@ function editors.init()
   editors.opened = false
   editors.code = require "editors.code"
   editors.sprites = require "editors.sprites"
+  editors.map = require "editors.map"
+  editors.sfx = require "editors.sfx"
+  editors.music = require "editors.music"
 
   editors.modes = {
     editors.code,
-		editors.sprites
+		editors.sprites,
+		editors.map,
+		editors.sfx,
+		editors.music
   }
 
   editors.current = editors.modes[1]

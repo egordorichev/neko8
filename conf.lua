@@ -3,7 +3,7 @@ config = {
 		major = 0,
 		minor = 0.1,
 		name = "bunny",
-		string = "v.0.0.1 bunny"
+		string = "v0.0.1 bunny"
 	},
 
 	window = {

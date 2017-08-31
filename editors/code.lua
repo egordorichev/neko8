@@ -1,5 +1,4 @@
 local code = {}
-local editors = require "editors"
 local lume = require "libs.lume"
 local colorize = require "libs.colorize"
 
