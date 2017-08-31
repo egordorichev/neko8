@@ -2,6 +2,9 @@
 -- main callbacks
 -----------------------------------------
 
+OS = love.system.getOS()
+mobile = OS == "Android" or OS == "iOS"
+
 giflib = require "gif"
 frameTime = 1 / config.fps
 hostTime = 0
@@ -12,6 +15,10 @@ function love.load()
 	)
 
 	neko.init()
+end
+
+function love.touchpressed()
+	love.keyboard.setTextInput(true)
 end
 
 function love.update(dt)
@@ -305,22 +312,28 @@ function initCanvas()
 end
 
 function resizeCanvas(width, height)
-	local size = math.floor(
-		math.min(
+	local size = math.min(
 			width / config.canvas.width,
 			height / config.canvas.height
-		)
 	)
+
+	if not mobile then
+		size = math.floor(size)
+	end
 
 	canvas.scaleX = size
 	canvas.scaleY = size
 
 	canvas.x =
-		(width - size * config.canvas.width)
-		/ 2
-	canvas.y =
-		(height - size * config.canvas.height)
-		/ 2
+		(width - size * config.canvas.width) / 2
+
+	if mobile then
+		canvas.y = 0
+	else
+		canvas.y =
+			(height - size * config.canvas.height)
+			/ 2
+	end
 end
 
 -----------------------------------------
@@ -472,6 +485,13 @@ function loadCart(name)
 		return cart
 	end
 
+	cart.map = loadMap(data, cart)
+
+	if not cart.map then
+		log.error("failed to load map")
+		return cart
+	end
+
 	if loadData then
 		import(cart)
 	end
@@ -495,6 +515,7 @@ end
 function import(cart)
 	editors.code.import(cart.code)
 	editors.sprites.import(cart.sprites)
+	editors.map.import(cart.map)
 end
 
 function export()
@@ -503,6 +524,9 @@ function export()
 
 	neko.loadedCart.sprites =
 		editors.sprites.export()
+
+	neko.loadedCart.map =
+		editors.map.export()
 end
 
 function createCart()
@@ -609,7 +633,7 @@ function loadSprites(cdata, cart)
 
 	local flagsStart = cdata:find("__gff__")
 		+ 8
-	local flagsEnd = cdata:find("__end__")
+	local flagsEnd = cdata:find("__map__")
 		- 1
 	local data = cdata:sub(
 		flagsStart, flagsEnd
@@ -644,6 +668,12 @@ function loadSprites(cdata, cart)
 	end
 
 	return sprites
+end
+
+function loadMap(data, cart)
+	local map = {}
+
+	return map
 end
 
 function patchLua(code)

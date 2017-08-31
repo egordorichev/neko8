@@ -10,6 +10,7 @@ function code.init()
   code.lines = {}
   code.lines[1] = ""
 	code.icon = 8
+	code.bg = config.editors.code.bg
 
   code.cursor = {
     x = 0,

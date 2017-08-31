@@ -6,6 +6,7 @@ function sprites.init()
 	sprites.page = 0
 	sprites.scale = 1
 	sprites.icon = 9
+	sprites.bg = config.editors.sprites.bg
 end
 
 function sprites.open()

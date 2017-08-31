@@ -72,6 +72,21 @@ config = {
 			fg = 4
 		},
 
+		map = {
+			bg = 0,
+			fg = 7
+		},
+
+		sfx = {
+			bg = 5,
+			fg = 7
+		},
+
+		music = {
+			bg = 5,
+			fg = 7
+		},
+
 		ui = {
 			bg = 9,
 			fg = 4

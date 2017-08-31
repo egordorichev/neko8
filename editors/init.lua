@@ -51,6 +51,8 @@ function editors.toggle()
 end
 
 function editors.drawUI()
+	local mx, my, mb = api.mstat(1)
+
   api.rectfill(
     0, 0, config.canvas.width,
     6, config.editors.ui.bg
@@ -67,19 +69,19 @@ function editors.drawUI()
 
 	neko.core, neko.cart = neko.cart, neko.core
 
-	api.pal(7, 4)
-
 	for i = 1, #editors.modes do
 		local m = editors.modes[i]
-		local c = m == editors.current and
-			config.editors.sprites.bg or
+		local c = m == editors.current and m.bg or
 			config.editors.ui.bg
+
+		if m == editors.current then
+			api.pal(4, 7)
+		end
 
 		api.brectfill(21 + i * 7 - 7, 0, 7, 7, c)
 		api.spr(m.icon, 21 + i * 7 - 7, 0)
+		api.pal()
 	end
-
-	api.pal()
 
 	neko.core, neko.cart = neko.cart, neko.core
 end

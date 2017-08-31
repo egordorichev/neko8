@@ -3,6 +3,7 @@ local music = {}
 function music.init()
 	music.forceDraw = false
 	music.icon = 12
+	music.bg = config.editors.music.bg
 end
 
 function music.open()
@@ -21,7 +22,7 @@ function music._draw()
 end
 
 function music.redraw()
-	api.cls(0)
+	api.cls(music.bg)
 	editors.drawUI()
 end
 

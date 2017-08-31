@@ -3,6 +3,7 @@ local map = {}
 function map.init()
 	map.forceDraw = false
 	map.icon = 10
+	map.bg = config.editors.map.bg
 end
 
 function map.open()

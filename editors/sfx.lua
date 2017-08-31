@@ -3,6 +3,7 @@ local sfx = {}
 function sfx.init()
 	sfx.forceDraw = false
 	sfx.icon = 11
+	sfx.bg = config.editors.sfx.bg
 end
 
 function sfx.open()
@@ -21,7 +22,7 @@ function sfx._draw()
 end
 
 function sfx.redraw()
-	api.cls(0)
+	api.cls(sfx.bg)
 	editors.drawUI()
 end
 
