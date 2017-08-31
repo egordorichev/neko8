@@ -1,4 +1,4 @@
-![Code editor](https://media.discordapp.net/attachments/326292337762500612/352809890105917449/neko8-1504186823.png)
+![Code editor](https://cdn.discordapp.com/attachments/326292337762500612/352810241852964864/neko8-1504186903.png)
 
 # neko8
 
