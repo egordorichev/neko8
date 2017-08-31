@@ -1,8 +1,17 @@
-![Code editor](https://media.discordapp.net/attachments/314487938949971980/351391764046938112/neko8-1503848714.png?width=500&height=327)
+![Code editor](https://media.discordapp.net/attachments/326292337762500612/352809890105917449/neko8-1504186823.png)
 
 # neko8
 
-**Neko8** is a **fantasy console** (not yet), inspired by **pico8**, **liko12** and **tic80**.
+**Neko8** is a **fantasy console**, inspired by **pico8**, **liko12** and **tic80**.
+
+Currently it features:
+
+* Pico8-like api
+* Code editor
+* Sprite editor
+* Terminal
+
+More to come ;)
 
 #### Installing ang running
 
