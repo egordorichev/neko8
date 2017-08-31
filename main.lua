@@ -572,7 +572,7 @@ function loadSprites(cdata, cart)
 
 		for i = 1, #line do
 			local v = line:sub(i,i)
-			v = tonumber(v, 16)
+			v = tonumber(v, 16) or 0
 			sprites.data:setPixel(
 				col, row, v * 16, v * 16,
 				v * 16, 255
