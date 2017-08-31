@@ -67,6 +67,8 @@ function editors.drawUI()
 
 	neko.core, neko.cart = neko.cart, neko.core
 
+	api.pal(7, 4)
+
 	for i = 1, #editors.modes do
 		local m = editors.modes[i]
 		local c = m == editors.current and
@@ -76,6 +78,8 @@ function editors.drawUI()
 		api.brectfill(21 + i * 7 - 7, 0, 7, 7, c)
 		api.spr(m.icon, 21 + i * 7 - 7, 0)
 	end
+
+	api.pal()
 
 	neko.core, neko.cart = neko.cart, neko.core
 end

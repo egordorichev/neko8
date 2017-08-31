@@ -1320,16 +1320,16 @@ function api.sspr(
 end
 
 function api.sget(x, y)
-	x = flr(x)
-	y = flr(y)
+	x = api.flr(x)
+	y = api.flr(y)
 	local r, g, b, a =
 		neko.loadedCart.sprites.data:getPixel(x, y)
-	return flr(r / 16)
+	return api.flr(r / 16)
 end
 
 function api.sset(x, y, c)
-	x = flr(x)
-	y = flr(y)
+	x = api.flr(x)
+	y = api.flr(y)
 	neko.loadedCart.sprites.data:setPixel(
 		x, y, c * 16, 0, 0, 255
 	)
@@ -1353,25 +1353,25 @@ function api.pal(c0,c1,p)
 			"palette", shaderUnpack(colors.draw)
 		)
 
-		__sprite_shader:send(
+		colors.spriteShader:send(
 			"palette", shaderUnpack(colors.draw)
 		)
 
-		__text_shader:send(
+		colors.textShader:send(
 			"palette", shaderUnpack(colors.draw)
 		)
 
-		__display_shader:send(
+		colors.displayShader:send(
 			"palette", shaderUnpack(colors.display)
 		)
 
 		paletteModified = false
 
-		palt()
-		palt()
+		api.palt()
+		api.palt()
 	elseif p == 1 and c1 ~= nil then
-		c0 = flr(c0) % 16
-		c1 = flr(c1) % 16
+		c0 = api.flr(c0) % 16
+		c1 = api.flr(c1) % 16
 		c1 = c1 + 1
 		c0 = c0 + 1
 		colors.display[c0] = colors.palette[c1]
@@ -1382,8 +1382,8 @@ function api.pal(c0,c1,p)
 
 		paletteModified = true
 	elseif c1 ~= nil then
-		c0 = flr(c0) % 16
-		c1 = flr(c1) % 16
+		c0 = api.flr(c0) % 16
+		c1 = api.flr(c1) % 16
 		c1 = c1 + 1
 		c0 = c0 + 1
 		colors.draw[c0] = c1
@@ -1410,7 +1410,7 @@ function api.palt(c, t)
 			colors.transparent[i] = i == 1 and 0 or 1
 		end
 	else
-		c = flr(c) % 16
+		c = api.flr(c) % 16
 		if t == false then
 			colors.transparent[c + 1] = 1
 		elseif t == true then
@@ -1420,7 +1420,7 @@ function api.palt(c, t)
 
 	colors.spriteShader:send(
 		"transparent",
-		shaderUnpack(__pico_pal_transparent)
+		shaderUnpack(colors.transparent)
 	)
 end
 
