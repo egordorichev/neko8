@@ -33,10 +33,6 @@ end
 
 function love.resize(w, h)
 	resizeCanvas(w,h)
-	log.debug(
-		"new window size: " .. w
-		.. "x" .. h .. "px"
-	)
 end
 
 function love.keypressed(
@@ -412,7 +408,6 @@ end
 
 function loadCart(name)
 	local cart = createCart()
-	log.debug("loading cart " .. name)
 
 	local pureName = name
 	local extensions = { "", ".n8" }
@@ -423,6 +418,7 @@ function loadCart(name)
 	end
 
 	local found = false
+
 	for i = 1, #extensions do
 		if love.filesystem.isFile(
 			neko.currentDirectory
@@ -435,13 +431,16 @@ function loadCart(name)
 		end
 	end
 
-	cart.name = name
-	cart.pureName = pureName
-
 	if not found then
 		log.error("failed to load cart")
+		if neko.core == nil then
+			error("Failed to load neko.n8. Did you delete it, hacker?")
+		end
 		return nil
 	end
+
+	cart.name = name
+	cart.pureName = pureName
 
 	local data, size =
 		love.filesystem.read(name)
@@ -507,7 +506,6 @@ function export()
 end
 
 function createCart()
-	log.debug("created new cart")
 	local cart = {}
 	cart.sandbox = createSandbox()
 	cart.code = "-- see https://github.com/egordorichev/neko8\n-- for help"
@@ -571,7 +569,8 @@ function loadSprites(cdata, cart)
 		local line = data:sub(nextLine, lineEnd)
 
 		for i = 1, #line do
-			local v = line:sub(i,i)
+			-- fixme: windows fails?
+			local v = line:sub(i, i)
 			v = tonumber(v, 16) or 0
 			sprites.data:setPixel(
 				col, row, v * 16, v * 16,
@@ -687,7 +686,10 @@ function runCart(cart)
 		return
 	end
 
-	saveCart(cart.pureName)
+	if cart ~= neko.core then
+		saveCart(cart.pureName)
+	end
+
 	local name = cart.name
 	if not name then
 		name = "new cart"
@@ -843,6 +845,8 @@ function createSandbox()
 		sspr = api.sspr,
 		sget = api.sget,
 		sset = api.sset,
+		pal = api.pal,
+		palt = api.palt,
 
 		memcpy = api.memcpy,
 
@@ -1316,11 +1320,108 @@ function api.sspr(
 end
 
 function api.sget(x, y)
-
+	x = flr(x)
+	y = flr(y)
+	local r, g, b, a =
+		neko.loadedCart.sprites.data:getPixel(x, y)
+	return flr(r / 16)
 end
 
 function api.sset(x, y, c)
+	x = flr(x)
+	y = flr(y)
+	neko.loadedCart.sprites.data:setPixel(
+		x, y, c * 16, 0, 0, 255
+	)
+	neko.loadedCart.sprites.sheet:refresh()
+end
 
+local paletteModified = false
+
+function api.pal(c0,c1,p)
+	if type(c0) ~= "number" then
+		if paletteModified == false then
+			return
+		end
+
+		for i = 1, 16 do
+			colors.draw[i] = i
+			colors.display[i] = colors.palette[i]
+		end
+
+		colors.drawShader:send(
+			"palette", shaderUnpack(colors.draw)
+		)
+
+		__sprite_shader:send(
+			"palette", shaderUnpack(colors.draw)
+		)
+
+		__text_shader:send(
+			"palette", shaderUnpack(colors.draw)
+		)
+
+		__display_shader:send(
+			"palette", shaderUnpack(colors.display)
+		)
+
+		paletteModified = false
+
+		palt()
+		palt()
+	elseif p == 1 and c1 ~= nil then
+		c0 = flr(c0) % 16
+		c1 = flr(c1) % 16
+		c1 = c1 + 1
+		c0 = c0 + 1
+		colors.display[c0] = colors.palette[c1]
+
+		colors.displayShader:send(
+			"palette", shaderUnpack(colors.display)
+		)
+
+		paletteModified = true
+	elseif c1 ~= nil then
+		c0 = flr(c0) % 16
+		c1 = flr(c1) % 16
+		c1 = c1 + 1
+		c0 = c0 + 1
+		colors.draw[c0] = c1
+
+		colors.drawShader:send(
+			"palette", shaderUnpack(colors.draw)
+		)
+
+		colors.spriteShader:send(
+			"palette", shaderUnpack(colors.draw)
+		)
+
+		colors.textShader:send(
+			"palette", shaderUnpack(colors.draw)
+		)
+
+		paletteModified = true
+	end
+end
+
+function api.palt(c, t)
+	if type(c) ~= "number" then
+		for i= 1, 16 do
+			colors.transparent[i] = i == 1 and 0 or 1
+		end
+	else
+		c = flr(c) % 16
+		if t == false then
+			colors.transparent[c + 1] = 1
+		elseif t == true then
+			colors.transparent[c + 1] = 0
+		end
+	end
+
+	colors.spriteShader:send(
+		"transparent",
+		shaderUnpack(__pico_pal_transparent)
+	)
 end
 
 function api.memcpy(
@@ -1602,6 +1703,7 @@ function commands.load(a)
 		api.print("load [cart]")
 	else
 		local c = loadCart(a[1])
+
 		if not c then
 			api.color(14)
 			api.print(
