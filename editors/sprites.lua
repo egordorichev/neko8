@@ -6,6 +6,7 @@ function sprites.init()
 	sprites.sprite = 0
 	sprites.page = 0
 	sprites.scale = 1
+	sprites.icon = 9
 end
 
 function sprites.open()
@@ -31,7 +32,7 @@ function sprites.redraw()
 
 	api.sspr(
 		sprites.sprite % 16 * 8,
-		sprites.page * 32 + api.flr(sprites.sprite / 16) * 8,
+		api.flr(sprites.sprite / 16) * 8,
 		8 * sprites.scale, 8 * sprites.scale,
 		3, 10, 64, 64
 	)
@@ -81,14 +82,12 @@ function sprites.redraw()
 
 	-- page buttons
 
-	for i = 0, 7 do
-		api.brectfill(
-			19 + i * 8, 80, 7,
-			8, 6
-		)
+	neko.cart, neko.core = neko.core, neko.cart
 
-		api.line(
-			19 + i * 8, 88, 26 + i * 8, 88, 13
+	for i = 0, 7 do
+		api.spr(
+			i == sprites.page and 7 or 6,
+			19 + i * 8, 80
 		)
 
 		api.print(
@@ -96,11 +95,15 @@ function sprites.redraw()
 		)
 	end
 
+	neko.cart, neko.core = neko.core, neko.cart
+
 	-- sprite flags
 	for i = 0, 7 do
-	local f = sprites.data.flags[sprites.sprite]
+	local f = sprites.data.flags[
+			sprites.sprite
+		]
 		local c =	bit.band(bit.rshift(f, i), 1) == 1
-			and i + 8 or 0
+			and i + 8 or 1
 
 		api.circfill(74 + i * 6, 65, 2, c)
 		api.circ(74 + i * 6, 65, 2, 0)
@@ -118,18 +121,22 @@ function sprites.redraw()
 	)
 
 	-- current sprite
-	x = sprites.sprite % 16
-	y = api.flr(sprites.sprite / 16)
+	local s = sprites.sprite - sprites.page * 64
+	x = s % 16
+	y = api.flr(s / 16)
 
-	api.brect(
-		x * 8, 89 + y * 8,
-		8 * sprites.scale, 8 * sprites.scale, 0
-	)
+	if y >= 0 then
+		api.brect(
+			x * 8, 89 + y * 8,
+			8 * sprites.scale, 8 * sprites.scale, 0
+		)
 
-	api.brect(
-		-1 + x * 8, 88 + y * 8,
-		8 * sprites.scale + 2, 8 * sprites.scale + 2, 7
-	)
+		api.brect(
+			-1 + x * 8, 88 + y * 8,
+			8 * sprites.scale + 2, 8 * sprites.scale + 2, 7,
+			8 * sprites.scale + 2, 8 * sprites.scale + 2, 7
+		)
+	end
 
 	editors.drawUI()
 	neko.cart = nil -- see spr and sspr
@@ -149,8 +156,8 @@ function sprites._update()
 			and my >= 88 and my <= 88 + 32 then
 
 			my = my - 88
-			sprites.sprite = api.flr(mx / 8)
-				+ api.flr(my / 8) * 16
+			sprites.sprite = api.mid(0, 511, api.flr(mx / 8)
+				+ api.flr(my / 8) * 16 + sprites.page * 64)
 
 			sprites.forceDraw = true
 		elseif mx >= 3 and mx <= 67
@@ -160,10 +167,12 @@ function sprites._update()
 			my = api.flr((my - 10) / (8 * sprites.scale))
 
 			local v = sprites.color * 16
+			local s = sprites.sprite
+			-- drawing in wrong place
 
 			sprites.data.data:setPixel(
-				mx + sprites.sprite % 16 * 8,
-				my + api.flr(sprites.sprite / 16) * 8,
+				api.mid(mx, 0, 7) + s % 16 * 8,
+				api.mid(my, 0, 7) + api.flr(s / 16) * 8,
 				v, v, v
 			)
 
@@ -175,13 +184,22 @@ function sprites._update()
 			mx = api.flr((mx - 71) / 12)
 			my = api.flr((my - 10) / 12)
 
-			sprites.color = mx + my * 4
+			sprites.color = api.mid(0, 14, mx + my * 4)
 			sprites.forceDraw = true
-		elseif lmb == false and my >= 61 and my <= 65 then
+		elseif lmb == false and my >= 60 and my <= 66 then
 			for i = 0, 7 do
-				if mx >= 70 + i * 6 and mx <= 74 + i * 6 then
+				if mx >= 69 + i * 6 and mx <= 76 + i * 6 then
 					local b = sprites.data.flags[sprites.sprite]
 					sprites.data.flags[sprites.sprite] = flip(b, i)
+					sprites.forceDraw = true
+					-- fixme: wrong page
+					return
+				end
+			end
+		elseif lmb == false and my >= 80 and my <= 88 then
+			for i = 0, 7 do
+				if mx >= 19 + i * 8 and mx <= 26 + i * 8 then
+					sprites.page = i
 					sprites.forceDraw = true
 					return
 				end

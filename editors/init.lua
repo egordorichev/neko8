@@ -10,8 +10,7 @@ function editors.init()
 		editors.sprites
   }
 
-  -- editors.current = editors.modes[1]
-  editors.current = editors.modes[2]
+  editors.current = editors.modes[1]
 
   for e in api.all(editors.modes) do
     e.init()
@@ -58,21 +57,28 @@ function editors.drawUI()
     config.editors.ui.bg
   )
 
+	api.print("neko8", 1, 1, 4)
+
+	neko.core, neko.cart = neko.cart, neko.core
+
 	for i = 1, #editors.modes do
 		local m = editors.modes[i]
 		local c = m == editors.current and
-			config.editors.ui.bg or
-			config.editors.sprites.fg
+			config.editors.sprites.bg or
+			config.editors.ui.bg
 
-		api.brectfill(i * 7 - 7, 0, 7, 7, c)
+		api.brectfill(21 + i * 7 - 7, 0, 7, 7, c)
+		api.spr(m.icon, 21 + i * 7 - 7, 0)
 	end
+
+	neko.core, neko.cart = neko.cart, neko.core
 end
 
 function editors._update()
 	local mx, my, mb = api.mstat(1)
 	for i = 1, #editors.modes do
 		local m = editors.modes[i]
-		local x = i * 7 - 7
+		local x = i * 7 - 7 + 21
 		if mb and mx >= x and mx <= x + 7 and
 			my >= 0 and my <= 7 then
 			editors.current.close()

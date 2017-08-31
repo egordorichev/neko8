@@ -4,12 +4,13 @@ local lume = require "libs.lume"
 local colorize = require "libs.colorize"
 
 local t = 0
-local tw = 35
+local tw = 40
 local th = 20
 
 function code.init()
   code.lines = {}
   code.lines[1] = ""
+	code.icon = 8
 
   code.cursor = {
     x = 0,
@@ -58,7 +59,7 @@ local function colorPrint(tbl)
     api.print(tbl[i + 1], true, false)
   end
   api.print("")
-  api.cursor(1)
+  api.cursor(1 - code.view.x * 4)
 end
 
 function code.redraw()
@@ -73,7 +74,7 @@ function code.redraw()
 
   buffer = highlight(buffer)
 
-  api.cursor(1, 9)
+  api.cursor(1 - code.view.x * 4, 9)
 
   for l in api.all(buffer) do
     colorPrint(l)
@@ -258,7 +259,8 @@ function code._text(text)
 
   code.cursor.x = code.cursor.x + 1
   t = 0
-  code.redraw()
+	code.checkCursor()
+	code.redraw()
 end
 
 function code.checkCursorY()
@@ -294,7 +296,6 @@ function code.checkCursorX(j)
   elseif code.cursor.x >
     #code.lines[code.cursor.y + 1] then
 
-
     if code.cursor.y + 1 < #code.lines
       and not j then
       code.cursor.y =
@@ -304,6 +305,14 @@ function code.checkCursorX(j)
     else
       code.cursor.x = #code.lines[code.cursor.y + 1]
     end
+  end
+
+	if code.cursor.x > code.view.x + tw - 5 then
+    code.view.x = code.cursor.x - tw + 5
+		f = true
+  elseif code.cursor.x < code.view.x + 5 then
+    code.view.x = api.max(0, code.cursor.x - 5)
+		f = true
   end
 
   return f

@@ -77,6 +77,7 @@ function love.keypressed(
 		if key == "escape" and not isRepeat then
 			handled = false
 			if neko.cart then
+				log.debug("nil")
 				neko.cart = nil
 			elseif editors.opened then
 				editors.close()
@@ -92,8 +93,9 @@ function love.keypressed(
 			s:encode("png", file)
 			api.smes("saved screenshot")
 		elseif key == "f8" then
-			gif = giflib.new("neko8.gif")
-			api.smes("started recording gif")
+			-- gif = giflib.new("neko8.gif")
+			-- api.smes("started recording gif")
+			api.smes("gif recording is not supported")
 		elseif key == "f9" then
 			if not gif then return end
 			gif:close()
@@ -346,6 +348,8 @@ function neko.init()
 
 	neko.core = loadCart("neko")
 	runCart(neko.core)
+	neko.loadedCart = createCart()
+	import(neko.loadedCart)
 end
 
 function neko.showMessage(s)
@@ -504,10 +508,20 @@ function export()
 end
 
 function createCart()
+	log.debug("created new cart")
 	local cart = {}
 	cart.sandbox = createSandbox()
+	cart.code = "-- see https://github.com/egordorichev/neko8\n-- for help"
+	cart.sprites = {}
+	cart.sprites.data =
+		love.image.newImageData(128, 256)
+	cart.sprites.sheet =
+		love.graphics.newImage(cart.sprites.data)
+	cart.sprites.flags = {}
 
-	-- fixme: init sprites
+	for i = 0, 511 do
+		cart.sprites.flags[i] = 0
+	end
 
 	return cart
 end
@@ -520,37 +534,6 @@ function loadCode(data, cart)
 
 	local code = data:sub(
 		codeStart, codeEnd
-	)
-
-	code = code:gsub("!=","~=")
-	code = code:gsub(
-		"if%s*(%b())%s*([^\n]*)\n",
-		function(a,b)
-			local nl = a:find("\n",nil,true)
-			local th = b:find(
-				"%f[%w]then%f[%W]"
-			)
-			local an = b:find("%f[%w]and%f[%W]")
-			local o = b:find("%f[%w]or%f[%W]")
-			local ce = b:find("--", nil, true)
-			if not (nl or th or an or o) then
-				if ce then
-					local c,t = b:match(
-						"(.-)(%s-%-%-.*)"
-					)
-					return "if " .. a:sub(2, -2)
-						.." then " .. c
-						.. " end" .. t .. "\n"
-				else
-					return "if " .. a:sub(2, -2)
-					.. " then " .. b .. " end\n"
-				end
-			end
-		end)
-
-	code = code:gsub(
-		"(%S+)%s*([%+-%*/%%])=",
-		"%1=%1%2 "
 	)
 
 	return code
@@ -665,25 +648,69 @@ function loadSprites(cdata, cart)
 	return sprites
 end
 
+function patchLua(code)
+	code = code:gsub("!=","~=")
+	code = code:gsub(
+		"if%s*(%b())%s*([^\n]*)\n",
+		function(a,b)
+			local nl = a:find("\n",nil,true)
+			local th = b:find(
+				"%f[%w]then%f[%W]"
+			)
+			local an = b:find("%f[%w]and%f[%W]")
+			local o = b:find("%f[%w]or%f[%W]")
+			local ce = b:find("--", nil, true)
+			if not (nl or th or an or o) then
+				if ce then
+					local c,t = b:match(
+						"(.-)(%s-%-%-.*)"
+					)
+					return "if " .. a:sub(2, -2)
+						.." then " .. c
+						.. " end" .. t .. "\n"
+				else
+					return "if " .. a:sub(2, -2)
+					.. " then " .. b .. " end\n"
+				end
+			end
+		end)
+
+	code = code:gsub(
+		"(%S+)%s*([%+-%*/%%])=",
+		"%1=%1%2 "
+	)
+
+	return code
+end
+
 function runCart(cart)
 	if not cart or not cart.sandbox then
 		return
 	end
 
 	saveCart(cart.pureName)
-	neko.cart = cart
+	local name = cart.name
+	if not name then
+		name = "new cart"
+		export()
+	end
 
 	log.info(
-		"running cart " .. cart.pureName
+		"running cart " .. name
 	)
 
 	local ok, f, e = pcall(
-		load, cart.code, cart.name
+		load, patchLua(cart.code), name
 	)
 
 	if e then
 		log.error("syntax error:")
 		log.error(e)
+		neko.cart = nil
+		local pos = e:find("\"]:")
+		e = "line " .. e:sub(pos + 3)
+		api.color(8)
+		api.print(e)
 		return
 	end
 
@@ -702,6 +729,11 @@ function runCart(cart)
 	if not ok then
 		log.error("runtime error:")
 		log.error(result)
+		neko.cart = nil
+		local pos = result:find("\"]:")
+		result = "line " .. result:sub(pos + 3)
+		api.color(8)
+		api.print(result)
 		return
 	end
 
@@ -718,7 +750,7 @@ function runCart(cart)
 end
 
 function saveCart(name)
-	if not neko.loadedCart then
+	if not neko.loadedCart or not name then
 		return false
 	end
 
@@ -738,9 +770,10 @@ function saveCart(name)
 	data = data .. "__end__\n"
 
 	love.filesystem.write(
-		name, data, #data
+		name .. ".n8", data, #data
 	)
 
+	-- fixme: wrong names
 	neko.loadedCart.pureName = name
 
 	return true
@@ -1206,8 +1239,8 @@ end
 
 function api.spr(n, x, y, w, h, fx, fy)
 	if neko.cart == nil then
-		neko.cart = {}
-		neko.cart.sprites = editors.sprites.data
+		neko.cart = neko.loadedCart
+			and neko.loadedCart or neko.core
 	end
 
 	n = api.flr(n)
@@ -1252,8 +1285,8 @@ function api.sspr(
 	sx, sy, sw, sh, dx, dy, dw, dh, fx,fy
 )
 	if neko.cart == nil then
-		neko.cart = {}
-		neko.cart.sprites = editors.sprites.data
+		neko.cart = neko.loadedCart
+			and neko.loadedCart or neko.core
 	end
 
 	dw = dw or sw
@@ -1460,9 +1493,14 @@ function commands.help(a)
 		api.color(7)
 		api.print("https://github.com/egordorichev/neko8")
 		api.print("")
-		api.print("todo")
+		api.print("ls   - list files  rm     - delete file")
+		api.print("cd   - change dir  mkdir  - create dir")
+		api.print("new  - new cart    run    - run cart")
+		api.print("load - load cart   save   - save cart")
+		api.print("reboot, shutdown, cls")
 	else
-		api.print("todo: help on a subject")
+		-- todo
+		api.print("subject " .. a[1] .. " is not found")
 	end
 end
 
