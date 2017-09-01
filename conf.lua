@@ -91,6 +91,11 @@ config = {
 			bg = 9,
 			fg = 4
 		}
+	},
+
+	audio = {
+		bufferSize = 1024,
+		sampleRate = 22050
 	}
 }
 

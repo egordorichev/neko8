@@ -86,16 +86,21 @@ function editors.drawUI()
 	neko.core, neko.cart = neko.cart, neko.core
 end
 
+local lmb, mb, mx, my
+
 function editors._update()
-	local mx, my, mb = api.mstat(1)
-	for i = 1, #editors.modes do
-		local m = editors.modes[i]
-		local x = i * 7 - 7 + 21
-		if mb and mx >= x and mx <= x + 7 and
-			my >= 0 and my <= 7 then
-			editors.current.close()
-			editors.current = m
-			m.open()
+	lmb = mb
+	mx, my, mb = api.mstat(1)
+	if mb ~= lmb then
+		for i = 1, #editors.modes do
+			local m = editors.modes[i]
+			local x = i * 7 - 7 + 21
+			if mb and mx >= x and mx <= x + 7 and
+				my >= 0 and my <= 7 then
+				editors.current.close()
+				editors.current = m
+				m.open()
+			end
 		end
 	end
 end

@@ -5,7 +5,8 @@
 OS = love.system.getOS()
 mobile = OS == "Android" or OS == "iOS"
 
-giflib = require "gif"
+giflib = require "libs.gif"
+QueueableSource = require "libs.QueueableSource"
 frameTime = 1 / config.fps
 hostTime = 0
 
@@ -420,7 +421,8 @@ end
 -----------------------------------------
 
 function loadCart(name)
-	local cart = createCart()
+	local cart = {}
+	cart.sandbox = createSandbox()
 
 	local pureName = name
 	local extensions = { "", ".n8" }
@@ -492,6 +494,13 @@ function loadCart(name)
 		return cart
 	end
 
+	cart.sfx = loadSFX(data, cart)
+
+	if not cart.sfx then
+		log.error("failed to load sfx")
+		return cart
+	end
+
 	if loadData then
 		import(cart)
 	end
@@ -516,6 +525,7 @@ function import(cart)
 	editors.code.import(cart.code)
 	editors.sprites.import(cart.sprites)
 	editors.map.import(cart.map)
+	editors.sfx.import(cart.sfx)
 end
 
 function export()
@@ -527,6 +537,9 @@ function export()
 
 	neko.loadedCart.map =
 		editors.map.export()
+
+	neko.loadedCart.sfx =
+		editors.sfx.export()
 end
 
 function createCart()
@@ -538,10 +551,34 @@ function createCart()
 		love.image.newImageData(128, 256)
 	cart.sprites.sheet =
 		love.graphics.newImage(cart.sprites.data)
+	cart.sprites.quads = {}
+
+	local sprite = 0
+
+	for y = 0, 31 do
+		for x = 0, 15 do
+			cart.sprites.quads[sprite] =
+				love.graphics.newQuad(
+					8 * x, 8 * y, 8, 8, 128, 256
+			)
+
+			sprite = sprite + 1
+		end
+	end
+
 	cart.sprites.flags = {}
 
 	for i = 0, 511 do
 		cart.sprites.flags[i] = 0
+	end
+
+	cart.map = {}
+
+	for y = 0, 127 do
+		cart.map[y] = {}
+		for x = 0, 127 do
+			cart.map[y][x] = 0
+		end
 	end
 
 	return cart
@@ -672,8 +709,56 @@ end
 
 function loadMap(data, cart)
 	local map = {}
+	local mapStart = data:find("__map__") + 8
+	local mapEnd = data:find("__end__") - 1
+	data = data:sub(mapStart, mapEnd)
+
+	for y = 0, 127 do
+		map[y] = {}
+		for x = 0, 127 do
+			map[y][x] = 0
+		end
+	end
+
+	local row = 0
+	local col = 0
+	local tiles = 0
+	local nextLine = 1
+
+	while nextLine do
+		local lineEnd = data:find("\n", nextLine)
+		if lineEnd == nil then
+			break
+		end
+
+		lineEnd = lineEnd - 1
+		local line = data:sub(nextLine, lineEnd)
+
+		for i = 1, #line, 2 do
+			local v = line:sub(i, i + 1)
+			v = tonumber(v, 16)
+
+			map[row][col] = v
+			col = col + 1
+			tiles = tiles + 1
+
+			if col == 128 then
+				col = 0
+				row = row + 1
+			end
+		end
+		nextLine = data:find("\n", lineEnd) + 1
+	end
+
+	assert(tiles == 128 * 128, "invalid map size: " .. tiles)
 
 	return map
+end
+
+function loadSFX(data, cart)
+	local sfx = {}
+
+	return sfx
 end
 
 function patchLua(code)
@@ -798,7 +883,9 @@ function saveCart(name)
 	data = data .. editors.sprites.exportGFX()
 	data = data .. "__gff__\n"
 	data = data .. editors.sprites.exportGFF()
-	data = data .. "__end__\n"
+	data = data .. "__map__\n"
+	data = data .. editors.map.export()
+	data = data .. "__end__"
 
 	love.filesystem.write(
 		name .. ".n8", data, #data
@@ -877,6 +964,7 @@ function createSandbox()
 		sset = api.sset,
 		pal = api.pal,
 		palt = api.palt,
+		map = api.map,
 
 		memcpy = api.memcpy,
 
@@ -1452,6 +1540,55 @@ function api.palt(c, t)
 		"transparent",
 		shaderUnpack(colors.transparent)
 	)
+end
+
+function api.map(
+	cx, cy, sx, sy, cw, ch, bitmask
+)
+
+	love.graphics.setShader(colors.spriteShader)
+	love.graphics.setColor(255, 255, 255, 255)
+
+	cx = cx and api.flr(cx) or 0
+	cy = cy and api.flr(cy) or 0
+	sx = cx and api.flr(sx) or 0
+	sy = cy and api.flr(sy) or 0
+	cw = cw and api.flr(cw) or 24
+	ch = ch and api.flr(ch) or 16
+
+
+	for y = 0, ch - 1 do
+		if cy + y < 64 and cy + y >= 0 then
+			for x = 0, cw - 1 do
+				if cx + x < 128 and cx + x >= 0 then
+					local v =
+						neko.loadedCart.map[api.flr(cy + y)][api.flr(cx + x)]
+
+					if v > 0 then
+						if bitmask == nil or bitmask == 0 then
+							love.graphics.draw(
+								neko.loadedCart.sprites.sheet,
+								neko.loadedCart.sprites.quads[v],
+								sx + 8 * x,
+								sy + 8 * y
+							)
+						else
+							if band(__pico_spriteflags[v],bitmask) ~= 0 then
+								love.graphics.draw(
+									neko.loadedCart.sprites.sheet,
+									neko.loadedCart.sprites.quads[v],
+									sx + 8 * x,
+									sy + 8 * y
+								)
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+
+	love.graphics.setShader(colors.drawShader)
 end
 
 function api.memcpy(
