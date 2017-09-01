@@ -1,5 +1,3 @@
-![Code editor](https://cdn.discordapp.com/attachments/326292337762500612/352810241852964864/neko8-1504186903.png)
-
 # neko8
 
 **Neko8** is a **fantasy console**, inspired by **pico8**, **liko12** and **tic80**.
