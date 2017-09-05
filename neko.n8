@@ -1,5 +1,7 @@
 neko8 cart
 __lua__
+-- neko code
+-- by @egordorichev
 function _init()
  input=""
  history={}
