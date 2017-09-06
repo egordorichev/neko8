@@ -261,8 +261,9 @@ end
 
 function triggerCallback(c, ...)
 	if neko.cart
-		and neko.cart.sandbox[c] then
-		return neko.cart.sandbox[c](...)
+		if neko.cart.sandbox[c] then
+			return neko.cart.sandbox[c](...)
+		end
 	elseif editors.opened then
 		if editors.current[c] then
 			editors.current[c](...)
