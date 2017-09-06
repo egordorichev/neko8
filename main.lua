@@ -817,10 +817,6 @@ function runCart(cart)
 		return
 	end
 
-	if cart ~= neko.core then
-		saveCart(cart.pureName)
-	end
-
 	local name = cart.name
 	if not name then
 		name = "new cart"
