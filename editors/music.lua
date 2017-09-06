@@ -23,6 +23,7 @@ end
 
 function music.redraw()
 	api.cls(music.bg)
+	api.print("work in progress", 1, 8, 7)
 	editors.drawUI()
 end
 

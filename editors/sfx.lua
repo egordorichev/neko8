@@ -23,6 +23,7 @@ end
 
 function sfx.redraw()
 	api.cls(sfx.bg)
+	api.print("work in progress", 1, 8, 7)
 	editors.drawUI()
 end
 

@@ -14,13 +14,13 @@ function code.init()
 
 	code.select = {
 		start = {
-			x = 0,
-			y = 0
+			x = -1,
+			y = -1
 		},
 
 		finish = {
-			x = 0,
-			y = 0
+			x = -1,
+			y = -1
 		},
 
 		active = false
@@ -66,7 +66,7 @@ function code._update()
 	my = my + code.view.y * 6
 
 	if mb then
-		if not lmb then
+		if not lmb or code.select.start.x == -1 then
 			code.select.start.x = api.flr((mx - 1) / 4)
 			code.select.start.y = api.flr((my - 8) / 6)
 
@@ -75,10 +75,12 @@ function code._update()
 			)
 
 			code.select.start.x = api.mid(
-				0, #code.lines[code.cursor.y + 1],
+				0, #code.lines[code.select.start.y + 1] - 1,
 				code.select.start.x
 			)
-		else
+		end
+
+		if lmb or code.select.finish.x == -1 then
 			code.select.finish.x = api.flr((mx - 1) / 4)
 			code.select.finish.y = api.flr((my - 8) / 6)
 
@@ -87,7 +89,7 @@ function code._update()
 			)
 
 			code.select.finish.x = api.mid(
-				0, #code.lines[code.cursor.y + 1],
+				0, #code.lines[code.select.finish.y + 1] - 1,
 				code.select.finish.x
 			)
 		end
@@ -137,6 +139,8 @@ function code.redraw()
 
   api.cursor(1 - code.view.x * 4, 9)
 
+	local c = config.editors.code.select
+
 	if code.select.active then
 		if code.select.finish.y - code.select.start.y == 0 then
 			api.rectfill(
@@ -144,7 +148,7 @@ function code.redraw()
 				code.select.start.y * 6 + 9 - code.view.y * 6,
 				code.select.finish.x * 4 - code.view.x * 4,
 				(code.select.start.y + 1) * 6 + 8 - code.view.y * 6,
-				10
+				c
 			)
 		else
 			local min = code.select.start.y
@@ -162,7 +166,7 @@ function code.redraw()
 				min.y * 6 + 9 - code.view.y * 6,
 				#code.lines[min.y + 1] * 4 - code.view.x * 4,
 				(min.y + 1) * 6 + 8 - code.view.y * 6,
-				10
+				c
 			)
 
 			for y = min.y + 1, max.y - 1 do
@@ -171,7 +175,7 @@ function code.redraw()
 					y * 6 + 9 - code.view.y * 6,
 					#code.lines[y + 1] * 4 - code.view.x * 4,
 					(y + 1) * 6 + 8 - code.view.y * 6,
-					10
+					c
 				)
 			end
 
@@ -180,7 +184,7 @@ function code.redraw()
 				max.y * 6 + 9 - code.view.y * 6,
 				max.x * 4 - code.view.x * 4,
 				(max.y + 1) * 6 + 8 - code.view.y * 6,
-				10
+				c
 			)
 		end
 	end
@@ -237,6 +241,15 @@ function code._keydown(k)
   if api.key("rctrl") or api.key("lctrl") then
     if k == "s" then
       commands.save()
+		elseif k == "a" then
+			code.select.active = true
+			code.select.start = { x = 0, y = 0 }
+			code.select.finish = {
+				x = #code.lines[#code.lines - 1],
+				y = #code.lines - 1
+			}
+
+			code.forceDraw = true
     end
   else
     if k == "left" then
@@ -335,6 +348,8 @@ function code._keydown(k)
       end
       t = 0
       code.checkCursor()
+		elseif k == "tab" then
+			code._text(" ")
     elseif k == "delete" then
 			if code.select.active then
 				code.replaceSelected("")

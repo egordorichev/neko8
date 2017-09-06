@@ -545,7 +545,23 @@ end
 function createCart()
 	local cart = {}
 	cart.sandbox = createSandbox()
-	cart.code = "-- see https://github.com/egordorichev/neko8\n-- for help"
+	cart.code = [[
+-- see https://github.com/egordorichev/neko8
+-- for help
+
+function _init()
+
+end
+
+function _update()
+
+end
+
+function _draw()
+ cls()
+end
+]]
+
 	cart.sprites = {}
 	cart.sprites.data =
 		love.image.newImageData(128, 256)

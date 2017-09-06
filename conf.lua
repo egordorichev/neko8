@@ -55,6 +55,7 @@ config = {
 			bg = 5,
 			fg = 6,
 			cursor = 2,
+			select = 1,
 
 			colors = {
 				text = 6,
