@@ -9,8 +9,6 @@ Currently it features:
 * Sprite editor
 * Terminal
 
-More to come ;)
-
 #### Installing ang running
 
 Download and extract the source. In the root folder run:
