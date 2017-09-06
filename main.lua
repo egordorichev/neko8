@@ -1249,9 +1249,7 @@ function api.print(s, x, y, c)
 		api.scroll(6)
 		y = 114
 
-		api.rectfill(
-			0, y - 1, config.canvas.width, y + 7, 0
-		)
+
 
 		api.color(c)
 		api.cursor(0, y + 6)
@@ -1932,14 +1930,56 @@ function commands.cd(a)
 	end
 
 	local dir = neko.currentDirectory
-		.. a[1]
 
-	-- todo: fix /test//../ and stuff
+	if dir:sub(-1, -1) ~= "/" then
+		dir = dir .. "/"
+	end
+
+	dir = dir .. a[1]
+	dir = dir:gsub("\\","/")
+
+	if #dir:sub(-1,-1) == "/" then
+		dir = "/"
+	end
+
+	local p = dir:match("(.+)")
+
+  if p then
+    p = "/" .. p .. "/";
+		local dirs = {}
+    p = p:gsub("/","//"):sub(2,-1)
+
+    for path in string.gmatch(p, "/(.-)/") do
+      if path == "." then
+
+      elseif path == ".." then
+        if #dirs > 0 then
+          table.remove(dirs, #dirs)
+        end
+      elseif dir ~= "" then
+        table.insert(dirs, path)
+      end
+    end
+
+    dir = table.concat(dirs, "/")
+
+		if dir:sub(1, 1) ~= "/" then
+			dir = "/" .. dir
+		end
+
+		if dir:sub(-1, -1) ~= "/" then
+			dir = dir .. "/"
+		end
+  end
+
+	dir = dir:gsub("//", "/")
+	-- fixme: doesn't work
 
 	if not love.filesystem.isDirectory(dir) then
 		api.print(
 			"no such directory", nil, nil, 14
 		)
+
 		return
 	end
 
