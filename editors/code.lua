@@ -12,6 +12,20 @@ function code.init()
 	code.icon = 8
 	code.bg = config.editors.code.bg
 
+	code.select = {
+		start = {
+			x = -1,
+			y = -1
+		},
+
+		finish = {
+			x = -1,
+			y = -1
+		},
+
+		active = false
+	}
+
   code.cursor = {
     x = 0,
     y = 0
@@ -41,9 +55,27 @@ end
 function code._update()
   local lb = cursorBlink()
   t = t + 1
+
   if cursorBlink() ~= lb then
     code.redraw()
   end
+
+	lmb = mb
+	mx, my, mb = api.mstat(1)
+
+	if mb then
+		if not lmb then
+			code.select.start.x = api.flr((mx - 1) / 4)
+			code.select.start.y = api.flr((my - 9) / 6)
+		else
+			code.select.finish.x = api.flr((mx - 1) / 4)
+			code.select.finish.y = api.flr((my - 9) / 6)
+		end
+
+		code.select.active =
+			api.abs(code.select.start.x - code.select.finish.x) > 0
+			or api.abs(code.select.start.y - code.select.finish.y) > 0
+	end
 end
 
 local function highlight(lines)
@@ -55,9 +87,23 @@ end
 
 local function colorPrint(tbl)
   for i = 1, #tbl, 2 do
-    api.color(tbl[i])
+		local cx, cy = api.cget()
+
+		if code.select.active then
+			local icx = api.flr((cx - 1) / 8)
+			local icy = api.flr((cy - 9) / 8)
+
+			if code.select.start.y <= icy and
+				code.select.finish.y >= icy then
+
+				api.brectfill(cx, cy, tbl[i + 1] * 4, 6, 10)
+			end
+		end
+
+		api.color(tbl[i])
     api.print(tbl[i + 1], true, false)
   end
+
   api.print("")
   api.cursor(1 - code.view.x * 4)
 end
