@@ -260,7 +260,7 @@ function love.run()
 end
 
 function triggerCallback(c, ...)
-	if neko.cart
+	if neko.cart then
 		if neko.cart.sandbox[c] then
 			return neko.cart.sandbox[c](...)
 		end
