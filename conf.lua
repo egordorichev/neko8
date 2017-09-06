@@ -2,8 +2,8 @@ config = {
 	version = {
 		major = 0,
 		minor = 0.1,
-		name = "bunny",
-		string = "v0.0.1 bunny"
+		name = "candy",
+		string = "v0.0.2 candy"
 	},
 
 	window = {

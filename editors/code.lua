@@ -256,6 +256,10 @@ function code._keydown(k)
       t = 0
       code.checkCursor(true)
     elseif k == "return" or k == "kpenter" then
+			if code.select.active then
+				code.replaceSelected("")
+			end
+
       local cx, cy = code.cursor.x,
         code.cursor.y
       local newLine = code.lines[cy + 1]
@@ -296,6 +300,10 @@ function code._keydown(k)
         #code.lines[code.cursor.y + 1]
 	    code.checkCursor()
     elseif k == "backspace" then
+			if code.select.active then
+				code.replaceSelected("")
+				return
+			end
       if #code.lines[code.cursor.y + 1] > 0
         and code.cursor.x > 0 then
         code.lines[code.cursor.y + 1] =
@@ -328,6 +336,11 @@ function code._keydown(k)
       t = 0
       code.checkCursor()
     elseif k == "delete" then
+			if code.select.active then
+				code.replaceSelected("")
+				return
+			end
+
       if #code.lines[code.cursor.y + 1] > 0
         and code.cursor.x <
         #code.lines[code.cursor.y + 1] then
@@ -358,18 +371,85 @@ function code._keydown(k)
   code.redraw()
 end
 
-function code._text(text)
-  code.lines[code.cursor.y + 1] =
-    code.lines[code.cursor.y + 1]:sub(
-    1, code.cursor.x) .. text
-    .. code.lines[code.cursor.y + 1]:sub(
-      code.cursor.x + 1, #code.lines[
-        code.cursor.y + 1
-      ]
-    )
+function code.replaceSelected(text)
+	if code.select.finish.y - code.select.start.y == 0 then
+		local min = code.select.start.x
+			> code.select.finish.x and
+			code.select.finish
+			or code.select.start
 
-  code.cursor.x = code.cursor.x + 1
-  t = 0
+		local max = code.select.start.x
+			< code.select.finish.x and
+			code.select.finish
+			or code.select.start
+
+		local line = code.lines[min.y + 1]
+		local newLine
+
+		if min.x == 0 then
+			newLine = text
+		else
+			newLine = line:sub(0, min.x) ..
+				text
+		end
+
+		code.lines[min.y + 1] =
+			newLine ..
+			line:sub(max.x + 1, #line)
+
+		code.cursor.x = #newLine
+		code.checkCursor()
+	else
+		local min = code.select.start.y
+			> code.select.finish.y and
+			code.select.finish
+			or code.select.start
+
+		local max = code.select.start.y
+			< code.select.finish.y and
+			code.select.finish
+			or code.select.start
+
+		local line = code.lines[min.y + 1]
+		local newLine
+
+		if min.x > 0 then
+			newLine = line:sub(0, min.x) .. text
+		else
+			newLine = text
+		end
+
+		for y = min.y - 1, max.y + 1 do
+			table.remove(code.lines, min.y + 1)
+		end
+
+		table.insert(code.lines, min.y + 1, newLine)
+
+		code.cursor.x = #newLine
+		code.cursor.y = min.y + 1
+		code.checkCursor()
+	end
+
+	code.select.active = false
+end
+
+function code._text(text)
+	if code.select.active then
+		code.replaceSelected(text)
+	else
+		code.lines[code.cursor.y + 1] =
+		code.lines[code.cursor.y + 1]:sub(
+		1, code.cursor.x) .. text
+		.. code.lines[code.cursor.y + 1]:sub(
+			code.cursor.x + 1, #code.lines[
+				code.cursor.y + 1
+			]
+		)
+
+	code.cursor.x = code.cursor.x + 1
+	end
+
+	t = 0
 	code.checkCursor()
 	code.redraw()
 end
