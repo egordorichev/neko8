@@ -14,13 +14,13 @@ function code.init()
 
 	code.select = {
 		start = {
-			x = -1,
-			y = -1
+			x = 0,
+			y = 0
 		},
 
 		finish = {
-			x = -1,
-			y = -1
+			x = 0,
+			y = 0
 		},
 
 		active = false
@@ -62,19 +62,45 @@ function code._update()
 
 	lmb = mb
 	mx, my, mb = api.mstat(1)
+	mx = mx + code.view.x * 4
+	my = my + code.view.y * 6
 
 	if mb then
 		if not lmb then
 			code.select.start.x = api.flr((mx - 1) / 4)
-			code.select.start.y = api.flr((my - 9) / 6)
+			code.select.start.y = api.flr((my - 8) / 6)
+
+			code.select.start.y = api.mid(
+				0, #code.lines - 1, code.select.start.y
+			)
+
+			code.select.start.x = api.mid(
+				0, #code.lines[code.cursor.y + 1],
+				code.select.start.x
+			)
 		else
 			code.select.finish.x = api.flr((mx - 1) / 4)
-			code.select.finish.y = api.flr((my - 9) / 6)
+			code.select.finish.y = api.flr((my - 8) / 6)
+
+			code.select.finish.y = api.mid(
+				0, #code.lines - 1, code.select.finish.y
+			)
+
+			code.select.finish.x = api.mid(
+				0, #code.lines[code.cursor.y + 1],
+				code.select.finish.x
+			)
 		end
 
 		code.select.active =
 			api.abs(code.select.start.x - code.select.finish.x) > 0
 			or api.abs(code.select.start.y - code.select.finish.y) > 0
+
+		code.cursor.x = code.select.finish.x
+		code.cursor.y = code.select.finish.y
+		code.checkCursor()
+
+		code.forceDraw = true
 	end
 end
 
@@ -88,17 +114,6 @@ end
 local function colorPrint(tbl)
   for i = 1, #tbl, 2 do
 		local cx, cy = api.cget()
-
-		if code.select.active then
-			local icx = api.flr((cx - 1) / 8)
-			local icy = api.flr((cy - 9) / 8)
-
-			if code.select.start.y <= icy and
-				code.select.finish.y >= icy then
-
-				api.brectfill(cx, cy, tbl[i + 1] * 4, 6, 10)
-			end
-		end
 
 		api.color(tbl[i])
     api.print(tbl[i + 1], true, false)
@@ -121,6 +136,54 @@ function code.redraw()
   buffer = highlight(buffer)
 
   api.cursor(1 - code.view.x * 4, 9)
+
+	if code.select.active then
+		if code.select.finish.y - code.select.start.y == 0 then
+			api.rectfill(
+				code.select.start.x * 4 - code.view.x * 4,
+				code.select.start.y * 6 + 9 - code.view.y * 6,
+				code.select.finish.x * 4 - code.view.x * 4,
+				(code.select.start.y + 1) * 6 + 8 - code.view.y * 6,
+				10
+			)
+		else
+			local min = code.select.start.y
+				> code.select.finish.y and
+				code.select.finish
+				or code.select.start
+
+			local max = code.select.start.y
+				< code.select.finish.y and
+				code.select.finish
+				or code.select.start
+
+			api.rectfill(
+				min.x * 4 - code.view.x * 4,
+				min.y * 6 + 9 - code.view.y * 6,
+				#code.lines[min.y + 1] * 4 - code.view.x * 4,
+				(min.y + 1) * 6 + 8 - code.view.y * 6,
+				10
+			)
+
+			for y = min.y + 1, max.y - 1 do
+				api.rectfill(
+					-code.view.x * 4,
+					y * 6 + 9 - code.view.y * 6,
+					#code.lines[y + 1] * 4 - code.view.x * 4,
+					(y + 1) * 6 + 8 - code.view.y * 6,
+					10
+				)
+			end
+
+			api.rectfill(
+				-code.view.x * 4,
+				max.y * 6 + 9 - code.view.y * 6,
+				max.x * 4 - code.view.x * 4,
+				(max.y + 1) * 6 + 8 - code.view.y * 6,
+				10
+			)
+		end
+	end
 
   for l in api.all(buffer) do
     colorPrint(l)
@@ -227,9 +290,11 @@ function code._keydown(k)
       code.checkCursor()
     elseif k == "home" then
       code.cursor.x = 0
+      code.checkCursor()
     elseif k == "end" then
       code.cursor.x =
         #code.lines[code.cursor.y + 1]
+	    code.checkCursor()
     elseif k == "backspace" then
       if #code.lines[code.cursor.y + 1] > 0
         and code.cursor.x > 0 then

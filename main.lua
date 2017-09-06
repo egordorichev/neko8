@@ -981,6 +981,8 @@ function createSandbox()
 		max = api.max,
 		min = api.min,
 		mid = api.mid,
+		abs = api.abs,
+		sgn = api.sgn,
 
 		help = commands.help,
 		folder = commands.folder,
@@ -1687,6 +1689,18 @@ function api.mid(x, y, z)
 	return api.max(x, api.min(y, z))
 end
 
+function api.abs(n)
+	return n and math.abs(n) or 0
+end
+
+function api.sgn(n)
+	if n == nil then
+		return 1
+	end
+
+	return n < 0 and -1 or 1
+end
+
 function api.add(a, v)
 	if a == nil then
 		return
@@ -1938,7 +1952,7 @@ function commands.cd(a)
 	dir = dir .. a[1]
 	dir = dir:gsub("\\","/")
 
-	if #dir:sub(-1,-1) == "/" then
+	if #dir:sub(-1, -1) == "/" then
 		dir = "/"
 	end
 
@@ -1947,7 +1961,7 @@ function commands.cd(a)
   if p then
     p = "/" .. p .. "/";
 		local dirs = {}
-    p = p:gsub("/","//"):sub(2,-1)
+    p = p:gsub("/","//"):sub(2, -1)
 
     for path in string.gmatch(p, "/(.-)/") do
       if path == "." then
@@ -1972,10 +1986,12 @@ function commands.cd(a)
 		end
   end
 
-	dir = string.gsub(dir, "//", "/")
-	dir = string.gsub(dir, "//", "/")
-	dir = string.gsub(dir, "//", "/")
-	
+	local flag = string.find(dir, "//")
+	while flag do
+	  dir = string.gsub(dir, "//", "/")
+	  flag = string.find(dir, "//")
+	end
+
 	if not love.filesystem.isDirectory(dir) then
 		api.print(
 			"no such directory", nil, nil, 14
