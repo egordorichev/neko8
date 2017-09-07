@@ -502,13 +502,44 @@ function code._text(text)
 		table.insert(parts, p)
 	end
 
-	for i, part in ipairs(parts) do
+	if #parts > 0 then
+		for i, part in ipairs(parts) do
+			if code.select.active then
+				code.replaceSelected(part)
+			else
+				code.lines[code.cursor.y + 1] =
+				code.lines[code.cursor.y + 1]:sub(
+				1, code.cursor.x) .. part
+				.. code.lines[code.cursor.y + 1]:sub(
+					code.cursor.x + 1, #code.lines[
+						code.cursor.y + 1
+					]
+				)
+
+				code.cursor.x = code.cursor.x + #text
+			end
+
+			code.checkCursor()
+
+			if #parts > 1 then
+				if i < #parts then
+					table.insert(code.lines, code.cursor.y + 1, "")
+				end
+			end
+
+			code.select.active = false
+		end
+
+		code.cursor.y = code.cursor.y - 1
+		code.checkCursor()
+		code.cursor.x = #code.lines[code.cursor.y + 1]
+	else
 		if code.select.active then
-			code.replaceSelected(part)
+			code.replaceSelected(text)
 		else
 			code.lines[code.cursor.y + 1] =
 			code.lines[code.cursor.y + 1]:sub(
-			1, code.cursor.x) .. part
+			1, code.cursor.x) .. text
 			.. code.lines[code.cursor.y + 1]:sub(
 				code.cursor.x + 1, #code.lines[
 					code.cursor.y + 1
@@ -516,22 +547,9 @@ function code._text(text)
 			)
 
 			code.cursor.x = code.cursor.x + #text
+			code.checkCursor()
 		end
-
-		code.checkCursor()
-
-		if #parts > 1 then
-			if i < #parts then
-				table.insert(code.lines, code.cursor.y + 1, "")
-			end
-		end
-
-		code.select.active = false
 	end
-
-	code.cursor.y = code.cursor.y - 1
-	code.checkCursor()
-	code.cursor.x = #code.lines[code.cursor.y + 1]
 
 	t = 0
 	code.redraw()

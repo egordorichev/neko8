@@ -50,8 +50,8 @@ config = {
 	version = {
 		major = 0,
 		minor = 0.1,
-		name = "candy",
-		string = "v0.0.2 candy"
+		name = "kitten",
+		string = "v0.0.3 kitten"
 	},
 
 	window = {
