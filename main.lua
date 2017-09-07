@@ -1335,9 +1335,8 @@ function api.flip()
 
 	-- fixme! broken colors
 
-	api.sspr(
-		40, 0, 8, 8, mx, my, 8 * canvas.scaleX,
-		8 * canvas.scaleY
+	api.onCanvasSpr(
+		5, mx, my
 	)
 
 	neko.cart, neko.core = neko.core, neko.cart
@@ -1414,6 +1413,48 @@ function api.spr(n, x, y, w, h, fx, fy)
 	)
 
 	love.graphics.setShader(colors.drawShader)
+end
+
+function api.onCanvasSpr(n, x, y, w, h, fx, fy)
+	if neko.cart == nil then
+		neko.cart = neko.loadedCart
+			and neko.loadedCart or neko.core
+	end
+
+	n = api.flr(n)
+	love.graphics.setShader(colors.onCanvasShader)
+
+
+	w = w or 1
+	h = h or 1
+
+	local q
+	if w == 1 and h == 1 then
+		q = neko.cart.sprites.quads[n]
+	else
+		local id = string.format('%d-%d-%d', n, w, h)
+		if neko.cart.sprites.quads[id] then
+			q = neko.cart.sprites.quads[id]
+		else
+			q = love.graphics.newQuad(
+				api.flr(n % 16) * 8,
+				api.flr(n / 32) * 8, 8 * w,
+				8 * h, 128, 256
+			)
+
+			neko.cart.sprites.quads[id] = q
+		end
+	end
+
+	love.graphics.draw(
+		neko.cart.sprites.sheet, q,
+		api.flr(x) + (w * 8 * (fx and 1 or 0)),
+		api.flr(y) + (h * 8 * (fy and 1 or 0)),
+		0, api.flr((fx and -1 or 1) * canvas.scaleX),
+		api.flr((fy and -1 or 1) * canvas.scaleY)
+	)
+
+	love.graphics.setShader(colors.displayShader)
 end
 
 function api.sspr(
@@ -2148,6 +2189,27 @@ vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) 
 	colors.displayShader:send(
 		"palette",
 		shaderUnpack(colors.display)
+	)
+
+	colors.onCanvasShader =
+		love.graphics.newShader([[
+extern vec4 palette[16];
+extern float transparent[16];
+vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) {
+	int index = int(floor(Texel(texture, texture_coords).r*16.0));
+	float alpha = transparent[index];
+	vec3 clr = vec3(palette[index]/16.0);
+  return vec4(clr/16.0,alpha);
+}]])
+
+	colors.onCanvasShader:send(
+		"palette",
+		shaderUnpack(colors.display)
+	)
+
+	colors.onCanvasShader:send(
+		"transparent",
+		shaderUnpack(colors.transparent)
 	)
 end
 
