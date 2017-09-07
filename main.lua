@@ -71,9 +71,10 @@ function love.keypressed(
 				love.system.getClipboardText()
 			)
 		elseif key == "c" then
-			love.system.setClipboardText(
-				triggerCallback("_copy") or ""
-			)
+			local text = triggerCallback("_copy")
+			if text then
+				love.system.setClipboardText(text)
+			end
 		else
 			handled = false
 		end
@@ -266,7 +267,7 @@ function triggerCallback(c, ...)
 		end
 	elseif editors.opened then
 		if editors.current[c] then
-			editors.current[c](...)
+			return editors.current[c](...)
 		end
 	elseif neko.core.sandbox[c] then
 		return neko.core.sandbox[c](...)

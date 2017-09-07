@@ -76,7 +76,7 @@ function code._update()
 			)
 
 			code.select.start.x = api.mid(
-				0, #code.lines[code.select.start.y + 1] - 1,
+				0, #code.lines[code.select.start.y + 1],
 				code.select.start.x
 			)
 		end
@@ -90,7 +90,7 @@ function code._update()
 			)
 
 			code.select.finish.x = api.mid(
-				0, #code.lines[code.select.finish.y + 1] - 1,
+				0, #code.lines[code.select.finish.y + 1],
 				code.select.finish.x
 			)
 		end
@@ -449,24 +449,91 @@ function code.replaceSelected(text)
 	code.select.active = false
 end
 
-function code._text(text)
+function code._copy()
 	if code.select.active then
-		code.replaceSelected(text)
-	else
-		code.lines[code.cursor.y + 1] =
-		code.lines[code.cursor.y + 1]:sub(
-		1, code.cursor.x) .. text
-		.. code.lines[code.cursor.y + 1]:sub(
-			code.cursor.x + 1, #code.lines[
-				code.cursor.y + 1
-			]
-		)
+		local text = ""
 
-	code.cursor.x = code.cursor.x + 1
+		if code.select.finish.y - code.select.start.y == 0 then
+			local min = code.select.start.x
+				> code.select.finish.x and
+				code.select.finish
+				or code.select.start
+
+			local max = code.select.start.x
+				< code.select.finish.x and
+				code.select.finish
+				or code.select.start
+
+			local line = code.lines[min.y + 1]
+			text = line:sub(min.x + 1, max.x)
+		else
+			local min = code.select.start.y
+				> code.select.finish.y and
+				code.select.finish
+				or code.select.start
+
+			local max = code.select.start.y
+				< code.select.finish.y and
+				code.select.finish
+				or code.select.start
+
+			local line = code.lines[min.y + 1]
+			text = line:sub(0, min.x, #line)
+
+			for y = min.y + 1, max.y + 1 do
+				text = text .. "\n\n" .. code.lines[y]
+			end
+
+			text = text .. "\n\n" .. code.lines[max.y + 2]:sub(0, max.x)
+		end
+
+		code.forceDraw = true
+		code.select.active = false
+
+		return text
+	end
+end
+
+function code._text(text)
+	text = text:gsub("\t", " ")
+	local parts = {}
+
+	for p in text:gmatch("([^\r\n]*)\r?\n") do
+		table.insert(parts, p)
 	end
 
-	t = 0
+	for i, part in ipairs(parts) do
+		if code.select.active then
+			code.replaceSelected(part)
+		else
+			code.lines[code.cursor.y + 1] =
+			code.lines[code.cursor.y + 1]:sub(
+			1, code.cursor.x) .. part
+			.. code.lines[code.cursor.y + 1]:sub(
+				code.cursor.x + 1, #code.lines[
+					code.cursor.y + 1
+				]
+			)
+
+			code.cursor.x = code.cursor.x + #text
+		end
+
+		code.checkCursor()
+
+		if #parts > 1 then
+			if i < #parts then
+				table.insert(code.lines, code.cursor.y + 1, "")
+			end
+		end
+
+		code.select.active = false
+	end
+
+	code.cursor.y = code.cursor.y - 1
 	code.checkCursor()
+	code.cursor.x = #code.lines[code.cursor.y + 1]
+
+	t = 0
 	code.redraw()
 end
 
