@@ -3,6 +3,7 @@ local music = {}
 function music.init()
 	music.forceDraw = false
 	music.icon = 12
+	music.name = "music editor"
 	music.bg = config.editors.music.bg
 end
 

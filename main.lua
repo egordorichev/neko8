@@ -393,7 +393,7 @@ function neko.update()
 	end
 
 	triggerCallback("_update")
-	if editors.opened then
+	if editors.opened and not neko.cart then
 		editors._update()
 	end
 end

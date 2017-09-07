@@ -10,6 +10,7 @@ function code.init()
   code.lines = {}
   code.lines[1] = ""
 	code.icon = 8
+	code.name = "code editor"
 	code.bg = config.editors.code.bg
 
 	code.select = {

@@ -7,12 +7,12 @@ config = {
 	},
 
 	window = {
-		width = 588,
+		width = 576,
 		height = 384
 	},
 
 	canvas = {
-		width = 196,
+		width = 192,
 		height = 128
 	},
 
@@ -59,7 +59,7 @@ config = {
 
 			colors = {
 				text = 6,
-				keyword = 10,
+				keyword = 12,
 				number = 12,
 				comment = 13,
 				str = 12,
@@ -89,8 +89,8 @@ config = {
 		},
 
 		ui = {
-			bg = 9,
-			fg = 4
+			bg = 7,
+			fg = 0
 		}
 	},
 

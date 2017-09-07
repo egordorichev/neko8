@@ -65,7 +65,7 @@ function editors.drawUI()
     config.editors.ui.bg
   )
 
-	api.print("neko8", 1, 1, 4)
+	api.print("neko8", 1, 1, config.editors.ui.fg)
 
 	neko.core, neko.cart = neko.cart, neko.core
 
@@ -75,13 +75,18 @@ function editors.drawUI()
 			config.editors.ui.bg
 
 		if m == editors.current then
-			api.pal(4, 7)
+			api.pal(6, 7)
+		else
+			api.pal(6, 5)
 		end
 
 		api.brectfill(21 + i * 7 - 7, 0, 7, 7, c)
 		api.spr(m.icon, 21 + i * 7 - 7, 0)
 		api.pal()
 	end
+
+
+	api.print(editors.current.name, 22 + #editors.modes * 7, 1, 0)
 
 	neko.core, neko.cart = neko.cart, neko.core
 end
@@ -91,6 +96,7 @@ local lmb, mb, mx, my
 function editors._update()
 	lmb = mb
 	mx, my, mb = api.mstat(1)
+
 	if mb ~= lmb then
 		for i = 1, #editors.modes do
 			local m = editors.modes[i]

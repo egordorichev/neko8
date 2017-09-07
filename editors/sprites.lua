@@ -6,6 +6,7 @@ function sprites.init()
 	sprites.page = 0
 	sprites.scale = 1
 	sprites.icon = 9
+	sprites.name = "sprite editor"
 	sprites.bg = config.editors.sprites.bg
 end
 
@@ -28,29 +29,29 @@ function sprites.redraw()
 	api.cls(config.editors.sprites.bg)
 
 	-- sprite space
-	api.brectfill(3, 10, 64, 64, 0)
+	api.brectfill(1, 8, 64, 64, 0)
 
 	api.sspr(
 		sprites.sprite % 16 * 8,
 		api.flr(sprites.sprite / 16) * 8,
 		8 * sprites.scale, 8 * sprites.scale,
-		3, 10, 64, 64
+		1, 8, 64, 64
 	)
 
-	api.brect(3, 10, 64, 64, 0)
+	api.brect(1, 8, 64, 64, 0)
 
 	-- palette
 	for x = 0, 3 do
 		for y = 0, 3 do
 			local c = x + y * 4
 			api.brectfill(
-				71 + x * 12, 10 + y * 12,
+				1 + x * 12, 73 + y * 12,
 				12, 12, c
 			)
 		end
 	end
 
-	api.brect(71, 10, 48, 48, 0)
+	api.brect(1, 73, 48, 48, 0)
 
 	-- current color
 
@@ -58,18 +59,18 @@ function sprites.redraw()
 	local y = api.flr(sprites.color / 4)
 
 	api.brect(
-		71 + x * 12, 10 + y * 12,
+		1 + x * 12, 73 + y * 12,
 		12, 12, 0
 	)
 
 	api.brect(
-		70 + x * 12, 9 + y * 12,
+		0 + x * 12, 72 + y * 12,
 		14, 14, 7
 	)
 
 	-- sprite select
 
-	api.brectfill(
+	--[[api.brectfill(
 		3, 78, 13,
 		7, 6
 	)
@@ -107,21 +108,21 @@ function sprites.redraw()
 
 		api.circfill(74 + i * 6, 65, 2, c)
 		api.circ(74 + i * 6, 65, 2, 0)
-	end
+	end--]]
 
 	-- sprites
 	api.brectfill(
-		0, 88, 129,
-		33, 0
+		79, 8, 112,
+		112, 0
 	)
 
 	api.sspr(
-		0, sprites.page * 32,
-		128, 32, 0, 89
+		0, sprites.page * 2,
+		128, 128, 79, 8, 112, 112
 	)
 
 	-- current sprite
-	local s = sprites.sprite - sprites.page * 64
+	--[[local s = sprites.sprite - sprites.page * 64
 	x = s % 16
 	y = api.flr(s / 16)
 
@@ -136,7 +137,7 @@ function sprites.redraw()
 			8 * sprites.scale + 2, 8 * sprites.scale + 2, 7,
 			8 * sprites.scale + 2, 8 * sprites.scale + 2, 7
 		)
-	end
+	end--]]
 
 	editors.drawUI()
 	neko.cart = nil -- see spr and sspr
@@ -146,6 +147,8 @@ local function flip(byte, b)
   b = 2 ^ b
   return bit.bxor(byte, b)
 end
+
+local mx, my, mb, lmb
 
 function sprites._update()
 	lmb = mb
@@ -168,7 +171,6 @@ function sprites._update()
 
 			local v = sprites.color * 16
 			local s = sprites.sprite
-			-- drawing in wrong place
 
 			sprites.data.data:setPixel(
 				api.mid(mx, 0, 7) + s % 16 * 8,
@@ -192,7 +194,6 @@ function sprites._update()
 					local b = sprites.data.flags[sprites.sprite]
 					sprites.data.flags[sprites.sprite] = flip(b, i)
 					sprites.forceDraw = true
-					-- fixme: wrong page
 					return
 				end
 			end

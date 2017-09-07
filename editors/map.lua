@@ -6,6 +6,7 @@ function map.init()
 	map.icon = 10
 	map.bg = config.editors.map.bg
 	map.showTiles = true
+	map.name = "map editor"
 end
 
 function map.open()
@@ -33,73 +34,13 @@ function map.redraw()
 	api.map(0, 0, 0, 7)
 
 	if map.showTiles then
-		-- tools
-
-		api.brectfill(
-			0, 75, config.canvas.width,
-			75, 5
-		)
-		-- sprite select
-
-		api.brectfill(
-			3, 78, 13,
-			7, 6
-		)
-
-		api.print(
-			string.format(
-				"%03d", sprites.sprite
-			), 4, 79, 13
-		)
-
-		-- page buttons
-
-		neko.cart, neko.core = neko.core, neko.cart
-
-		for i = 0, 3 do
-			api.spr(
-				i == sprites.page and 7 or 6,
-				19 + i * 8, 80
-			)
-
-			api.print(
-				i, 21 + i * 8, 81, 13
-			)
-		end
-
-		neko.cart, neko.core = neko.core, neko.cart
-		-- sprites
-		api.brectfill(
-			0, 88, 129,
-			33, 0
-		)
-
-		api.sspr(
-			0, sprites.page * 32,
-			128, 32, 0, 89
-		)
-
-		-- current sprite
-		local s = sprites.sprite - sprites.page * 64
-		x = s % 16
-		y = api.flr(s / 16)
-
-		if y >= 0 then
-			api.brect(
-				x * 8, 89 + y * 8,
-				8 * sprites.scale, 8 * sprites.scale, 0
-			)
-
-			api.brect(
-				-1 + x * 8, 88 + y * 8,
-				8 * sprites.scale + 2, 8 * sprites.scale + 2, 7,
-				8 * sprites.scale + 2, 8 * sprites.scale + 2, 7
-			)
-		end
+		-- todo
 	end
 
 	editors.drawUI()
 end
+
+local mx, my, mb, lmb
 
 function map._update()
 	lmb = mb
