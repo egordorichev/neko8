@@ -1,6 +1,6 @@
 neko8 cart
 __lua__
--- neko code
+-- neko core
 -- by @egordorichev
 
 function _init()
