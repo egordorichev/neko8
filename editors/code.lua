@@ -127,7 +127,7 @@ local function colorPrint(tbl)
 end
 
 function code.redraw()
-  api.cls(5)
+  api.cls(config.editors.code.bg)
 
   local buffer = lume.clone(
     lume.slice(
@@ -140,7 +140,7 @@ function code.redraw()
 
   api.cursor(1 - code.view.x * 4, 9)
 
-	local c = config.editors.code.select
+	local c = config.editors.code.colors.select
 
 	if code.select.active then
 		if code.select.finish.y - code.select.start.y == 0 then

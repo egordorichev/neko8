@@ -1,3 +1,51 @@
+local neko8 = {
+	code = {
+		bg = 2,
+		fg = 6,
+		cursor = 8,
+
+		colors = {
+			select = 1,
+			text = 6,
+			keyword = 8,
+			number = 12,
+			comment = 13,
+			str = 12,
+			selection = 7
+			-- todo: tokens
+		}
+	},
+
+	sprites = {
+		bg = 5,
+		fg = 7
+	},
+
+	map = {
+		bg = 0,
+		fg = 7
+	},
+
+	sfx = {
+		bg = 5,
+		fg = 7
+	},
+
+	music = {
+		bg = 5,
+		fg = 7
+	},
+
+	ui = {
+		bg = 1,
+		fg = 7,
+		icons = {
+			selected = 6,
+			default = 7
+		}
+	}
+}
+
 config = {
 	version = {
 		major = 0,
@@ -50,49 +98,7 @@ config = {
 		{ 255, 204, 170, 255 }
 	},
 
-	editors = {
-		code = {
-			bg = 5,
-			fg = 6,
-			cursor = 2,
-			select = 1,
-
-			colors = {
-				text = 6,
-				keyword = 12,
-				number = 12,
-				comment = 13,
-				str = 12,
-				selection = 7
-				-- todo: tokens
-			}
-		},
-
-		sprites = {
-			bg = 5,
-			fg = 4
-		},
-
-		map = {
-			bg = 0,
-			fg = 7
-		},
-
-		sfx = {
-			bg = 5,
-			fg = 7
-		},
-
-		music = {
-			bg = 5,
-			fg = 7
-		},
-
-		ui = {
-			bg = 7,
-			fg = 0
-		}
-	},
+	editors = neko8,
 
 	audio = {
 		bufferSize = 1024,

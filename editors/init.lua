@@ -75,9 +75,9 @@ function editors.drawUI()
 			config.editors.ui.bg
 
 		if m == editors.current then
-			api.pal(6, 7)
+			api.pal(6, config.editors.ui.icons.selected)
 		else
-			api.pal(6, 5)
+			api.pal(6, config.editors.ui.icons.default)
 		end
 
 		api.brectfill(21 + i * 7 - 7, 0, 7, 7, c)
@@ -86,7 +86,11 @@ function editors.drawUI()
 	end
 
 
-	api.print(editors.current.name, 22 + #editors.modes * 7, 1, 0)
+	api.print(
+		editors.current.name, config.canvas.width
+		- 1 - #editors.current.name * 4, 
+		1, config.editors.ui.fg
+	)
 
 	neko.core, neko.cart = neko.cart, neko.core
 end
