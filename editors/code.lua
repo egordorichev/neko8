@@ -495,6 +495,7 @@ function code._copy()
 end
 
 function code._text(text)
+	-- todo: rewrite
 	text = text:gsub("\t", " ")
 	local parts = {}
 

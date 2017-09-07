@@ -1916,6 +1916,7 @@ end
 
 function commands.new()
 	neko.loadedCart = createCart()
+	import(neko.loadedCart)
 	api.color(7)
 	api.print("created new cart")
 end
