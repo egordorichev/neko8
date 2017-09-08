@@ -8,6 +8,65 @@ function sprites.init()
 	sprites.icon = 9
 	sprites.name = "sprite editor"
 	sprites.bg = config.editors.sprites.bg
+
+	sprites.tools = {
+		pencil = {
+			icon = 32,
+
+			use = function(x, y)
+				local v = sprites.color * 16
+				local s = sprites.sprite
+
+				x = api.flr(x / (8 * sprites.scale))
+				y = api.flr((y - 8) / (8 * sprites.scale))
+
+				sprites.data.data:setPixel(
+					api.mid(x, 0, 7) + s % 16 * 8,
+					api.mid(y, 0, 7) + api.flr(s / 16) * 8,
+					v, v, v
+				)
+			end
+		},
+
+		stamp = {
+			icon = 33,
+
+			use = function(x, y)
+
+			end
+		},
+
+		select = {
+			icon = 34,
+
+			use = function(x, y)
+
+			end
+		},
+
+		move = {
+			icon = 35,
+
+			use = function(x, y)
+
+			end
+		},
+
+		fill = {
+			icon = 36,
+
+			use = function(x, y)
+
+			end
+		}
+	}
+
+	sprites.tools[1] = sprites.tools.pencil
+	sprites.tools[2] = sprites.tools.stamp
+	sprites.tools[3] = sprites.tools.select
+	sprites.tools[4] = sprites.tools.move
+	sprites.tools[5] = sprites.tools.fill
+	sprites.tool = sprites.tools.pencil
 end
 
 function sprites.open()
@@ -50,20 +109,22 @@ function sprites.redraw()
 		), 65, 74, 13
 	)
 
-	-- sprites
-	api.brectfill(
-		64, 8, 128,
-		64, 0
-	)
+	neko.cart, neko.core = neko.core, neko.cart
 
-	api.sspr(
-		0, sprites.page * 64,
-		128, 64, 64, 8, 128, 64
-	)
+	-- tools
+
+	for i, t in ipairs(sprites.tools) do
+		if t ~= sprites.tool then
+			api.pal(7, 6)
+		end
+
+		api.spr(t.icon, 1, 63 + i * 10)
+		i = i + 1
+	end
+
+	api.pal(7, 7)
 
 	-- page buttons
-
-	neko.cart, neko.core = neko.core, neko.cart
 
 	for i = 0, 3 do
 		api.spr(
@@ -78,6 +139,17 @@ function sprites.redraw()
 
 	neko.cart, neko.core = neko.core, neko.cart
 
+	-- sprites
+	api.brectfill(
+		64, 8, 128,
+		64, 0
+	)
+
+	api.sspr(
+		0, sprites.page * 64,
+		128, 64, 64, 8, 128, 64
+	)
+
 	-- sprite flags
 	for i = 0, 7 do
 		local f = sprites.data.flags[
@@ -87,8 +159,8 @@ function sprites.redraw()
 		local c =	bit.band(bit.rshift(f, i), 1) == 1
 			and i + 8 or 1
 
-		api.circfill(8, 76 + i * 6, 2, c)
-		api.circ(8, 76 + i * 6, 2, 0)
+		api.circfill(13, 76 + i * 6, 2, c)
+		api.circ(13, 76 + i * 6, 2, 0)
 	end
 
 	-- palette
@@ -126,12 +198,12 @@ function sprites.redraw()
 
 	if y >= 0 and y <= 8 then
 		api.brect(
-			64 + x * 8, 8 + y * 8,
+			64 + x * 8, 7 + y * 8,
 			8 * sprites.scale, 8 * sprites.scale, 0
 		)
 
 		api.brect(
-			63 + x * 8, 7 + y * 8,
+			63 + x * 8, 6 + y * 8,
 			8 * sprites.scale + 2, 8 * sprites.scale + 2, 7,
 			8 * sprites.scale + 2, 8 * sprites.scale + 2, 7
 		)
@@ -166,17 +238,7 @@ function sprites._update()
 		elseif mx > 0 and mx < 64
 			and my > 8 and my < 72 then
 
-			mx = api.flr(mx / (8 * sprites.scale))
-			my = api.flr((my - 8) / (8 * sprites.scale))
-
-			local v = sprites.color * 16
-			local s = sprites.sprite
-
-			sprites.data.data:setPixel(
-				api.mid(mx, 0, 7) + s % 16 * 8,
-				api.mid(my, 0, 7) + api.flr(s / 16) * 8,
-				v, v, v
-			)
+			sprites.tool.use(mx, my - 7)
 
 			sprites.data.sheet:refresh()
 			sprites.forceDraw = true
@@ -187,21 +249,36 @@ function sprites._update()
 
 			sprites.color = api.mid(0, 15, mx + my * 4)
 			sprites.forceDraw = true
-		elseif lmb == false and mx >= 5 and mx <= 13 then
-			for i = 0, 7 do
-				if my >= 68 + i * 6 and my <= 76 + i * 6 then
-					local b = sprites.data.flags[sprites.sprite]
-					sprites.data.flags[sprites.sprite] = flip(b, i)
-					sprites.forceDraw = true
-					return
+		elseif lmb == false then
+			if mx >= 10 and mx <= 18 then
+				for i = 0, 7 do
+					if my >= 68 + i * 6 and my <= 76 + i * 6 then
+						local b = sprites.data.flags[sprites.sprite]
+						sprites.data.flags[sprites.sprite] = flip(b, i)
+						sprites.forceDraw = true
+						return
+					end
 				end
 			end
-		elseif lmb == false and my >= 72 and my <= 80 then
-			for i = 0, 3 do
-				if mx >= 85 + i * 8 and mx <= 85 + 8 + i * 8 then
-					sprites.page = i
-					sprites.forceDraw = true
-					return
+
+			if my >= 72 and my <= 80 then
+				for i = 0, 3 do
+					if mx >= 85 + i * 8 and mx <= 85 + 8 + i * 8 then
+						sprites.page = i
+						sprites.forceDraw = true
+						return
+					end
+				end
+			end
+
+			if mx >= 1 and mx <= 9 then
+				for i, t in ipairs(sprites.tools) do
+					if my >= 63 + i * 10
+						and my <= 71 + i * 10 then
+						sprites.tool = t
+						sprites.forceDraw = true
+						return
+					end
 				end
 			end
 		end

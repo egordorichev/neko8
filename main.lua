@@ -20,8 +20,8 @@ function love.load(arg)
 			lurker.postswap = function(f)
 				editors.current.forceDraw = true
 				resizeCanvas(
-					love.window.getWidth(),
-					love.window.getHeight()
+					love.graphics.getWidth(),
+					love.graphics.getHeight()
 				)
 			end
 		end
@@ -534,6 +534,7 @@ function loadCart(name)
 
 	if not data:find(header) then
 		log.error("invalid cart")
+		return nil
 	end
 
 	cart.code = loadCode(data, cart)
