@@ -31,6 +31,10 @@ function love.touchpressed()
 end
 
 function love.update(dt)
+	if not neko.focus then
+		return
+	end
+
 	if DEBUG then
 		lurker.update()
 	end
@@ -94,6 +98,14 @@ function love.keypressed(
 			end
 		else
 			handled = false
+		end
+	elseif love.keyboard.isDown("lalt")
+	 	or love.keyboard.isDown("ralt") then
+		if (key == "return" or key == "kpenter")
+		 	and not isRepeat then
+
+			neko.fullscreen = not neko.fullscreen
+			love.window.setFullscreen(neko.fullscreen)
 		end
 	else
 		if key == "escape" and not isRepeat then
@@ -215,6 +227,10 @@ end
 function love.textinput(text)
 	text = validateText(text)
 	triggerCallback("_text", text)
+end
+
+function love.focus(focus)
+	neko.focus = focus
 end
 
 function love.run()
@@ -373,6 +389,8 @@ neko = {}
 
 function neko.init()
 	neko.core = nil
+	neko.fullscreen = false
+	neko.focus = true
 	neko.currentDirectory = "/"
 
 	neko.cursor = {

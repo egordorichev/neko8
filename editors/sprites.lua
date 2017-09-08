@@ -188,7 +188,6 @@ function sprites._update()
 			sprites.color = api.mid(0, 15, mx + my * 4)
 			sprites.forceDraw = true
 		elseif lmb == false and mx >= 5 and mx <= 13 then
-			-- fixme!
 			for i = 0, 7 do
 				if my >= 68 + i * 6 and my <= 76 + i * 6 then
 					local b = sprites.data.flags[sprites.sprite]
@@ -254,6 +253,14 @@ function sprites._keydown(k, r)
 	else
 
 	end
+end
+
+function sprites._copy()
+
+end
+
+function sprites._text(text)
+	print(text)
 end
 
 return sprites
