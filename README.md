@@ -17,4 +17,4 @@ Download and extract the source. In the root folder run:
 love .
 ```
 
-You will need **love2d** to run **neko8**.
+You will need **love2d 0.10.2** to run **neko8**. Love2d version is really important!
