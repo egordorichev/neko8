@@ -75,6 +75,11 @@ function love.keypressed(
 			if text then
 				love.system.setClipboardText(text)
 			end
+		elseif key == "x" then
+			local text = triggerCallback("_cut")
+			if text then
+				love.system.setClipboardText(text)
+			end
 		else
 			handled = false
 		end
@@ -1372,16 +1377,16 @@ function api.flip()
 		)
 	end
 
-	local mx, my = love.mouse.getPosition()
-	neko.cart, neko.core = neko.core, neko.cart
+	if editors.opened then
+		local mx, my = love.mouse.getPosition()
+		neko.cart, neko.core = neko.core, neko.cart
 
-	-- fixme! broken colors
+		api.onCanvasSpr(
+			5, mx, my
+		)
 
-	api.onCanvasSpr(
-		5, mx, my
-	)
-
-	neko.cart, neko.core = neko.core, neko.cart
+		neko.cart, neko.core = neko.core, neko.cart
+	end
 
 	love.graphics.present()
 	love.graphics.setShader(colors.drawShader)

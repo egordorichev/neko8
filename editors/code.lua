@@ -256,32 +256,93 @@ function code._keydown(k)
 		local shift = api.key("lshift") or api.key("rshift")
 
     if k == "left" then
+			local lastX = code.cursor.x
+			local lastY = code.cursor.y
+
+			code.cursor.x = code.cursor.x - 1
+			t = 0
+			code.checkCursor()
+
 			if shift then
 				if not code.select.active then
 					code.select.active = true
-					code.select.start.x = code.cursor.x
-					code.select.start.y = code.cursor.y
+					code.select.start.x = lastX
+					code.select.start.y = lastY
+					code.select.finish.x = code.cursor.x
+					code.select.finish.y = code.cursor.y
 				else
 					code.select.finish.x = code.cursor.x
 					code.select.finish.y = code.cursor.y
 				end
+			else
+				code.select.active = false
 			end
-
-			code.cursor.x = code.cursor.x - 1
-      t = 0
-      code.checkCursor()
     elseif k == "right" then
-      code.cursor.x = code.cursor.x + 1
-      t = 0
-      code.checkCursor()
+			local lastX = code.cursor.x
+			local lastY = code.cursor.y
+
+			code.cursor.x = code.cursor.x + 1
+			t = 0
+			code.checkCursor()
+
+			if shift then
+				if not code.select.active then
+					code.select.active = true
+					code.select.start.x = lastX
+					code.select.start.y = lastY
+					code.select.finish.x = code.cursor.x
+					code.select.finish.y = code.cursor.y
+				else
+					code.select.finish.x = code.cursor.x
+					code.select.finish.y = code.cursor.y
+				end
+			else
+				code.select.active = false
+			end
     elseif k == "up" then
-      code.cursor.y = code.cursor.y - 1
-      t = 0
-      code.checkCursor(true)
+			local lastX = code.cursor.x
+			local lastY = code.cursor.y
+
+			code.cursor.y = code.cursor.y - 1
+			t = 0
+			code.checkCursor()
+
+			if shift then
+				if not code.select.active then
+					code.select.active = true
+					code.select.start.x = lastX
+					code.select.start.y = lastY
+					code.select.finish.x = code.cursor.x
+					code.select.finish.y = code.cursor.y
+				else
+					code.select.finish.x = code.cursor.x
+					code.select.finish.y = code.cursor.y
+				end
+			else
+				code.select.active = false
+			end
     elseif k == "down" then
-      code.cursor.y = code.cursor.y + 1
-      t = 0
-      code.checkCursor(true)
+			local lastX = code.cursor.x
+			local lastY = code.cursor.y
+
+			code.cursor.y = code.cursor.y + 1
+			t = 0
+			code.checkCursor()
+
+			if shift then
+				if not code.select.active then
+					code.select.active = true
+					code.select.start.x = lastX
+					code.select.start.y = lastY
+					code.select.finish.x = code.cursor.x
+					code.select.finish.y = code.cursor.y
+				else
+					code.select.finish.x = code.cursor.x
+					code.select.finish.y = code.cursor.y
+				end
+			else
+				code.select.active = false
+			end
     elseif k == "return" or k == "kpenter" then
 			if code.select.active then
 				code.replaceSelected("")
@@ -448,14 +509,14 @@ function code.replaceSelected(text)
 			newLine = text
 		end
 
-		for y = min.y - 1, max.y + 1 do
+		for y = min.y, max.y do
 			table.remove(code.lines, min.y + 1)
 		end
 
 		table.insert(code.lines, min.y + 1, newLine)
 
 		code.cursor.x = #newLine
-		code.cursor.y = min.y + 1
+		code.cursor.y = min.y
 		code.checkCursor()
 	end
 
@@ -493,11 +554,13 @@ function code._copy()
 			local line = code.lines[min.y + 1]
 			text = line:sub(0, min.x, #line)
 
-			for y = min.y + 1, max.y + 1 do
+			local m = 1
+
+			for y = min.y + 1, max.y + m do
 				text = text .. "\n\n" .. code.lines[y]
 			end
 
-			text = text .. "\n\n" .. code.lines[max.y + 2]:sub(0, max.x)
+			text = text .. "\n\n" .. code.lines[max.y + m]:sub(0, max.x)
 		end
 
 		code.forceDraw = true
@@ -505,6 +568,18 @@ function code._copy()
 
 		return text
 	end
+end
+
+function code._cut()
+	local active = code.select.active
+	local text = code._copy()
+
+	if active then
+		code.select.active = true
+		code.replaceSelected("")
+	end
+
+	return text
 end
 
 function code._text(text)
