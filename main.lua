@@ -7,6 +7,10 @@ mobile = OS == "Android" or OS == "iOS"
 
 if DEBUG then
 	lurker = require "libs.lurker"
+
+	lurker.postswap = function(f)
+		editors.current.forceDraw = true
+	end
 end
 
 giflib = require "libs.gif"
