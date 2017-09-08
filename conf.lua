@@ -1,3 +1,5 @@
+DEBUG = arg[1] ~= nil
+
 local neko8 = {
 	code = {
 		bg = 2,

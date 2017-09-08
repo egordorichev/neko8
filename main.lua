@@ -5,6 +5,10 @@
 OS = love.system.getOS()
 mobile = OS == "Android" or OS == "iOS"
 
+if DEBUG then
+	lurker = require "libs.lurker"
+end
+
 giflib = require "libs.gif"
 QueueableSource = require "libs.QueueableSource"
 frameTime = 1 / config.fps
@@ -23,6 +27,10 @@ function love.touchpressed()
 end
 
 function love.update(dt)
+	if DEBUG then
+		lurker.update()
+	end
+
 	neko.update()
 end
 
