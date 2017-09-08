@@ -11,15 +11,17 @@ frameTime = 1 / config.fps
 hostTime = 0
 
 function love.load(arg)
-	DEBUG = arg[2] == "-d"
+	if arg then
+		DEBUG = arg[2] == "-d"
 
-	if DEBUG then
-		lurker = require "libs.lurker"
+		if DEBUG then
+			lurker = require "libs.lurker"
 
-		lurker.postswap = function(f)
-			editors.current.forceDraw = true
+			lurker.postswap = function(f)
+				editors.current.forceDraw = true
+			end
 		end
-	end
+	end	
 
 	log.info(
 		"neko 8 " .. config.version.string
