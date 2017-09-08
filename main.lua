@@ -264,9 +264,10 @@ function triggerCallback(c, ...)
 	if neko.cart then
 		if neko.cart.sandbox[c] then
 			local v = nil
+			local args = unpack({ ... })
 
-			return try(function()
-				v = neko.cart.sandbox[c](...)
+			try(function()
+				v = neko.cart.sandbox[c](args)
 			end, function(e)
 				runtimeError(e)
 			end)

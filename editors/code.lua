@@ -253,8 +253,21 @@ function code._keydown(k)
 			code.forceDraw = true
     end
   else
+		local shift = api.key("lshift") or api.key("rshift")
+
     if k == "left" then
-      code.cursor.x = code.cursor.x - 1
+			if shift then
+				if not code.select.active then
+					code.select.active = true
+					code.select.start.x = code.cursor.x
+					code.select.start.y = code.cursor.y
+				else
+					code.select.finish.x = code.cursor.x
+					code.select.finish.y = code.cursor.y
+				end
+			end
+
+			code.cursor.x = code.cursor.x - 1
       t = 0
       code.checkCursor()
     elseif k == "right" then
