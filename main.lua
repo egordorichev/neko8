@@ -363,6 +363,14 @@ function neko.init()
 	neko.core = nil
 	neko.currentDirectory = "/"
 
+	neko.cursor = {
+		pointer = 5,
+		hand = 21,
+		holding_hand = 22 -- todo: draw it
+	}
+
+	neko.cursor.current = neko.cursor.pointer
+
 	initCanvas()
 	initFont()
 	initPalette()
@@ -1382,7 +1390,7 @@ function api.flip()
 		neko.cart, neko.core = neko.core, neko.cart
 
 		api.onCanvasSpr(
-			5, mx, my
+			neko.cursor.current, mx, my
 		)
 
 		neko.cart, neko.core = neko.core, neko.cart
@@ -1966,6 +1974,8 @@ function commands.new()
 	import(neko.loadedCart)
 	api.color(7)
 	api.print("created new cart")
+	editors.current.close()
+	editors.current = editors.code
 end
 
 function commands.mkdir(a)
