@@ -814,6 +814,45 @@ function patchLua(code)
 	return code
 end
 
+function try(f, catch)
+	local status, exception = pcall(f)
+	if not status then
+		catch(exception)
+	end
+end
+
+function runtimeError(error)
+	log.error("runtime error:")
+	log.error(error)
+	editors.close()
+
+	neko.cart = nil
+	local pos = error:find("\"]:")
+	error = "line " .. error:sub(pos + 3)
+
+	neko.core.sandbox.redraw_prompt(true)
+	api.print("")
+	api.color(8)
+	api.print(error)
+	neko.core.sandbox.redraw_prompt()
+end
+
+function syntaxError(error)
+	log.error("syntax error:")
+	log.error(e)
+	editors.close()
+
+	neko.cart = nil
+	local pos = error:find("\"]:")
+	error = "line " .. error:sub(pos + 3)
+
+	neko.core.sandbox.redraw_prompt(true)
+	api.print("")
+	api.color(8)
+	api.print(error)
+	neko.core.sandbox.redraw_prompt()
+end
+
 function runCart(cart)
 	if not cart or not cart.sandbox then
 		return
@@ -833,14 +872,8 @@ function runCart(cart)
 		load, patchLua(cart.code), name
 	)
 
-	if e then
-		log.error("syntax error:")
-		log.error(e)
-		neko.cart = nil
-		local pos = e:find("\"]:")
-		e = "line " .. e:sub(pos + 3)
-		api.color(8)
-		api.print(e)
+	if not ok or f == nil then
+		syntaxError(e)
 		return
 	end
 
@@ -856,25 +889,25 @@ function runCart(cart)
 	setfenv(f, cart.sandbox)
 	ok, result = pcall(f)
 
+	-- fixme: doesn't handle undeclarated stuff
+
 	if not ok then
-		log.error("runtime error:")
-		log.error(result)
-		neko.cart = nil
-		local pos = result:find("\"]:")
-		result = "line " .. result:sub(pos + 3)
-		api.color(8)
-		api.print(result)
+		runtimeError(result)
 		return
 	end
 
-	if cart.sandbox._init then
-		cart.sandbox._init()
-	end
+	try(function()
+		if cart.sandbox._init then
+			cart.sandbox._init()
+		end
 
-	if cart.sandbox._draw or
-		cart.sandbox._update then
-		neko.cart = cart
-	end
+		if cart.sandbox._draw or
+			cart.sandbox._update then
+			neko.cart = cart
+		end
+	end, function(e)
+		runtimeError(e)
+	end)
 
 	api.flip()
 end
@@ -1940,7 +1973,7 @@ function commands.load(a)
 		local c = loadCart(a[1])
 
 		if not c then
-			api.color(14)
+			api.color(8)
 			api.print(
 				"failed to load " .. a[1]
 			)
