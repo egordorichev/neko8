@@ -19,9 +19,13 @@ function love.load(arg)
 
 			lurker.postswap = function(f)
 				editors.current.forceDraw = true
+				resizeCanvas(
+					love.window.getWidth(),
+					love.window.getHeight()
+				)
 			end
 		end
-	end	
+	end
 
 	log.info(
 		"neko 8 " .. config.version.string
@@ -1421,11 +1425,15 @@ function api.flip()
 	end
 
 	if editors.opened then
-		local mx, my = love.mouse.getPosition()
+		local mx, my = api.mstat()
 		neko.cart, neko.core = neko.core, neko.cart
 
 		api.onCanvasSpr(
-			neko.cursor.current, mx, my
+			neko.cursor.current,
+			mx * canvas.scaleX
+			+ canvas.x,
+			my * canvas.scaleY
+			+ canvas.y
 		)
 
 		neko.cart, neko.core = neko.core, neko.cart

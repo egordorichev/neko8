@@ -271,6 +271,24 @@ function sprites._copy()
 	return "[gfx]" .. data .. "[/gfx]"
 end
 
+function sprites._cut()
+	local data = sprites._copy()
+
+	for y = api.flr(sprites.sprite / 16) * 8,
+		api.flr(sprites.sprite / 16) * 8 + 7 do
+		for x = (sprites.sprite % 16) * 8,
+			(sprites.sprite % 16) * 8 + 7 do
+
+			sprites.data.data:setPixel(x, y, 0, 0, 0, 255)
+		end
+	end
+
+	sprites.data.sheet:refresh()
+	sprites.forceDraw = true
+
+	return data
+end
+
 function sprites._text(text)
 	if text:sub(0, 5) == "[gfx]" and
 		text:sub(#text - 5, #text) == "[/gfx]" then
@@ -283,8 +301,7 @@ function sprites._text(text)
 				(sprites.sprite % 16) * 8 + 7 do
 
 				local v = tonumber(text:sub(i, i), 10) * 16
-
-				local r = sprites.data.data:setPixel(x, y, v, v, v, 255)
+				sprites.data.data:setPixel(x, y, v, v, v, 255)
 				i = i + 1
 			end
 		end

@@ -85,10 +85,9 @@ function editors.drawUI()
 		api.pal()
 	end
 
-
 	api.print(
 		editors.current.name, config.canvas.width
-		- 1 - #editors.current.name * 4, 
+		- 1 - #editors.current.name * 4,
 		1, config.editors.ui.fg
 	)
 
