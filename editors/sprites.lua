@@ -256,11 +256,24 @@ function sprites._keydown(k, r)
 end
 
 function sprites._copy()
+	local data = ""
 
+	for y = api.flr(sprites.sprite / 16) * 8,
+		api.flr(sprites.sprite / 16) * 8 + 7 do
+		for x = (sprites.sprite % 16) * 8,
+			(sprites.sprite % 16) * 8 + 7 do
+
+			local r = sprites.data.data:getPixel(x, y) / 16
+			data = data .. string.format("%x", r)
+		end
+	end
+
+	return "[gfx]" .. data .. "[/gfx]"
 end
 
 function sprites._text(text)
 	print(text)
+	-- todo
 end
 
 return sprites

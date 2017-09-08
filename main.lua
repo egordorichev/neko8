@@ -5,24 +5,27 @@
 OS = love.system.getOS()
 mobile = OS == "Android" or OS == "iOS"
 
-if DEBUG then
-	lurker = require "libs.lurker"
-
-	lurker.postswap = function(f)
-		editors.current.forceDraw = true
-	end
-end
-
 giflib = require "libs.gif"
 QueueableSource = require "libs.QueueableSource"
 frameTime = 1 / config.fps
 hostTime = 0
 
-function love.load()
+function love.load(arg)
+	DEBUG = arg[2] == "-d"
+
+	if DEBUG then
+		lurker = require "libs.lurker"
+
+		lurker.postswap = function(f)
+			editors.current.forceDraw = true
+		end
+	end
+
 	log.info(
 		"neko 8 " .. config.version.string
 	)
 
+	love.window.setDisplaySleepEnabled(false)
 	neko.init()
 end
 
