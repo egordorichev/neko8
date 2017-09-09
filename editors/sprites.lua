@@ -9,64 +9,114 @@ function sprites.init()
 	sprites.name = "sprite editor"
 	sprites.bg = config.editors.sprites.bg
 
-	sprites.tools = {
-		pencil = {
-			icon = 32,
-
-			use = function(x, y)
-				local v = sprites.color * 16
-				local s = sprites.sprite
-
-				x = api.flr(x / (8 * sprites.scale))
-				y = api.flr((y - 8) / (8 * sprites.scale))
-
-				sprites.data.data:setPixel(
-					api.mid(x, 0, 7) + s % 16 * 8,
-					api.mid(y, 0, 7) + api.flr(s / 16) * 8,
-					v, v, v
-				)
-			end
-		},
-
-		stamp = {
-			icon = 33,
-
-			use = function(x, y)
-
-			end
-		},
-
-		select = {
-			icon = 34,
-
-			use = function(x, y)
-
-			end
-		},
-
-		move = {
-			icon = 35,
-
-			use = function(x, y)
-
-			end
-		},
-
-		fill = {
-			icon = 36,
-
-			use = function(x, y)
-
-			end
-		}
+	local pencil = {
+		icon = 32
 	}
 
-	sprites.tools[1] = sprites.tools.pencil
-	sprites.tools[2] = sprites.tools.stamp
-	sprites.tools[3] = sprites.tools.select
-	sprites.tools[4] = sprites.tools.move
-	sprites.tools[5] = sprites.tools.fill
-	sprites.tool = sprites.tools.pencil
+	pencil.use = function(x, y)
+		local v = sprites.color * 16
+		local s = sprites.sprite
+
+		x = api.flr(x / (8 * sprites.scale))
+		y = api.flr(y / (8 * sprites.scale))
+
+		sprites.data.data:setPixel(
+			api.mid(x, 0, 7) + s % 16 * 8,
+			api.mid(y, 0, 7) + api.flr(s / 16) * 8,
+			v, v, v
+		)
+	end
+
+	local stamp = {
+		icon = 33
+	}
+
+	stamp.use = function(x, y)
+
+	end
+
+	local select = {
+		icon = 34
+	}
+
+	select.use = function(x, y)
+
+	end
+
+	local move = {
+		icon = 35
+	}
+
+	move.use = function(x, y)
+
+	end
+
+	local fill = {
+		icon = 36
+	}
+
+	fill.setPixel = function(x, y, c)
+			sprites.data.data:setPixel(x, y, c * 16, c * 16, c * 16, 255)
+	end
+
+	fill.getPixel = function(x, y)
+		if x < 0 or x > 7 or
+			y < 0 or y > 7 then -- fixme: bounds
+			return -1
+		end
+
+		return sprites.data.data:getPixel(x, y) / 16
+	end
+
+	fill.fillPixel = function(x, y, t, f)
+		local c = fill.getPixel(x, y)
+
+		if c == -1 or c ~= t then
+			return
+		end
+
+		fill.setPixel(x, y, f)
+	end
+
+	fill.use = function(x, y, t, f)
+		if t == nil or f == nil then
+			t = fill.getPixel(x, y)
+			f = sprites.color
+			print(t)
+		end
+
+		print(x, y)
+
+		fill.fillPixel(x, y, t, f)
+
+		if fill.getPixel(x + 1, y) == t then
+			fill.use(x + 1, y, t, f)
+		end
+
+		if fill.getPixel(x - 1, y) == t then
+			fill.use(x - 1, y, t, f)
+		end
+
+		if fill.getPixel(x, y + 1) == t then
+			fill.use(x, y + 1, t, f)
+		end
+
+		if fill.getPixel(x, y - 1) == t then
+			fill.use(x, y - 1, t, f)
+		end
+	end
+
+	sprites.tools = {
+		pencil, stamp,
+		select, move, fill
+	}
+
+	sprites.tools[1] = pencil
+	sprites.tools[2] = stamp
+	sprites.tools[3] = select
+	sprites.tools[4] = move
+	sprites.tools[5] = fill
+	sprites.tool = pencil
 end
 
 function sprites.open()
@@ -114,7 +164,9 @@ function sprites.redraw()
 	-- tools
 
 	for i, t in ipairs(sprites.tools) do
-		if t ~= sprites.tool then
+		if t == sprites.tool then
+			api.pal(7, 15)
+		else
 			api.pal(7, 6)
 		end
 
@@ -238,7 +290,7 @@ function sprites._update()
 		elseif mx > 0 and mx < 64
 			and my > 8 and my < 72 then
 
-			sprites.tool.use(mx, my - 7)
+			sprites.tool.use(mx, my - 8)
 
 			sprites.data.sheet:refresh()
 			sprites.forceDraw = true
