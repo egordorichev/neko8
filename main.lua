@@ -895,8 +895,9 @@ function runtimeError(error)
 
 	neko.cart = nil
 	local pos = error:find("\"]:")
-	error = "line " .. error:sub(pos + 3)
-
+	if pos then
+		error = "line " .. error:sub(pos + 3)
+	end
 	neko.core.sandbox.redraw_prompt(true)
 	api.print("")
 	api.color(8)
@@ -911,8 +912,9 @@ function syntaxError(error)
 
 	neko.cart = nil
 	local pos = error:find("\"]:")
-	error = "line " .. error:sub(pos + 3)
-
+	if pos then
+		error = "line " .. error:sub(pos + 3)
+	end
 	neko.core.sandbox.redraw_prompt(true)
 	api.print("")
 	api.color(8)
@@ -955,8 +957,6 @@ function runCart(cart)
 	local result
 	setfenv(f, cart.sandbox)
 	ok, result = pcall(f)
-
-	-- fixme: doesn't handle undeclarated stuff
 
 	if not ok then
 		runtimeError(result)

@@ -238,16 +238,15 @@ function sprites.redraw()
 	x = s % 16
 	y = api.flr(s / 16)
 
-	if y >= 0 and y <= 8 then
+	if y >= 0 and y <= 7 then
 		api.brect(
 			64 + x * 8, 8 + y * 8,
-			8 * sprites.scale, 8 * sprites.scale, 0
+			8 * sprites.scale - 1, 8 * sprites.scale - 1, 0
 		)
 
 		api.brect(
 			63 + x * 8, 7 + y * 8,
-			8 * sprites.scale + 2, 8 * sprites.scale + 2, 7,
-			8 * sprites.scale + 2, 8 * sprites.scale + 2, 7
+			8 * sprites.scale + 1, 8 * sprites.scale + 1, 7
 		)
 	end
 

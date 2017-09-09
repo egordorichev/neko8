@@ -5,14 +5,18 @@ function map.init()
 	map.forceDraw = false
 	map.icon = 10
 	map.bg = config.editors.map.bg
-	map.showTiles = true
 	map.name = "map editor"
+	map.window = {
+		active = true,
+		x = 110, -- fixme: better start pos
+		y = 44
+	}
 end
 
 function map.open()
 	map.forceDraw = true
 
-	if sprites.page > 3 then
+	if sprites.page > 1 then
 		sprites.page = 0
 		sprites.sprite = 0
 	end
@@ -33,8 +37,64 @@ function map.redraw()
 	api.cls(0)
 	api.map(0, 0, 0, 7)
 
-	if map.showTiles then
-		-- todo
+	-- draw window
+	if map.window.active then
+		api.brectfill(
+			map.window.x, map.window.y,
+			66, 74, 5
+		)
+
+		-- sprites
+		api.brectfill(
+			map.window.x + 1, map.window.y + 9,
+			64, 64, 0
+		)
+
+		api.spr(
+			0, 0, -- todo: page
+			64, 64,
+			map.window.x + 1, map.window.y + 9,
+			64, 64
+		)
+
+		neko.cart = nil
+
+		-- current sprite
+		local bs = sprites.sprite - sprites.page * 64
+		local bx = bs % 16
+		local by = api.flr(bs / 16)
+
+		if by >= 0 and by <= 7
+		 	and bx >= 0 and bx <= 7 then
+				api.brect(
+					map.window.x + 1 + bx * 8,
+					map.window.y + 9 + by * 8,
+					8 * sprites.scale - 1, 8 * sprites.scale - 1, 0
+				)
+
+				api.brect(
+					map.window.x + bx * 8,
+					map.window.y + 8 + by * 8,
+					8 * sprites.scale + 1, 8 * sprites.scale + 1, 7
+				)
+		end
+
+		neko.cart, neko.core = neko.core, neko.cart
+
+		for i = 0, 3 do
+			api.spr(
+				i == sprites.page and 22 or 23,
+				map.window.x + i * 8 + 12, map.window.y + 1
+			)
+
+			api.print(
+				i, map.window.x + i * 8 + 14, map.window.y + 2, 13
+			)
+		end
+
+		api.spr(24, map.window.x + 1, map.window.y + 1)
+
+		neko.cart, neko.core = neko.core, neko.cart
 	end
 
 	editors.drawUI()
@@ -45,32 +105,6 @@ local mx, my, mb, lmb
 function map._update()
 	lmb = mb
 	mx, my, mb = api.mstat(1)
-
-	if mb then
-		if map.showTiles and mx >= 0 and mx <= 128
-			and my >= 88 and my <= 88 + 32 then
-
-			my = my - 88
-			sprites.sprite = api.mid(0, 511, api.flr(mx / 8)
-				+ api.flr(my / 8) * 16 + sprites.page * 64)
-
-			map.forceDraw = true
-		elseif map.showTiles and lmb == false and my >= 80 and my <= 88 then
-			for i = 0, 3 do
-				if mx >= 19 + i * 8 and mx <= 26 + i * 8 then
-					sprites.page = i
-					map.forceDraw = true
-					return
-				end
-			end
-		elseif my >= 8
-			and my <= (map.showTiles and 75 or 120) then
-			mx = api.mid(0, 127, api.flr(mx / 8 + 0.5))
-			my = api.mid(0, 127, api.flr(my / 8 - 1))
-			neko.loadedCart.map[my][mx] = sprites.sprite
-			map.forceDraw = true
-		end
-	end
 end
 
 function map.import(data)
@@ -96,8 +130,8 @@ function map._keydown(k)
 			commands.save()
 		end
 	else
-		if k == "lshift" then
-			map.showTiles = not map.showTiles
+		if k == "lshift" or k == "rshift" then
+			map.window.active = not map.window.active
 			map.forceDraw = true
 		end
 	end
