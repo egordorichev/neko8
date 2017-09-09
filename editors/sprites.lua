@@ -57,8 +57,8 @@ function sprites.init()
 	fill.getPixel = function(x, y)
 		local s = sprites.sprite
 
-		if x < s % 16 * 8 or x > s % 16 * 8 + 8 or
-			y < api.flr(s / 16) * 8 or y > api.flr(s / 16) * 8 + 8 then -- fixme: bounds
+		if x < s % 16 * 8 or x > s % 16 * 8 + 7 or
+			y < api.flr(s / 16) * 8 or y > api.flr(s / 16) * 8 + 7 then
 			return -1
 		end
 
