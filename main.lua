@@ -5,6 +5,14 @@
 OS = love.system.getOS()
 mobile = OS == "Android" or OS == "iOS"
 
+-- DEBUG!
+-- mobile = true
+
+if mobile then
+	keyboard = require "keyboard"
+	keyboard.init()
+end
+
 giflib = require "libs.gif"
 QueueableSource = require "libs.QueueableSource"
 frameTime = 1 / config.fps
@@ -49,6 +57,10 @@ function love.update(dt)
 	end
 
 	neko.update()
+
+	if mobile then
+		keyboard.update()
+	end
 end
 
 function love.draw()
@@ -62,6 +74,10 @@ function love.draw()
 
 	neko.draw()
 	api.flip()
+
+	if mobile then
+		keyboard.update()
+	end
 end
 
 function love.wheelmoved(x, y)
@@ -1110,6 +1126,7 @@ function createSandbox()
 		shutdown = commands.shutdown,
 		cd = commands.cd,
 		rm = commands.rm,
+		edit = commands.edit,
 
 		pairs = pairs,
 		ipairs = ipairs,
@@ -1934,11 +1951,16 @@ function commands.help(a)
 		api.print("cd   - change dir  mkdir  - create dir")
 		api.print("new  - new cart    run    - run cart")
 		api.print("load - load cart   save   - save cart")
-		api.print("reboot, shutdown, cls")
+		api.print("reboot, shutdown, cls, edit")
 	else
 		-- todo
 		api.print("subject " .. a[1] .. " is not found")
 	end
+end
+
+function commands.edit()
+	neko.cart = nil
+	editors.open()
 end
 
 function commands.folder()
