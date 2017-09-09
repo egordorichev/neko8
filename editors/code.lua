@@ -387,6 +387,14 @@ function code._keydown(k)
       code.cursor.x =
         #code.lines[code.cursor.y + 1]
 	    code.checkCursor()
+		elseif k == "pagedown" then
+			code.cursor.y = code.cursor.y + th
+      code.checkCursor()
+			code.cursor.x = #code.lines[code.cursor.y + 1]
+		elseif k == "pageup" then
+			code.cursor.y = code.cursor.y - th
+			code.cursor.x = 0
+      code.checkCursor()
     elseif k == "backspace" then
 			if code.select.active then
 				code.replaceSelected("")
