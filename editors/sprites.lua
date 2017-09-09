@@ -51,7 +51,7 @@ function sprites.init()
 	}
 
 	fill.setPixel = function(x, y, c)
-			sprites.data.data:setPixel(x, y, c * 16, c * 16, c * 16, 255)
+		sprites.data.data:setPixel(x, y, c * 16, c * 16, c * 16, 255)
 	end
 
 	fill.getPixel = function(x, y)

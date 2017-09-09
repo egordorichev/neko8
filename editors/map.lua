@@ -31,6 +31,11 @@ function map._draw()
 		map.redraw()
 		map.forceDraw = false
 	end
+
+	if map.redrawInfo then
+		map.drawInfo()
+		map.redrawInfo = true
+	end
 end
 
 function map.redraw()
@@ -100,11 +105,53 @@ function map.redraw()
 	editors.drawUI()
 end
 
-local mx, my, mb, lmb
+local mx, my, mb, lmb, lmx, lmy
+
+function map.drawInfo()
+	editors.drawUI()
+
+	if map.window.active and mx >= map.window.x
+		and mx <= map.window.x + 66
+		and my >= map.window.y and my <= map.window.y + 74 then
+
+	else
+		if my > 7 and my < config.canvas.height - 7 then
+			local x = api.flr(mx / 8)
+			local y = api.flr((my - 8) / 8)
+
+			api.print(
+				"x:" .. x .. " y:" .. y,
+				1, config.canvas.height - 6,
+				config.editors.sprites.fg
+			)
+		end
+	end
+end
 
 function map._update()
 	lmb = mb
+	lmx = mx
+	lmy = my
 	mx, my, mb = api.mstat(1)
+
+	if mx ~= lmx or my ~= lmy then
+		map.redrawInfo = true
+	end
+
+	if mb then
+		if mx >= map.window.x and mx <= map.window.x + 66
+			and my >= map.window.y and my <= map.window.y + 74 then
+
+			mx = mx - map.window.x
+			my = my - map.window.y
+
+			if mb then
+
+			end
+		else
+
+		end
+	end
 end
 
 function map.import(data)
