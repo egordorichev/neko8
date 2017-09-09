@@ -15,14 +15,9 @@ function sprites.init()
 
 	pencil.use = function(x, y)
 		local v = sprites.color * 16
-		local s = sprites.sprite
-
-		x = api.flr(x / (8 * sprites.scale))
-		y = api.flr(y / (8 * sprites.scale))
 
 		sprites.data.data:setPixel(
-			api.mid(x, 0, 7) + s % 16 * 8,
-			api.mid(y, 0, 7) + api.flr(s / 16) * 8,
+			x, y,
 			v, v, v
 		)
 	end
@@ -68,8 +63,30 @@ function sprites.init()
 		return sprites.data.data:getPixel(x, y) / 16
 	end
 
-	fill.use = function(x, y, t, f)
-		-- todo
+	fill.use = function(x, y, r)
+		if r then
+			return
+		end
+
+		local t = fill.getPixel(x, y)
+		local f = sprites.color
+
+		fill.fillPixel(x, y, t, f)
+	end
+
+	fill.fillPixel = function(x, y, t, f)
+		local p = fill.getPixel(x, y)
+
+		if p == -1 or p ~= t or p == f then
+			return
+		end
+
+		fill.setPixel(x, y, f)
+
+		fill.fillPixel(x + 1, y, t, f)
+		fill.fillPixel(x - 1, y, t, f)
+		fill.fillPixel(x, y + 1, t, f)
+		fill.fillPixel(x, y - 1, t, f)
 	end
 
 	sprites.tools = {
@@ -256,7 +273,11 @@ function sprites._update()
 		elseif mx > 0 and mx < 64
 			and my > 8 and my < 72 then
 
-			sprites.tool.use(mx, my - 8)
+			local s = sprites.sprite
+			local x = api.mid(api.flr(mx / (8 * sprites.scale)), 0, 7) + s % 16 * 8
+			local y = api.mid(api.flr((my - 8) / (8 * sprites.scale)), 0, 7) + api.flr(s / 16) * 8
+
+			sprites.tool.use(x, y, lmb == false)
 
 			sprites.data.sheet:refresh()
 			sprites.forceDraw = true
