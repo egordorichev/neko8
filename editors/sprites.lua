@@ -117,6 +117,11 @@ function sprites._draw()
 		sprites.redraw()
 		sprites.forceDraw = false
 	end
+
+	if sprites.redrawInfo then
+		sprites.drawInfo()
+		sprites.redrawInfo = false
+	end
 end
 
 function sprites.redraw()
@@ -250,16 +255,41 @@ function sprites.redraw()
 	neko.cart = nil -- see spr and sspr
 end
 
+local mx, my, mb, lmb, lmx, lmy
+
+function sprites.drawInfo()
+	editors.drawUI()
+
+	local s = sprites.sprite
+	local mx = api.flr(mx / (8 * sprites.scale))
+	local my = api.flr((my - 8) / (8 * sprites.scale))
+	local x = api.mid(mx, 0, 7) + s % 16 * 8
+	local y = api.mid(my, 0, 7) + api.flr(s / 16) * 8
+
+	if mx >= 0 and mx <= 7 and
+		my >= 0 and my <= 7 then
+		api.print(
+			"x:" .. x .. " y:" .. y, 1,
+			config.canvas.height - 6,
+			config.editors.sprites.fg
+		)
+	end
+end
+
 local function flip(byte, b)
   b = 2 ^ b
   return bit.bxor(byte, b)
 end
 
-local mx, my, mb, lmb
-
 function sprites._update()
 	lmb = mb
+	lmx = mx
+	lmy = my
 	mx, my, mb = api.mstat(1)
+
+	if mx ~= lmx or my ~= lmy then
+		sprites.redrawInfo = true
+	end
 
 	if mb then
 		if mx > 64 and mx < 192

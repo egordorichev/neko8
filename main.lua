@@ -424,6 +424,7 @@ function neko.init()
 
 	neko.core = loadCart("neko")
 	runCart(neko.core)
+	neko.cart = nil
 	neko.loadedCart = createCart()
 	import(neko.loadedCart)
 end
