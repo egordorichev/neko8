@@ -1,5 +1,7 @@
 # neko8
 
+![](https://media.discordapp.net/attachments/314487938949971980/355710597528027146/Peek_2017-09-08_16-43.gif)
+
 **Neko8** is a **fantasy console**, inspired by **pico8**, **liko12** and **tic80**.
 
 Currently it features:
