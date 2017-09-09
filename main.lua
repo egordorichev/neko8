@@ -117,7 +117,7 @@ function love.keypressed(
 			love.window.setFullscreen(neko.fullscreen)
 		end
 	else
-		if key == "escape" and not isRepeat then
+		if (key == "escape" or (key == "return" and (love.keyboard.isDown("lshift") or ove.keyboard.isDown("rshift")))) and not isRepeat then
 			handled = false
 			if neko.cart then
 				neko.cart = nil
