@@ -2,12 +2,12 @@ local code = {}
 local lume = require "libs.lume"
 local colorize = require "libs.colorize"
 
-local t = 0
 local tw = 40
 local th = 20
 
 function code.init()
   code.lines = {}
+	code.t = 0
   code.lines[1] = ""
 	code.icon = 8
 	code.name = "code editor"
@@ -50,12 +50,12 @@ function code._draw()
 end
 
 local function cursorBlink()
-  return t < 16 or t % 30 < 16
+  return code.t < 16 or code.t % 30 < 16
 end
 
 function code._update()
   local lb = cursorBlink()
-  t = t + 1
+  code.t = code.t + 1
 
   if cursorBlink() ~= lb then
     code.redraw()
@@ -260,7 +260,7 @@ function code._keydown(k)
 			local lastY = code.cursor.y
 
 			code.cursor.x = code.cursor.x - 1
-			t = 0
+			code.t = 0
 			code.checkCursor()
 
 			if shift then
@@ -282,7 +282,7 @@ function code._keydown(k)
 			local lastY = code.cursor.y
 
 			code.cursor.x = code.cursor.x + 1
-			t = 0
+			code.t = 0
 			code.checkCursor()
 
 			if shift then
@@ -304,7 +304,7 @@ function code._keydown(k)
 			local lastY = code.cursor.y
 
 			code.cursor.y = code.cursor.y - 1
-			t = 0
+			code.t = 0
 			code.checkCursor()
 
 			if shift then
@@ -326,7 +326,7 @@ function code._keydown(k)
 			local lastY = code.cursor.y
 
 			code.cursor.y = code.cursor.y + 1
-			t = 0
+			code.t = 0
 			code.checkCursor()
 
 			if shift then
@@ -378,22 +378,26 @@ function code._keydown(k)
           )
         )
       end
-      t = 0
+      code.t = 0
       code.checkCursor()
     elseif k == "home" then
       code.cursor.x = 0
+			code.t = 0
       code.checkCursor()
     elseif k == "end" then
       code.cursor.x =
         #code.lines[code.cursor.y + 1]
+			code.t = 0
 	    code.checkCursor()
 		elseif k == "pagedown" then
 			code.cursor.y = code.cursor.y + th
       code.checkCursor()
 			code.cursor.x = #code.lines[code.cursor.y + 1]
+			code.t = 0
 		elseif k == "pageup" then
 			code.cursor.y = code.cursor.y - th
 			code.cursor.x = 0
+			code.t = 0
       code.checkCursor()
     elseif k == "backspace" then
 			if code.select.active then
@@ -429,11 +433,14 @@ function code._keydown(k)
           code.cursor.y = code.cursor.y - 1
         end
       end
-      t = 0
+      code.t = 0
       code.checkCursor()
 		elseif k == "tab" then
 			code._text(" ")
+			code.t = 0
     elseif k == "delete" then
+			code.t = 0
+
 			if code.select.active then
 				code.replaceSelected("")
 				return
@@ -463,7 +470,6 @@ function code._keydown(k)
             l1 .. l2
         end
       end
-      t = 0
     end
   end
   code.redraw()
@@ -648,7 +654,7 @@ function code._text(text)
 		end
 	end
 
-	t = 0
+	code.t = 0
 	code.redraw()
 end
 
