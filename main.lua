@@ -1101,7 +1101,6 @@ function createSandbox()
 		help = commands.help,
 		folder = commands.folder,
 		ls = commands.ls,
-		cls = commands.cls,
 		run = commands.run,
 		new = commands.new,
 		mkdir = commands.mkdir,
@@ -2005,10 +2004,6 @@ function commands.ls(a)
 	end
 end
 
-function commands.cls()
-	api.cls()
-end
-
 function commands.run()
 	if neko.loadedCart ~= nil then
 		runCart(neko.loadedCart)
@@ -2055,6 +2050,8 @@ function commands.load(a)
 				"loaded " .. c.pureName
 			)
 			neko.loadedCart = c
+			editors.current.close()
+			editors.current = editors.code
 		end
 	end
 end

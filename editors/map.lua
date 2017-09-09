@@ -55,7 +55,7 @@ function map.redraw()
 			64, 64, 0
 		)
 
-		api.spr(
+		api.sspr(
 			0, 0, -- todo: page
 			64, 64,
 			map.window.x + 1, map.window.y + 9,
@@ -116,8 +116,8 @@ function map.drawInfo()
 
 	else
 		if my > 7 and my < config.canvas.height - 7 then
-			local x = api.flr(mx / 8)
-			local y = api.flr((my - 8) / 8)
+			local x = api.mid(0, 127, api.flr(mx / 8))
+			local y = api.mid(0, 127, api.flr((my - 8) / 8))
 
 			api.print(
 				"x:" .. x .. " y:" .. y,
@@ -139,7 +139,8 @@ function map._update()
 	end
 
 	if mb then
-		if mx >= map.window.x and mx <= map.window.x + 66
+		if map.window.active and mx >= map.window.x
+			and mx <= map.window.x + 66
 			and my >= map.window.y and my <= map.window.y + 74 then
 
 			mx = mx - map.window.x
@@ -149,7 +150,13 @@ function map._update()
 
 			end
 		else
+			if my > 7 and my < config.canvas.height - 7 then
+				local x = api.mid(0, 127, api.flr(mx / 8))
+				local y = api.mid(0, 127, api.flr((my - 8) / 8))
 
+				neko.loadedCart.map[y][x] = editors.sprites.sprite
+				map.forceDraw = true
+			end
 		end
 	end
 end
