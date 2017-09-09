@@ -64,6 +64,10 @@ function love.draw()
 	api.flip()
 end
 
+function love.wheelmoved(x, y)
+	triggerCallback("_wheel", y)
+end
+
 function love.resize(w, h)
 	resizeCanvas(w,h)
 end
