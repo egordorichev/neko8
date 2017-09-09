@@ -55,8 +55,10 @@ function sprites.init()
 	end
 
 	fill.getPixel = function(x, y)
-		if x < 0 or x > 7 or
-			y < 0 or y > 7 then -- fixme: bounds
+		local s = sprites.sprite
+
+		if x < s % 16 * 8 or x > s % 16 * 8 + 8 or
+			y < api.flr(s / 16) * 8 or y > api.flr(s / 16) * 8 + 8 then -- fixme: bounds
 			return -1
 		end
 
@@ -233,12 +235,12 @@ function sprites.redraw()
 
 	if y >= 0 and y <= 8 then
 		api.brect(
-			64 + x * 8, 7 + y * 8,
+			64 + x * 8, 8 + y * 8,
 			8 * sprites.scale, 8 * sprites.scale, 0
 		)
 
 		api.brect(
-			63 + x * 8, 6 + y * 8,
+			63 + x * 8, 7 + y * 8,
 			8 * sprites.scale + 2, 8 * sprites.scale + 2, 7,
 			8 * sprites.scale + 2, 8 * sprites.scale + 2, 7
 		)
