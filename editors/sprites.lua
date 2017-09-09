@@ -68,42 +68,8 @@ function sprites.init()
 		return sprites.data.data:getPixel(x, y) / 16
 	end
 
-	fill.fillPixel = function(x, y, t, f)
-		local c = fill.getPixel(x, y)
-
-		if c == -1 or c ~= t then
-			return
-		end
-
-		fill.setPixel(x, y, f)
-	end
-
 	fill.use = function(x, y, t, f)
-		if t == nil or f == nil then
-			t = fill.getPixel(x, y)
-			f = sprites.color
-			print(t)
-		end
-
-		print(x, y)
-
-		fill.fillPixel(x, y, t, f)
-
-		if fill.getPixel(x + 1, y) == t then
-			fill.use(x + 1, y, t, f)
-		end
-
-		if fill.getPixel(x - 1, y) == t then
-			fill.use(x - 1, y, t, f)
-		end
-
-		if fill.getPixel(x, y + 1) == t then
-			fill.use(x, y + 1, t, f)
-		end
-
-		if fill.getPixel(x, y - 1) == t then
-			fill.use(x, y - 1, t, f)
-		end
+		-- todo
 	end
 
 	sprites.tools = {
