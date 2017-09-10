@@ -1965,9 +1965,17 @@ function commands.minify(a)
 	neko.loadedCart.code = editors.code.export()
 
 	try(function()
-		neko.loadedCart.code = minify(
+		local code = minify(
 			patchLua(neko.loadedCart.code)
 		)
+		
+		if not code or #code == 0 then
+			api.color(8)
+			api.print("something went wrong. please, contact @egordorichev")
+			return
+		end
+
+		neko.loadedCart.code = code
 
 		editors.code.import(neko.loadedCart.code)
 	end, function(e)
