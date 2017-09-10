@@ -970,6 +970,17 @@ function runCart(cart)
 		"running cart " .. name
 	)
 
+    if cart.lang == "asm" then
+        cart.code = try(function()
+            return asm.compile(cart.code, DEBUG or false)
+        end,
+        runtimeError,
+        function(result) return result end)
+
+        api.print(
+            "successfully compiled " .. cart.pureName
+        )
+    end
 	local ok, f, e = pcall(
 		load, patchLua(cart.code), name
 	)
@@ -2119,17 +2130,6 @@ function commands.load(a)
 			api.print(
 				"loaded " .. c.pureName
 			)
-            if c.lang == "asm" then
-                c.code = try(function()
-                    return asm.compile(c.code, DEBUG or false)
-                end,
-                runtimeError,
-                function(result) return result end)
-
-                api.print(
-                    "successfully compiled " .. c.pureName
-                )
-            end
 			neko.loadedCart = c
 			editors.current.close()
 			editors.current = editors.code
