@@ -18,6 +18,8 @@ QueueableSource = require "libs.QueueableSource"
 frameTime = 1 / config.fps
 hostTime = 0
 
+asm = require "libs/asm-lua"
+
 function love.load(arg)
 	if arg then
 		DEBUG = arg[2] == "-d"
@@ -559,7 +561,7 @@ function loadCart(name)
 		return nil
 	end
 
-	cart.code = loadCode(data, cart)
+	cart.code, cart.lang = loadCode(data, cart)
 
 	if not cart.code then
 		log.error("failed to load code")
@@ -687,14 +689,30 @@ end
 end
 
 function loadCode(data, cart)
-	local _, codeStart = data:find("\n__lua__\n")
+	local codeTypes = {"lua", "asm"}
+
+	local codeType
+	local codeStart
+
+	for _, v in ipairs(codeTypes) do
+		_, codeStart = data:find("\n__" .. v .. "__\n")
+		if codeStart then
+            codeType = v
+            break
+        end
+	end
+
+    if not codeStart then
+        runtimeError("Could't find a valid code section in cart")
+    end
+
 	local codeEnd = data:find("\n__gfx__\n")
 
 	local code = data:sub(
 		codeStart, codeEnd
 	)
 
-	return code
+	return code, codeType
 end
 
 function loadSprites(cdata, cart)
@@ -892,10 +910,12 @@ function patchLua(code)
 	return code
 end
 
-function try(f, catch)
-	local status, exception = pcall(f)
+function try(f, catch, finally)
+	local status, result = pcall(f)
 	if not status then
-		catch(exception)
+		catch(result)
+    elseif finally then
+        return finally(result)
 	end
 end
 
@@ -1062,6 +1082,9 @@ function createSandbox()
 	return {
 		pcall = pcall,
 		loadstring = loadstring,
+
+        -- this is required by the asm.lua callx operator
+        table = {unpack = table.unpack},
 
 		printh = print,
 		csize = api.csize,
@@ -2064,6 +2087,17 @@ function commands.load(a)
 			api.print(
 				"loaded " .. c.pureName
 			)
+            if c.lang == "asm" then
+                c.code = try(function()
+                    return asm.compile(c.code, DEBUG or false)
+                end,
+                runtimeError,
+                function(result) return result end)
+
+                api.print(
+                    "successfully compiled " .. c.pureName
+                )
+            end
 			neko.loadedCart = c
 			editors.current.close()
 			editors.current = editors.code
