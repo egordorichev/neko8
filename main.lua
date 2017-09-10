@@ -691,7 +691,7 @@ end
 end
 
 function loadCode(data, cart)
-	local codeTypes = {"lua", "asm"}
+	local codeTypes = { "lua", "asm" }
 
 	local codeType
 	local codeStart
@@ -699,19 +699,20 @@ function loadCode(data, cart)
 	for _, v in ipairs(codeTypes) do
 		_, codeStart = data:find("\n__" .. v .. "__\n")
 		if codeStart then
-			codeType = v
-			break
-		end
+      codeType = v
+    	break
+    end
 	end
 
 	if not codeStart then
-		runtimeError("Could't find a valid code section in cart")
-	end
+    runtimeError("Could't find a valid code section in cart")
+		return
+  end
 
 	local codeEnd = data:find("\n__gfx__\n")
 
 	local code = data:sub(
-		codeStart, codeEnd
+		codeStart + 1, codeEnd
 	)
 
 	return code, codeType
@@ -1979,9 +1980,17 @@ function commands.minify(a)
 	neko.loadedCart.code = editors.code.export()
 
 	try(function()
-		neko.loadedCart.code = minify(
+		local code = minify(
 			patchLua(neko.loadedCart.code)
 		)
+
+		if not code or #code == 0 then
+			api.color(8)
+			api.print("something went wrong. please, contact @egordorichev")
+			return
+		end
+
+		neko.loadedCart.code = code
 
 		editors.code.import(neko.loadedCart.code)
 	end, function(e)
