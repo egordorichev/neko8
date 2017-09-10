@@ -2,8 +2,10 @@ neko8 cart
 __asm__
 section .data
 
+def msg "Hello, world!"
+
 section .text
-extern cls
+
 extern _init
 extern _update
 extern _draw
@@ -17,7 +19,14 @@ update:
 end
 
 draw:
- callx cls, 0
+ mov a, 0
+ call color
+ call cls
+
+ mov a, 7
+ call color
+ mov ss, [msg]
+ call print
  ret
 end
 
