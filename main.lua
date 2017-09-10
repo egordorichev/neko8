@@ -1947,11 +1947,17 @@ function commands.minify(a)
 	end
 
 	neko.loadedCart.code = editors.code.export()
-	neko.loadedCart.code = minify(
-		patchLua(neko.loadedCart.code)
-	)
-	
-	editors.code.import(neko.loadedCart.code)
+
+	try(function()
+		neko.loadedCart.code = minify(
+			patchLua(neko.loadedCart.code)
+		)
+
+		editors.code.import(neko.loadedCart.code)
+	end, function(e)
+		api.color(8)
+		api.print("something went wrong. please, contact @egordorichev")
+	end)
 end
 
 function commands.help(a)

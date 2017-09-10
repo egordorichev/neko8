@@ -117,7 +117,7 @@ local Keywords = lookupify{
     'and', 'break', 'do', 'else', 'elseif',
     'end', 'false', 'for', 'function', 'goto', 'if',
     'in', 'local', 'nil', 'not', 'or', 'repeat',
-    'return', 'then', 'true', 'until', 'while',
+    'return', 'then', 'true', 'until', 'while'
 };
 
 local BlockFollowKeyword = lookupify{'else', 'elseif', 'until', 'end'}
@@ -132,7 +132,8 @@ local BinopSet = lookupify{
 }
 
 local GlobalRenameIgnore = lookupify{
-
+	'_init', '_draw', '_update', '_wheet', '_text',
+	'_key'
 }
 
 local BinaryPriority = {
@@ -1643,6 +1644,11 @@ function AddVariableInfo(ast)
 	local function addGlobalReference(name, setNameFunc)
 		assert(name, "Missing var name")
 		local var = getGlobalVar(name)
+		for k, v in pairs(GlobalRenameIgnore) do
+			if k == name or v == name then
+				return var
+			end
+		end
 		table.insert(var.RenameList, setNameFunc)
 		return var
 	end
@@ -2123,7 +2129,7 @@ function PrintAst(ast)
 				end
 			end
 		else
-			assert(false, "unreachable")
+			return
 		end
 	end
 
