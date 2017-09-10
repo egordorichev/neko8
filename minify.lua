@@ -133,7 +133,7 @@ local BinopSet = lookupify{
 
 local GlobalRenameIgnore = lookupify{
 	'_init', '_draw', '_update', '_wheet', '_text',
-	'_key'
+	'_keydown', '_copy', '_cut', '_keyup'
 }
 
 local BinaryPriority = {
