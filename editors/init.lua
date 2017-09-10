@@ -91,6 +91,9 @@ function editors.drawUI()
 		1, config.editors.ui.fg
 	)
 
+	api.spr(13, config.canvas.width - 7,
+		config.canvas.height - 7)
+
 	neko.core, neko.cart = neko.cart, neko.core
 end
 
@@ -110,6 +113,14 @@ function editors._update()
 				editors.current = m
 				m.open()
 			end
+		end
+
+		if mx >= config.canvas.width - 7
+			and mx <= config.canvas.width
+			and my >= config.canvas.height - 7
+			and my <= config.canvas.height then
+
+			editors.close()
 		end
 	end
 end

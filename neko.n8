@@ -23,7 +23,8 @@ function _init()
   new=new,
   save=save,
   folder=folder,
-  cls=cls
+  cls=cls,
+  edit=edit
  }
 
  start_screen()
