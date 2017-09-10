@@ -20,6 +20,8 @@ QueueableSource = require "libs.QueueableSource"
 frameTime = 1 / config.fps
 hostTime = 0
 
+asm = require "libs/asm-lua"
+
 function love.load(arg)
 	if arg then
 		DEBUG = arg[2] == "-d"
@@ -131,15 +133,18 @@ function love.keypressed(
 			handled = false
 		end
 	elseif love.keyboard.isDown("lalt")
-	 	or love.keyboard.isDown("ralt") then
+		or love.keyboard.isDown("ralt") then
 		if (key == "return" or key == "kpenter")
-		 	and not isRepeat then
+			and not isRepeat then
 
 			neko.fullscreen = not neko.fullscreen
 			love.window.setFullscreen(neko.fullscreen)
 		end
 	else
-		if (key == "escape" or (key == "return" and (love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift")))) and not isRepeat then
+		local shiftDown = love.keyboard.isDown("lshift")
+					or love.keyboard.isDown("rshift")
+		if (key == "escape" or (key == "return" and shiftDown))
+			and not isRepeat then
 			handled = false
 			if neko.cart then
 				neko.cart = nil
@@ -163,13 +168,13 @@ function love.keypressed(
 		elseif key == "f9" then
 			if not gif then return end
 			gif:close()
-      gif = nil
+			gif = nil
 			api.smes("saved gif")
-      love.filesystem.write(
+			love.filesystem.write(
 				"neko8-" .. os.time() .. ".gif",
 				love.filesystem.read("neko8.gif")
 			)
-      love.filesystem.remove("neko8.gif")
+			love.filesystem.remove("neko8.gif")
 		else
 			handled = false
 		end
@@ -300,9 +305,9 @@ function love.run()
 			dt = dt + love.timer.getDelta()
 		end
 		local render = false
-		while dt > frameTime do
+		while dt >= frameTime do
 			hostTime = hostTime + dt
-			if hostTime > 65536 then
+			if hostTime >= 65536 then
 				hostTime = hostTime - 65536
 			end
 			if love.update then
@@ -328,13 +333,11 @@ function triggerCallback(c, ...)
 	if neko.cart then
 		if neko.cart.sandbox[c] then
 			local v = nil
-			local args = unpack({ ... })
+			local args = {...}
 
 			try(function()
-				v = neko.cart.sandbox[c](args)
-			end, function(e)
-				runtimeError(e)
-			end)
+				v = neko.cart.sandbox[c](unpack(args))
+			end, runtimeError)
 
 			return v
 		end
@@ -560,7 +563,7 @@ function loadCart(name)
 		return nil
 	end
 
-	cart.code = loadCode(data, cart)
+	cart.code, cart.lang = loadCode(data, cart)
 
 	if not cart.code then
 		log.error("failed to load code")
@@ -688,16 +691,30 @@ end
 end
 
 function loadCode(data, cart)
-	local codeStart = data:find("__lua__")
-		+ 8
-	local codeEnd = data:find("__gfx__")
-		- 1
+	local codeTypes = {"lua", "asm"}
+
+	local codeType
+	local codeStart
+
+	for _, v in ipairs(codeTypes) do
+		_, codeStart = data:find("\n__" .. v .. "__\n")
+		if codeStart then
+            codeType = v
+            break
+        end
+	end
+
+    if not codeStart then
+        runtimeError("Could't find a valid code section in cart")
+    end
+
+	local codeEnd = data:find("\n__gfx__\n")
 
 	local code = data:sub(
 		codeStart, codeEnd
 	)
 
-	return code
+	return code, codeType
 end
 
 function loadSprites(cdata, cart)
@@ -709,10 +726,8 @@ function loadSprites(cdata, cart)
 	sprites.quads = {}
 	sprites.flags = {}
 
-	local gfxStart = cdata:find("__gfx__")
-		+ 8
-	local gfxEnd = cdata:find("__gff__")
-		- 1
+	local _, gfxStart = cdata:find("\n__gfx__\n")
+	local gfxEnd = cdata:find("\n__gff__\n")
 
 	local data = cdata:sub(gfxStart, gfxEnd)
 
@@ -771,10 +786,8 @@ function loadSprites(cdata, cart)
 	sprites.sheet =
 		love.graphics.newImage(sprites.data)
 
-	local flagsStart = cdata:find("__gff__")
-		+ 8
-	local flagsEnd = cdata:find("__map__")
-		- 1
+	local _, flagsStart = cdata:find("\n__gff__\n")
+	local flagsEnd = cdata:find("\n__map__\n")
 	local data = cdata:sub(
 		flagsStart, flagsEnd
 	)
@@ -812,8 +825,8 @@ end
 
 function loadMap(data, cart)
 	local map = {}
-	local mapStart = data:find("__map__") + 8
-	local mapEnd = data:find("__end__") - 1
+	local _, mapStart = data:find("\n__map__\n")
+	local mapEnd = data:find("\n__end__\n")
 	data = data:sub(mapStart, mapEnd)
 
 	for y = 0, 127 do
@@ -892,17 +905,19 @@ function patchLua(code)
 		end)
 
 	code = code:gsub(
-		"(%S+)%s*([%+-%*/%%])=",
+		"(%S+)%s*([%+%-%*/%%])=",
 		"%1=%1%2 "
 	)
 
 	return code
 end
 
-function try(f, catch)
-	local status, exception = pcall(f)
+function try(f, catch, finally)
+	local status, result = pcall(f)
 	if not status then
-		catch(exception)
+		catch(result)
+    elseif finally then
+        return finally(result)
 	end
 end
 
@@ -990,9 +1005,7 @@ function runCart(cart)
 			cart.sandbox._update then
 			neko.cart = cart
 		end
-	end, function(e)
-		runtimeError(e)
-	end)
+	end, runtimeError)
 
 	api.flip()
 end
@@ -1017,7 +1030,7 @@ function saveCart(name)
 	data = data .. editors.sprites.exportGFF()
 	data = data .. "__map__\n"
 	data = data .. editors.map.export()
-	data = data .. "__end__"
+	data = data .. "__end__\n"
 
 	love.filesystem.write(
 		name .. ".n8", data, #data
@@ -1071,6 +1084,9 @@ function createSandbox()
 	return {
 		pcall = pcall,
 		loadstring = loadstring,
+
+        -- this is required by the asm.lua callx operator
+        table = {unpack = table.unpack},
 
 		printh = print,
 		csize = api.csize,
@@ -1372,7 +1388,7 @@ function api.print(s, x, y, c)
 
 	if scroll then
 		y = cursor.y
-	 	cursor.y = cursor.y + 6
+		cursor.y = cursor.y + 6
 	end
 
 	if x == nil or type(x) == "boolean" then
@@ -2017,7 +2033,7 @@ function commands.ls(a)
 
 	for i, f in ipairs(files) do
 		if love.filesystem.isDirectory(f)
-		 	and f:sub(1, 1) ~= "." then
+			and f:sub(1, 1) ~= "." then
 			api.add(out, {
 				name = f:lower(),
 				color = 12
@@ -2089,6 +2105,17 @@ function commands.load(a)
 			api.print(
 				"loaded " .. c.pureName
 			)
+            if c.lang == "asm" then
+                c.code = try(function()
+                    return asm.compile(c.code, DEBUG or false)
+                end,
+                runtimeError,
+                function(result) return result end)
+
+                api.print(
+                    "successfully compiled " .. c.pureName
+                )
+            end
 			neko.loadedCart = c
 			editors.current.close()
 			editors.current = editors.code
@@ -2275,7 +2302,9 @@ function initPalette()
 	colors.drawShader =
 		love.graphics.newShader([[
 extern float palette[16];
-vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) {
+vec4 effect(vec4 color, Image texture,
+			vec2 texture_coords,
+			vec2 screen_coords) {
 	int index = int(color.r*16.0);
 	return vec4(vec3(palette[index]/16.0),1.0);
 }]])
@@ -2289,7 +2318,8 @@ vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) 
 		love.graphics.newShader([[
 extern float palette[16];
 extern float transparent[16];
-vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) {
+vec4 effect(vec4 color, Image texture,
+			vec2 texture_coords, vec2 screen_coords) {
 	int index = int(floor(Texel(texture, texture_coords).r*16.0));
 	float alpha = transparent[index];
 	return vec4(vec3(palette[index]/16.0),alpha);
@@ -2308,7 +2338,8 @@ vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) 
 	colors.textShader =
 		love.graphics.newShader([[
 extern float palette[16];
-vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) {
+vec4 effect(vec4 color, Image texture,
+			vec2 texture_coords, vec2 screen_coords) {
 	vec4 texcolor = Texel(texture, texture_coords);
 	if(texcolor.a == 0.0) {
 		return vec4(0.0,0.0,0.0,0.0);
@@ -2325,7 +2356,8 @@ vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) 
 	colors.displayShader =
 		love.graphics.newShader([[
 extern vec4 palette[16];
-vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) {
+vec4 effect(vec4 color, Image texture,
+			vec2 texture_coords, vec2 screen_coords) {
 	int index = int(Texel(texture, texture_coords).r*15.0);
 	return palette[index]/256.0;
 }]])
@@ -2339,7 +2371,8 @@ vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) 
 		love.graphics.newShader([[
 extern vec4 palette[16];
 extern float transparent[16];
-vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) {
+vec4 effect(vec4 color, Image texture,
+			vec2 texture_coords, vec2 screen_coords) {
 	int index = int(floor(Texel(texture, texture_coords).r*16.0));
 	float alpha = transparent[index];
 	vec3 clr = vec3(palette[index]/16.0);
