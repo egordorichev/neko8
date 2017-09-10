@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>neko8 web player</title>
 		<link rel="stylesheet" type="text/css" href="styles.css"></link>
-		<script src="twgl.js"></script>
+		<script src="fengari.js"></script>
+		<script src="conf.js"></script>
 		<script src="index.js"></script>
 	</head>
 	<body>
 		<div id="container"></div>
 	</body>
 	<script>
-		run()
+		document.title = "neko8 " + config.version.string
+	</script>
+	<script type="text/lua">
+		print('hi')
 	</script>
 </html>
