@@ -291,7 +291,7 @@ function sprites._update()
 	end
 
 	if mb then
-		if mx > 64 and mx < 192
+		if lmb == false and mx > 64 and mx < 192
 			and my > 8 and my < 72 then
 
 			my = my - 8
@@ -312,7 +312,7 @@ function sprites._update()
 
 			sprites.data.sheet:refresh()
 			sprites.forceDraw = true
-		elseif my > 72 and my < 120 and
+		elseif lmb == false and my > 72 and my < 120 and
 			mx > 15 and mx < 47 + 16 then
 			mx = api.flr((mx - 16) / 12)
 			my = api.flr((my - 72) / 12)
