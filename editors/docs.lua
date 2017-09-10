@@ -187,7 +187,8 @@ function docs.selectPage(t)
 end
 
 function docs._update()
-    lmb = mb
+    
+	lmb = mb
     lmx = mx
     lmy = my
     mx, my, mb = api.mstat(1)

@@ -48,7 +48,9 @@ function love.load(arg)
 end
 
 function love.touchpressed()
-	love.keyboard.setTextInput(true)
+	if editors.current == editors.modes[1] then
+		love.keyboard.setTextInput(true)
+	end
 end
 
 function love.update(dt)
