@@ -131,9 +131,9 @@ function love.keypressed(
 			handled = false
 		end
 	elseif love.keyboard.isDown("lalt")
-	 	or love.keyboard.isDown("ralt") then
+		or love.keyboard.isDown("ralt") then
 		if (key == "return" or key == "kpenter")
-		 	and not isRepeat then
+			and not isRepeat then
 
 			neko.fullscreen = not neko.fullscreen
 			love.window.setFullscreen(neko.fullscreen)
@@ -1385,7 +1385,7 @@ function api.print(s, x, y, c)
 
 	if scroll then
 		y = cursor.y
-	 	cursor.y = cursor.y + 6
+		cursor.y = cursor.y + 6
 	end
 
 	if x == nil or type(x) == "boolean" then
@@ -2015,7 +2015,7 @@ function commands.ls(a)
 
 	for i, f in ipairs(files) do
 		if love.filesystem.isDirectory(f)
-		 	and f:sub(1, 1) ~= "." then
+			and f:sub(1, 1) ~= "." then
 			api.add(out, {
 				name = f:lower(),
 				color = 12
