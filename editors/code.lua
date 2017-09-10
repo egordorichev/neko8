@@ -72,7 +72,7 @@ function code._update()
 			code.select.start.y = api.flr((my - 8) / 6)
 
 			code.select.start.y = api.mid(
-				0, #code.lines - 1, code.select.start.y
+				0, api.max(1, #code.lines - 1), code.select.start.y
 			)
 
 			code.select.start.x = api.mid(
@@ -86,7 +86,7 @@ function code._update()
 			code.select.finish.y = api.flr((my - 8) / 6)
 
 			code.select.finish.y = api.mid(
-				0, #code.lines - 1, code.select.finish.y
+				0, api.max(1, #code.lines - 1), code.select.finish.y
 			)
 
 			code.select.finish.x = api.mid(
@@ -246,8 +246,8 @@ function code._keydown(k)
 			code.select.active = true
 			code.select.start = { x = 0, y = 0 }
 			code.select.finish = {
-				x = #code.lines[#code.lines - 1],
-				y = #code.lines - 1
+				x = #code.lines[api.max(1, #code.lines - 1)],
+				y = api.max(1,#code.lines - 1)
 			}
 
 			code.forceDraw = true
@@ -673,7 +673,7 @@ function code.checkCursorY()
   code.cursor.y =
     api.mid(
       0, code.cursor.y,
-      #code.lines - 1
+      api.max(1, #code.lines - 1)
     )
 
   if code.cursor.y > th + code.view.y - 3 then
