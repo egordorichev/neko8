@@ -24,7 +24,8 @@ function _init()
   save=save,
   folder=folder,
   cls=cls,
-  edit=edit
+  edit=edit,
+	minify=minify
  }
 
  start_screen()

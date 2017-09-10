@@ -5,6 +5,8 @@
 OS = love.system.getOS()
 mobile = OS == "Android" or OS == "iOS"
 
+require "minify"
+
 -- DEBUG!
 -- mobile = true
 
@@ -1127,6 +1129,7 @@ function createSandbox()
 		cd = commands.cd,
 		rm = commands.rm,
 		edit = commands.edit,
+		minify = commands.minify,
 
 		pairs = pairs,
 		ipairs = ipairs,
@@ -1935,6 +1938,21 @@ end
 -----------------------------------------
 
 commands = {}
+
+function commands.minify(a)
+	if neko.loadedCart == nil then
+		api.color(8)
+		api.print("no carts loaded")
+		return
+	end
+
+	neko.loadedCart.code = editors.code.export()
+	neko.loadedCart.code = minify(
+		patchLua(neko.loadedCart.code)
+	)
+	
+	editors.code.import(neko.loadedCart.code)
+end
 
 function commands.help(a)
 	if #a == 0 then
