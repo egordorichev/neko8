@@ -8,20 +8,22 @@ local asmtest=function(a) local eq=a==0; return {lt=false,gt=false,le=eq,ge=eq,e
 local asmnot=function() return {lt=not _R.f.lt,gt=not _R.f.gt,le=not _R.f.le,ge=not _R.f.ge,eq=not _R.f.eq,ne=not _R.f.ne,err=false,syserr=false} end
 ]]
 
+_ASM = {}
+
 table.unpack = table.unpack or unpack
 
-prelude = [[]]
+_ASM.prelude = [[]]
 local name = ...
-root = string.gsub(name, '/init$', '') .. '/'
-std = require(root .. 'include/std')
+_ASM.root = string.gsub(name, '/init$', '') .. '/'
+_ASM.std = require(_ASM.root .. 'include/std')
 
-label = 0x0
-labels = {}
-externs = {}
+_ASM.label = 0x0
+_ASM.labels = {}
+_ASM.externs = {}
 
-stdsymbols = {}
+_ASM.stdsymbols = {}
 
-local parseline = require(root .. 'include/parseline')
+local parseline = require(_ASM.root .. 'include/parseline')
 local genast = function(src, verbose)
     local line = 1
     local ast = {}
@@ -52,14 +54,19 @@ local genast = function(src, verbose)
     return ast
 end
 
-local assemble = require(root .. 'include/assemble')
-local compile = function(src, verbose)
-    prelude = [[]]
+local assemble = require(_ASM.root .. 'include/assemble')
+local compile = function(src, verbose, neko8)
+    _ASM.prelude = [[]]
+    _ASM.neko8 = neko8
 
     local ast = genast(src, verbose)
     local asm = assemble(ast, verbose)
 
-    return boilerplate .. prelude .. asm
+    if neko8 then
+        return boilerplate .. asm
+    else
+        return boilerplate .. _ASM.prelude .. asm
+    end
 end
 
 return {compile = compile}

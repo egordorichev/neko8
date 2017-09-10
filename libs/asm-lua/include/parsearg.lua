@@ -47,32 +47,32 @@ local match_arg = function(expr, arg, result, verbose)
     end
 
     if result.type == 'var' then
-        if labels[result.name] then
+        if _ASM.labels[result.name] then
             result.type = 'immediate'
-            result.val = labels[result.name] 
+            result.val = _ASM.labels[result.name] 
             result.name = nil
-        elseif std[result.name] then
+        elseif _ASM.std[result.name] then
             result.type = 'immediate'
             result.val = result.name
-            if not stdsymbols[result.name] then
-                prelude = prelude .. std[result.name] .. '\n'
-                stdsymbols[result.name] = true
+            if not _ASM.stdsymbols[result.name] then
+                _ASM.prelude = _ASM.prelude .. _ASM.std[result.name] .. '\n'
+                _ASM.stdsymbols[result.name] = true
             end
             result.name = nil
-        elseif externs[result.name] then
+        elseif _ASM.externs[result.name] then
             result.type = 'externref'
             result.name = result.name
         else
             error(string.format('invalid identifier: %s', result.name))
         end
     elseif result.type == 'memvar' then
-        if labels[result.name] then
+        if _ASM.labels[result.name] then
             result.type = 'mem'
-            result.ptr = labels[result.name] 
-        elseif externs[result.name] then
+            result.ptr = _ASM.labels[result.name] 
+        elseif _ASM.externs[result.name] then
             result.type = 'extern'
             result.name = result.name
-        elseif std[result.name] then
+        elseif _ASM.std[result.name] then
             error(string.format('cannot access static std member: %s', result.name))
         else
             error(string.format('invalid identifier: %s', result.name))
