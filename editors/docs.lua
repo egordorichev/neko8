@@ -3,15 +3,12 @@ local docs = {}
 docs.content = {}
 local content = docs.content
 
-local docs1 = {}
-docs1.neko8 = {
-	{name="specs",desc=
-		[[Memory: 65k code space
-		Sprites: 512 sprites 
-		Map: 128*128 tile map 
-		Music/SFX: 4 channel, 64 definable chip blerps 
-		Display: 128*192, 16 colors 
-		80k planned memory]]},
+content.neko8 = {
+	{name="Memory", desc="65k code space, 80k planned memory"},
+	{name="Sprites", desc="512 sprites"},
+	{name="Map", desc=" 128 * 128 tile map"},
+	{name="Music SFX", desc="4 channel, 64 definable chip blerps"},
+	{name="Display", desc=" 128 * 192, 16 colors"},
 }
 
 content.sys = {
@@ -50,23 +47,23 @@ content.graph = {
 }
 
 content.input = {
-	{name="btn(b, p)",desc="Get button b state for player p"},
-	{name="key(k)",desc="Detect if key:k is pressed"},
-	{name="btnp(b, p)",desc="Only true when the button was not pressed the last frame; repeats every 4 frames after button held for 12 frames"},
+	{name = "btn(b, p)", desc = "Get button b state for player p"},
+	{name = "key(k)", desc = "Detect if key:k is pressed"},
+	{name = "btnp(b, p)", desc = "Only true when the button was not pressed the last frame; repeats every 4 frames after button held for 12 frames"},
 }
 
 content.math = {
-	{name="flr(n)",desc="Round down of n, flr(4.9)->4"},
-	{name="ceil(n)",desc="Round up of n, ceil(2.1)->3"},
-	{name="cos(n)",desc="Cosine n, [0..1]"},
-	{name="sin(n)",desc="Sine n, [0..1]; inverted"},
-	{name="rnd(min, max)",desc="Random from min to max"},
-	{name="srand(s)",desc="Set random seed"},
-	{name="max(a, b)",desc="Maximum of a,b"},
-	{name="min(a, b)",desc="Minimum of a,b"},
-	{name="mid(x, y, z)",desc="Middle of x,y,z"},
-	{name="abs(n)",desc="Absolute value of n"},
-	{name="sgn(n)",desc="Return n sign: -1 or 1"},
+	{name = "flr(n)", desc = "Round down of n, flr(4.9)->4"},
+	{name = "ceil(n)", desc = "Round up of n, ceil(2.1)->3"},
+	{name = "cos(n)", desc = "Cosine n, [0..1]"},
+	{name = "sin(n)", desc = "Sine n, [0..1]; inverted"},
+	{name = "rnd(min, max)", desc = "Random from min to max"},
+	{name = "srand(s)", desc = "Set random seed"},
+	{name = "max(a, b)", desc = "Maximum of a,b"},
+	{name = "min(a, b)", desc = "Minimum of a,b"},
+	{name = "mid(x, y, z)", desc = "Middle of x,y,z"},
+	{name = "abs(n)", desc = "Absolute value of n"},
+	{name = "sgn(n)", desc = "Return n sign: -1 or 1"},
 }
 
 content.cmd = {
@@ -87,15 +84,15 @@ content.cmd = {
 }
 
 content.table = {
-	{name="pairs(t)",desc="Used in 'for k,v in pairs(t)' loops"},
-	{name="ipairs(t)",desc="Used in 'for k,v in ipairs(t)' loops"},
-	{name="string()",desc="----"},
-	{name="add(a, v)",desc="Insert item v into table a"},
-	{name="del(a, dv)",desc="Remove item dv from table a"},
-	{name="all(a)",desc="Return every item of table a"},
-	{name="count(a)",desc="Return length of table a "},
-	{name="foreach(a, f)",desc="Iterate items in table a with function f"},
-}
+	{name = "pairs(t)", desc = "Used in 'for k,v in pairs(t)' loops"},
+	{name = "ipairs(t)", desc = "Used in 'for k,v in ipairs(t)' loops"},
+	{name = "string()", desc = "----"},
+	{name = "add(a, v)", desc = "Insert item v into table a"},
+	{name = "del(a, dv)", desc = "Remove item dv from table a"},
+	{name = "all(a)", desc = "Return every item of table a"},
+	{name = "count(a)", desc = "Return length of table a "},
+	{name = "foreach(a, f)", desc = "Iterate items in table a with function f"},
+	}
 
 content.msg = {
 	{name="smes(s)",desc="Show message at the bottom of screen"},
@@ -107,19 +104,26 @@ content.keys = {
 	{name="toggle editor",desc="esc"},
 	{name="save cart",desc="ctrl + s "},
 	{name="run cart",desc="ctrl + r"},
+	{name="toggle fullscreen", desc="ctrl + return"},
+	{name="copy text", desc="ctrl + c"},
+	{name="paste text", desc="ctrl + v"},
+	{name="cut text", desc="ctrl + x"},
+	{name="new screenshot", desc="f1"},
+	{name="new gif record", desc="f8"},
+	{name="save gif record", desc="f9"},
 }
 
 function docs.init()
-    docs.forceDraw = false
-    docs.icon = 14
-	docs.tab = "input"
+	docs.forceDraw = false
+	docs.icon = 13
+	docs.tab = "neko8"
 	docs.page = 0 
     docs.name = "build-in help"
     docs.bg = config.editors.docs.bg
 end
 
 function docs.open()
-    docs.forceDraw = true
+	docs.forceDraw = true
 end
 
 function docs.close()
@@ -127,16 +131,16 @@ function docs.close()
 end
 
 function docs._draw()
-    if docs.forceDraw then
-        docs.redraw()
-        docs.forceDraw = false
-    end 
+	if docs.forceDraw then
+		docs.redraw()
+		docs.forceDraw = false
+	end
+	editors.drawUI()
 end
 
 function docs.redraw()
-    api.cls(docs.bg)
-
-	api.rectfill(0,0,192,128,0)
+	api.cls(docs.bg)
+	api.brectfill(0, 7, 191, 127, 0)
 
 	neko.cart, neko.core = neko.core, neko.cart
    
@@ -175,57 +179,67 @@ function docs.selectPage(t)
     end   
         
     local l = #t
-	--print(l)
-        
+	
+    -- special info page for neko8   
+	if docs.tab == "neko8" then
+		api.print("NEKO-8 Specs:", 2, 10, 9)
+	end
+
     for k,v in pairs(t) do
         local nameY,descY = 12*(k-1)+8, 12*(k-1)+14
 		-- 1st name match "words words " in docs.keys, 2nd name match "words" in other docs
-		local name, para = string.match(v.name,"[%a*%s]*") or string.match(v.name, "%a*"), string.match(v.name, "[%(].*[%)]") or ":"
+		local name, para = string.match(v.name,"[%a*%s]*") or string.match(v.name, "%a*") or "empty", string.match(v.name, "[%(].*[%)]") or ":"
 		local paraX = 1 + string.len(name) * 8/2
-		if l <= 9 then
-			if v.name == "btnp(b, p)" then
-				local p1,p2,p3 = string.sub(v.desc, 1,15*3),string.sub(v.desc,15*3,30*3), string.sub(v.desc,30*3,-1)
-				api.print(name, 1, nameY, 7)
-				api.print(para, 1 + paraX , nameY, 8)  
-				api.print(p1, 6, descY, 6)
-				api.print(p2, 2, descY+6, 6)
-				api.print(p3, 2, descY+12, 6)
-			else
-            	api.print(name, 1, nameY, 7)
-				api.print(para, 1 + paraX, nameY, 8)
-            	api.print(v.desc, 6, descY, 6)
-        	end
-		elseif l > 9 then
-            multiPages( api.ceil(l/9) - 1)
-                
-            if docs.page == 0 and nameY <= 128-24 then
-                api.print(name, 1, nameY, 7)
-				api.print(para, 1 + paraX, nameY, 8)
-                api.print(v.desc, 6, descY, 6)
-            elseif docs.page == 1 and nameY >= 128-16 and nameY <= 128*2-24-16 then
-                api.print(name, 1, nameY-(128-20), 7)
-                api.print(para, 1 + paraX, nameY-(128-20), 8)
-				api.print(v.desc, 6, descY-(128-20), 6)
-            elseif docs.page == 2 and nameY > 128*2-24-16 then
-				api.print(name, 1, nameY-(128*2-40), 7)
-				api.print(para, 1 + paraX, nameY-(128*2-40), 8)
-                api.print(v.desc, 6, descY-(128*2-40), 6)
-			end 
-        end 
+		
+		-- special info page for neko8
+		if docs.tab == "neko8" then
+			api.print(name, 4, nameY+10, 7)
+			api.print(para, 4 + paraX, nameY+10, 8)
+			api.print(v.desc, 9, descY+10, 6)
+		else
+			if l <= 9 then
+				if v.name == "btnp(b, p)" then
+					local p1,p2,p3 = string.sub(v.desc, 1,15*3),string.sub(v.desc,15*3,30*3), string.sub(v.desc,30*3,-1)
+					api.print(name, 1, nameY, 7)
+					api.print(para, 1 + paraX , nameY, 8)  
+					api.print(p1, 6, descY, 6)
+					api.print(p2, 2, descY+6, 6)
+					api.print(p3, 2, descY+12, 6)
+				else
+					api.print(name, 1, nameY, 7)
+					api.print(para, 1 + paraX, nameY, 8)
+					api.print(v.desc, 6, descY, 6)
+				end
+			elseif l > 9 then
+				multiPages( api.ceil(l/9) - 1)
+					
+				if docs.page == 0 and nameY <= 128-24 then
+					api.print(name, 1, nameY, 7)
+					api.print(para, 1 + paraX, nameY, 8)
+					api.print(v.desc, 6, descY, 6)
+				elseif docs.page == 1 and nameY >= 128-16 and nameY <= 128*2-24-16 then
+					api.print(name, 1, nameY-(128-20), 7)
+					api.print(para, 1 + paraX, nameY-(128-20), 8)
+					api.print(v.desc, 6, descY-(128-20), 6)
+				elseif docs.page == 2 and nameY > 128*2-24-16 then
+					api.print(name, 1, nameY-(128*2-40), 7)
+					api.print(para, 1 + paraX, nameY-(128*2-40), 8)
+					api.print(v.desc, 6, descY-(128*2-40), 6)
+				end 
+			end
+		end
     end 
-
 end
 
 function docs._update()
-    
 	lmb = mb
-    lmx = mx
-    lmy = my
-    mx, my, mb = api.mstat(1)
-
-    if mx ~= lmx or my ~= lmy then
-        docs.redrawInfo = true
-    end 
+	lmx = mx
+	lmy = my
+	mx, my, mb = api.mstat(1)
+  
+	if mx ~= lmx or my ~= lmy then
+		docs.redrawInfo = true
+	end 
 
 	if mb then
 		if lmb == false then 
@@ -235,7 +249,7 @@ function docs._update()
 				local posX = 2
 				for k,v in pairs(content) do
 					local len = string.len(k)
-					
+						
 					if mx >= posX and mx <= posX + (len+1)*8/2 then
 						docs.tab = k
 						docs.page = 0
@@ -248,28 +262,24 @@ function docs._update()
 			-- select page
 			if my >= 8 and my <= 16 then
 				local j = api.ceil(#content[docs.tab]/9) - 1
-                for i = 0, j do
-                    if mx >= 166 + i * 8 and mx <= 166 + 8 + i * 8 then
-                        docs.page = i
-                        docs.forceDraw = true
-                        return
-                    end
-                end
-            end
+				for i = 0, j do
+					if mx >= 166 + i * 8 and mx <= 166 + 8 + i * 8 then
+						docs.page = i
+						docs.forceDraw = true
+						return
+					end
+				end
+			 end
 		end
-	end	 	
-end
-
-function docs.mouse(j)
-	
+	end
 end
 
 function docs.import(data)
-    docs.data = data
+	docs.data = data
 end
 
 function docs.export()
-    return docs.data
+	return docs.data
 end
 
 return docs

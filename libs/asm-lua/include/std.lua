@@ -17,11 +17,11 @@ std.itoa = [[local itoa=function() _R.ds=tostring(_R.a) end]]
 std.atoi = [[local atoi=function() _R.ds=tostring(_R.a) end]]
 std.memset = [[local memset=function() for i=0,_R.c-1 do _D[_R.b+i]=_R.a end end]]
 std.memcpy = [[local memcpy=function() for i=0,_R.c-1 do _D[_R.b+i]=_D[_R.a+i] end end]]
-std.memcmp = [[local memcmp=function() for i=0,_R.c-1 do local a=_D[_R.a+i]-_D[_R.b+i];ifa=0 then _R.a=a;return end end;_R.a=0 end]]
+std.memcmp = [[local memcmp=function() for i=0,_R.c-1 do local a=_D[_R.a+i]-_D[_R.b+i];if a~=0 then _R.a=a;return end end;_R.a=0 end]]
 
 -- math
 std.abs = [[local abs=function() _R.a=math.abs(_R.a) end]]
-std.mod = [[local mod=function() _R.a=math.mod(_R.a,_R.d) end]]
+std.fmod = [[local fmod=function() _R.a=math.fmod(_R.a,_R.d) end]]
 std.floor = [[local floor=function() _R.a=math.floor(_R.a) end]]
 std.round = [[local round=function() _R.a=math.floor(_R.a+.5) end]]
 std.ceil = [[local ceil=function() _R.a=math.ceil(_R.a) end]]
