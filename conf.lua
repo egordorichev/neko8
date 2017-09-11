@@ -36,6 +36,11 @@ local neko8 = {
 		fg = 7
 	},
 
+	docs = {
+		bg = 5,
+		fg = 7
+	},
+
 	ui = {
 		bg = 1,
 		fg = 7,

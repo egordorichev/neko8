@@ -7,13 +7,15 @@ function editors.init()
   editors.map = require "editors.map"
   editors.sfx = require "editors.sfx"
   editors.music = require "editors.music"
+  editors.docs = require "editors.docs"
 
   editors.modes = {
     editors.code,
 		editors.sprites,
 		editors.map,
 		editors.sfx,
-		editors.music
+		editors.music,
+		editors.docs
   }
 
   editors.current = editors.modes[1]
