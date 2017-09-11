@@ -15,12 +15,12 @@ docs1.neko8 = {
 }
 
 content.sys = {
-	{name="pcall",desc="Origin function in lua"},
-	{name="loadstring",desc="Origin function in lua"},
+	{name="pcall(f [, arg1, ··· ])",desc="Origin function in lua"},
+	{name="loadstring(str)",desc="Origin function in lua"},
 }
 
 content.graph = {
-	{name="printh",desc="Origin function in lua"},
+	{name="printh(...)",desc="Origin function in lua"},
 	{name="csize()",desc="Return canvas width,height"},
 	{name="rect(x0, y0, x1, y1, c)",desc="Draw rect from x0,y0 to x1,y1 with color:c"},
 	{name="rectfill(x0, y0, x1, y1, c)",desc="Draw filled rect with x0,y0,x1,y1,c"},
@@ -38,7 +38,7 @@ content.graph = {
 	{name="cursor(x, y)",desc="Draw cursor at x,y"},
 	{name="cget()",desc="Return position x,y of current cursor"},
 	{name="scroll(pixels)",desc="Scroll screen with pixels pixels"},
-	{name="spr(n, x, y, w, h, fx, fy)",desc="Draw sprite at x,y from spritesheet with No.:n"},
+	{name="spr(n, x, y, w, h, fx, fy)",desc="Draw sprite at x,y with sprites No.:n"},
 	{name="sspr(sx, sy, sw, sh, dx, dy, dw, dh, fx,fy)",desc="Draw texture from spritesheet"},
 	{name="sget(x, y)",desc="Get spritesheet pixel color"},
 	{name="sset(x, y, c)",desc="Set spritesheet pixel color"},
@@ -53,8 +53,8 @@ content.mem = {
 
 content.input = {
 	{name="btn(b, p)",desc="Get button b state for player p"},
-	{name="btnp(b, p)",desc="Only true when the button was not pressed the last frame; repeats every 4 frames after button held for 12 frames"},
 	{name="key(k)",desc="Detect if key:k is pressed"},
+	{name="btnp(b, p)",desc="Only true when the button was not pressed the last frame; repeats every 4 frames after button held for 12 frames"},
 }
 
 content.math = {
@@ -88,9 +88,9 @@ content.cmd = {
 }
 
 content.table = {
-	{name="pairs",desc="Used in 'for k,v in pairs(t)' loops"},
-	{name="ipairs",desc="Used in 'for k,v in ipairs(t)' loops"},
-	{name="string",desc="----"},
+	{name="pairs(t)",desc="Used in 'for k,v in pairs(t)' loops"},
+	{name="ipairs(t)",desc="Used in 'for k,v in ipairs(t)' loops"},
+	{name="string()",desc="----"},
 	{name="add(a, v)",desc="Insert item v into table a"},
 	{name="del(a, dv)",desc="Remove item dv from table a"},
 	{name="all(a)",desc="Return every item of table a"},
@@ -169,27 +169,43 @@ function docs.selectPage(t)
         end
     end
 
-    l = #t
+    local l = #t
 	--print(l)
 
     for k,v in pairs(t) do
         local nameY,descY = 12*(k-1)+8, 12*(k-1)+14
-        if l <= 9 then
-            api.print(v.name, 1, nameY, 7)
-            api.print(v.desc, 6, descY, 6)
-        elseif l > 9 then
+		local name, para = string.match(v.name, "%a*"), string.match(v.name, "[%(].*[%)]")
+        local paraX = 1 + string.len(name) * 8/2
+		if l <= 9 then
+			if v.name == "btnp(b, p)" then
+				local p1,p2,p3 = string.sub(v.desc, 1,15*3),string.sub(v.desc,15*3,30*3), string.sub(v.desc,30*3,-1)
+				--local paraX = 1 + string.len(name) * 8
+				api.print(name, 1, nameY, 7)
+				api.print(para, 1 + paraX , nameY, 8)
+				api.print(p1, 6, descY, 6)
+				api.print(p2, 2, descY+6, 6)
+				api.print(p3, 2, descY+12, 6)
+			else
+            	api.print(name, 1, nameY, 7)
+				api.print(para, 1 + paraX, nameY, 8)
+            	api.print(v.desc, 6, descY, 6)
+        	end
+		elseif l > 9 then
             multiPages( api.ceil(l/9) - 1)
 
             if docs.page == 0 and nameY <= 128-24 then
-                api.print(v.name, 1, nameY, 7)
+                api.print(name, 1, nameY, 7)
+				api.print(para, 1 + paraX, nameY, 8)
                 api.print(v.desc, 6, descY, 6)
             elseif docs.page == 1 and nameY >= 128-16 and nameY <= 128*2-24-16 then
-                api.print(v.name, 1, nameY-(128-20), 7)
-                api.print(v.desc, 6, descY-(128-20), 6)
+                api.print(name, 1, nameY-(128-20), 7)
+                api.print(para, 1 + paraX, nameY-(128-20), 8)
+				api.print(v.desc, 6, descY-(128-20), 6)
             elseif docs.page == 2 and nameY > 128*2-24-16 then
-                api.print(v.name, 1, nameY-(128*2-40), 7)
+				api.print(name, 1, nameY-(128*2-40), 7)
+				api.print(para, 1 + paraX, nameY-(128*2-40), 8)
                 api.print(v.desc, 6, descY-(128*2-40), 6)
-            end
+			end
         end
     end
 
@@ -226,7 +242,7 @@ function docs._update()
 			end
 			-- select page
 			if my >= 8 and my <= 16 then
-				local j = api.ceil(l/9) - 1
+				local j = api.ceil(#content[docs.tab]/9) - 1
                 for i = 0, j do
                     if mx >= 166 + i * 8 and mx <= 166 + 8 + i * 8 then
                         docs.page = i
