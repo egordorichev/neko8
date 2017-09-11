@@ -109,7 +109,7 @@ function docs.init()
 	docs.icon = 13
 	docs.tab = "input"
 	docs.page = 0
-	docs.name = "online help docs"
+	docs.name = "docs"
 	docs.bg = config.editors.docs.bg
 end
 
@@ -131,6 +131,7 @@ end
 
 function docs.redraw()
 	api.cls(docs.bg)
+	api.brectfill(32, 7, 64, 114, 0)
 
 	neko.cart, neko.core = neko.core, neko.cart
 
