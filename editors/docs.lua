@@ -3,15 +3,12 @@ local docs = {}
 docs.content = {}
 local content = docs.content
 
-local docs1 = {}
-docs1.neko8 = {
-	{name = "specs", desc =
-		[[Memory: 65k code space
-		Sprites: 512 sprites
-		Map: 128*128 tile map
-		Music/SFX: 4 channel, 64 definable chip blerps
-		Display: 128*192, 16 colors
-		80k planned memory]]},
+content.neko8 = {
+	{name="Memory", desc="65k code space, 80k planned memory"},
+	{name="Sprites", desc="512 sprites"},
+	{name="Map", desc=" 128 * 128 tile map"},
+	{name="Music SFX", desc="4 channel, 64 definable chip blerps"},
+	{name="Display", desc=" 128 * 192, 16 colors"},
 }
 
 content.sys = {
@@ -107,15 +104,22 @@ content.keys = {
 	{name="toggle editor",desc="esc"},
 	{name="save cart",desc="ctrl + s "},
 	{name="run cart",desc="ctrl + r"},
+	{name="toggle fullscreen", desc="ctrl + return"},
+	{name="copy text", desc="ctrl + c"},
+	{name="paste text", desc="ctrl + v"},
+	{name="cut text", desc="ctrl + x"},
+	{name="new screenshot", desc="f1"},
+	{name="new gif record", desc="f8"},
+	{name="save gif record", desc="f9"},
 }
 
 function docs.init()
 	docs.forceDraw = false
 	docs.icon = 13
-	docs.tab = "input"
+	docs.tab = "neko8"
 	docs.page = 0 
-  docs.name = "build-in help"
-  docs.bg = config.editors.docs.bg
+    docs.name = "build-in help"
+    docs.bg = config.editors.docs.bg
 end
 
 function docs.open()
@@ -136,10 +140,10 @@ end
 
 function docs.redraw()
 	api.cls(docs.bg)
-	api.brectfill(32, 7, 64, 114, 0)
+	api.brectfill(0, 7, 191, 127, 0)
 
 	neko.cart, neko.core = neko.core, neko.cart
-  
+   
 	local k = docs.tab
 	docs.selectPage(content[k])
 	docs.drawTab()
@@ -175,50 +179,99 @@ function docs.selectPage(t)
     end   
         
     local l = #t
-	--print(l)
-        
+	
+    -- special info page for neko8   
+	if docs.tab == "neko8" then
+		api.print("NEKO-8 Specs:", 2, 10, 9)
+	end
+
     for k,v in pairs(t) do
         local nameY,descY = 12*(k-1)+8, 12*(k-1)+14
 		-- 1st name match "words words " in docs.keys, 2nd name match "words" in other docs
-		local name, para = string.match(v.name,"[%a*%s]*") or string.match(v.name, "%a*"), string.match(v.name, "[%(].*[%)]") or ":"
+		local name, para = string.match(v.name,"[%a*%s]*") or string.match(v.name, "%a*") or "empty", string.match(v.name, "[%(].*[%)]") or ":"
 		local paraX = 1 + string.len(name) * 8/2
-		if l <= 9 then
-			if v.name == "btnp(b, p)" then
-				local p1,p2,p3 = string.sub(v.desc, 1,15*3),string.sub(v.desc,15*3,30*3), string.sub(v.desc,30*3,-1)
-				api.print(name, 1, nameY, 7)
-				api.print(para, 1 + paraX , nameY, 8)  
-				api.print(p1, 6, descY, 6)
-				api.print(p2, 2, descY+6, 6)
-				api.print(p3, 2, descY+12, 6)
-			else
-            	api.print(name, 1, nameY, 7)
-				api.print(para, 1 + paraX, nameY, 8)
-            	api.print(v.desc, 6, descY, 6)
-        	end
-		elseif l > 9 then
-            multiPages( api.ceil(l/9) - 1)
-                
-            if docs.page == 0 and nameY <= 128-24 then
-                api.print(name, 1, nameY, 7)
-				api.print(para, 1 + paraX, nameY, 8)
-                api.print(v.desc, 6, descY, 6)
-            elseif docs.page == 1 and nameY >= 128-16 and nameY <= 128*2-24-16 then
-                api.print(name, 1, nameY-(128-20), 7)
-                api.print(para, 1 + paraX, nameY-(128-20), 8)
-				api.print(v.desc, 6, descY-(128-20), 6)
-            elseif docs.page == 2 and nameY > 128*2-24-16 then
-				api.print(name, 1, nameY-(128*2-40), 7)
-				api.print(para, 1 + paraX, nameY-(128*2-40), 8)
-                api.print(v.desc, 6, descY-(128*2-40), 6)
-			end 
-        end 
+		
+		-- special info page for neko8
+		if docs.tab == "neko8" then
+			api.print(name, 4, nameY+10, 7)
+			api.print(para, 4 + paraX, nameY+10, 8)
+			api.print(v.desc, 9, descY+10, 6)
+		else
+			if l <= 9 then
+				if v.name == "btnp(b, p)" then
+					local p1,p2,p3 = string.sub(v.desc, 1,15*3),string.sub(v.desc,15*3,30*3), string.sub(v.desc,30*3,-1)
+					api.print(name, 1, nameY, 7)
+					api.print(para, 1 + paraX , nameY, 8)  
+					api.print(p1, 6, descY, 6)
+					api.print(p2, 2, descY+6, 6)
+					api.print(p3, 2, descY+12, 6)
+				else
+					api.print(name, 1, nameY, 7)
+					api.print(para, 1 + paraX, nameY, 8)
+					api.print(v.desc, 6, descY, 6)
+				end
+			elseif l > 9 then
+				multiPages( api.ceil(l/9) - 1)
+					
+				if docs.page == 0 and nameY <= 128-24 then
+					api.print(name, 1, nameY, 7)
+					api.print(para, 1 + paraX, nameY, 8)
+					api.print(v.desc, 6, descY, 6)
+				elseif docs.page == 1 and nameY >= 128-16 and nameY <= 128*2-24-16 then
+					api.print(name, 1, nameY-(128-20), 7)
+					api.print(para, 1 + paraX, nameY-(128-20), 8)
+					api.print(v.desc, 6, descY-(128-20), 6)
+				elseif docs.page == 2 and nameY > 128*2-24-16 then
+					api.print(name, 1, nameY-(128*2-40), 7)
+					api.print(para, 1 + paraX, nameY-(128*2-40), 8)
+					api.print(v.desc, 6, descY-(128*2-40), 6)
+				end 
+			end
+		end
     end 
-
-	neko.core, neko.cart = neko.cart, neko.core, neko.cart
 end
 
 function docs._update()
+	lmb = mb
+	lmx = mx
+	lmy = my
+	mx, my, mb = api.mstat(1)
+  
+	if mx ~= lmx or my ~= lmy then
+		docs.redrawInfo = true
+	end 
 
+	if mb then
+		if lmb == false then 
+			-- select tab
+			local j = #content
+			if my >= 128-20 and my <= 128-8 then
+				local posX = 2
+				for k,v in pairs(content) do
+					local len = string.len(k)
+						
+					if mx >= posX and mx <= posX + (len+1)*8/2 then
+						docs.tab = k
+						docs.page = 0
+						docs.forceDraw = true
+						return
+					end
+					posX = posX + (len+1)*8/2
+				end
+			end
+			-- select page
+			if my >= 8 and my <= 16 then
+				local j = api.ceil(#content[docs.tab]/9) - 1
+				for i = 0, j do
+					if mx >= 166 + i * 8 and mx <= 166 + 8 + i * 8 then
+						docs.page = i
+						docs.forceDraw = true
+						return
+					end
+				end
+			 end
+		end
+	end
 end
 
 function docs.import(data)
