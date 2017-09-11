@@ -47,7 +47,8 @@ function code._draw()
 		code.redraw()
 		code.forceDraw = false
 	end
-	 editors.drawUI()
+
+	editors.drawUI()
 end
 
 local function cursorBlink()

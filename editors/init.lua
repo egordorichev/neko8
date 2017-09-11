@@ -38,6 +38,15 @@ function editors.init()
 			editors.current.open()
 		end), e.name)
   end
+
+	-- exit button
+
+	editors.ui:add(UiButton(
+		14, config.canvas.width - 7,
+		config.canvas.height - 7, 8, 8, 6
+	):onClick(function(b)
+		editors.close()
+	end), "exit")
 end
 
 function editors.open()
@@ -68,6 +77,10 @@ function editors.toggle()
 end
 
 function editors.drawUI()
+  if not editors.opened then
+    return
+  end
+
 	local mx, my, mb = api.mstat(1)
 
   api.rectfill(
