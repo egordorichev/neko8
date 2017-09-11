@@ -53,7 +53,7 @@ function love.touchpressed()
 	end
 end
 
-local lmb = false
+local mbt = 0
 
 function love.update(dt)
 	if not neko.focus then
@@ -70,8 +70,11 @@ function love.update(dt)
 		keyboard.update()
 	end
 
-	local mx, my, mb = api.mstat(1)
-	lmb = mb
+	if love.mouse.isDown(1) then
+		mbt = mbt + 1
+	else
+		mbt = 0
+	end
 end
 
 function love.draw()
@@ -1953,7 +1956,7 @@ function api.mstat(b)
 	return api.flr((love.mouse.getX() - canvas.x)
 		/ canvas.scaleX), api.flr((love.mouse.getY() - canvas.y)
 		/ canvas.scaleY), love.mouse.isDown(b or 1),
-	lmb
+	mbt > 1
 end
 
 function api.count(a)

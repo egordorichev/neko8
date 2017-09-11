@@ -20,13 +20,13 @@ function UiComponent:updateAndDraw()
 end
 
 function UiComponent:update()
-	local mx, my, mb, lmb = api.mstat(1)
+	local mx, my, mb, mr = api.mstat(1)
 
 	if mx > self.x and mx < self.x + self.w and
 		my > self.y and my < self.y + self.h then
 
 		if mb == true then
-			if self.state ~= "clicked" then
+			if not mr and self.state ~= "clicked" then
 				self.state = "clicked"
 				self:click(self, mx, my)
 			end
