@@ -3189,17 +3189,6 @@ local function BeautifyVariables(globalScope, rootScope)
 	modify(rootScope)
 end
 
-local function usageError()
-	error(
-			"\nusage: minify <file> or unminify <file>\n" ..
-			"  The modified code will be printed to the stdout, pipe it to a file, the\n" ..
-			"  lua interpreter, or something else as desired EG:\n\n" ..
-			"        lua minify.lua minify input.lua > output.lua\n\n" ..
-			"  * minify will minify the code in the file.\n" ..
-			"  * unminify will beautify the code and replace the variable names with easily\n" ..
-			"    find-replacable ones to aide in reverse engineering minified code.\n", 0)
-end
-
 
 function minify(data)
 	ast = CreateLuaParser(data)
@@ -3208,10 +3197,4 @@ function minify(data)
 	MinifyVariables(global_scope, root_scope)
 	StripAst(ast)
 	return PrintAst(ast)
-end
-
-local function beautify(ast, global_scope, root_scope)
-	BeautifyVariables(global_scope, root_scope)
-	FormatAst(ast)
-	PrintAst(ast)
 end

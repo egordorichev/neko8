@@ -47,6 +47,8 @@ function code._draw()
 		code.redraw()
 		code.forceDraw = false
 	end
+
+	editors.drawUI()
 end
 
 local function cursorBlink()
@@ -221,8 +223,6 @@ function code.redraw()
     0, 8, config.canvas.width,
     8, config.editors.code.bg
   )
-
-  editors.drawUI()
 
   api.print(
     "line " .. code.cursor.y .. "/"

@@ -5,12 +5,12 @@ local content = docs.content
 
 local docs1 = {}
 docs1.neko8 = {
-	{name="specs",desc=
+	{name = "specs", desc =
 		[[Memory: 65k code space
-		Sprites: 512 sprites 
-		Map: 128*128 tile map 
-		Music/SFX: 4 channel, 64 definable chip blerps 
-		Display: 128*192, 16 colors 
+		Sprites: 512 sprites
+		Map: 128*128 tile map
+		Music/SFX: 4 channel, 64 definable chip blerps
+		Display: 128*192, 16 colors
 		80k planned memory]]},
 }
 
@@ -50,23 +50,23 @@ content.graph = {
 }
 
 content.input = {
-	{name="btn(b, p)",desc="Get button b state for player p"},
-	{name="key(k)",desc="Detect if key:k is pressed"},
-	{name="btnp(b, p)",desc="Only true when the button was not pressed the last frame; repeats every 4 frames after button held for 12 frames"},
+	{name = "btn(b, p)", desc = "Get button b state for player p"},
+	{name = "key(k)", desc = "Detect if key:k is pressed"},
+	{name = "btnp(b, p)", desc = "Only true when the button was not pressed the last frame; repeats every 4 frames after button held for 12 frames"},
 }
 
 content.math = {
-	{name="flr(n)",desc="Round down of n, flr(4.9)->4"},
-	{name="ceil(n)",desc="Round up of n, ceil(2.1)->3"},
-	{name="cos(n)",desc="Cosine n, [0..1]"},
-	{name="sin(n)",desc="Sine n, [0..1]; inverted"},
-	{name="rnd(min, max)",desc="Random from min to max"},
-	{name="srand(s)",desc="Set random seed"},
-	{name="max(a, b)",desc="Maximum of a,b"},
-	{name="min(a, b)",desc="Minimum of a,b"},
-	{name="mid(x, y, z)",desc="Middle of x,y,z"},
-	{name="abs(n)",desc="Absolute value of n"},
-	{name="sgn(n)",desc="Return n sign: -1 or 1"},
+	{name = "flr(n)", desc = "Round down of n, flr(4.9)->4"},
+	{name = "ceil(n)", desc = "Round up of n, ceil(2.1)->3"},
+	{name = "cos(n)", desc = "Cosine n, [0..1]"},
+	{name = "sin(n)", desc = "Sine n, [0..1]; inverted"},
+	{name = "rnd(min, max)", desc = "Random from min to max"},
+	{name = "srand(s)", desc = "Set random seed"},
+	{name = "max(a, b)", desc = "Maximum of a,b"},
+	{name = "min(a, b)", desc = "Minimum of a,b"},
+	{name = "mid(x, y, z)", desc = "Middle of x,y,z"},
+	{name = "abs(n)", desc = "Absolute value of n"},
+	{name = "sgn(n)", desc = "Return n sign: -1 or 1"},
 }
 
 content.cmd = {
@@ -87,15 +87,15 @@ content.cmd = {
 }
 
 content.table = {
-	{name="pairs(t)",desc="Used in 'for k,v in pairs(t)' loops"},
-	{name="ipairs(t)",desc="Used in 'for k,v in ipairs(t)' loops"},
-	{name="string()",desc="----"},
-	{name="add(a, v)",desc="Insert item v into table a"},
-	{name="del(a, dv)",desc="Remove item dv from table a"},
-	{name="all(a)",desc="Return every item of table a"},
-	{name="count(a)",desc="Return length of table a "},
-	{name="foreach(a, f)",desc="Iterate items in table a with function f"},
-}
+	{name = "pairs(t)", desc = "Used in 'for k,v in pairs(t)' loops"},
+	{name = "ipairs(t)", desc = "Used in 'for k,v in ipairs(t)' loops"},
+	{name = "string()", desc = "----"},
+	{name = "add(a, v)", desc = "Insert item v into table a"},
+	{name = "del(a, dv)", desc = "Remove item dv from table a"},
+	{name = "all(a)", desc = "Return every item of table a"},
+	{name = "count(a)", desc = "Return length of table a "},
+	{name = "foreach(a, f)", desc = "Iterate items in table a with function f"},
+	}
 
 content.msg = {
 	{name="smes(s)",desc="Show message at the bottom of screen"},
@@ -110,16 +110,16 @@ content.keys = {
 }
 
 function docs.init()
-    docs.forceDraw = false
-    docs.icon = 14
+	docs.forceDraw = false
+	docs.icon = 13
 	docs.tab = "input"
 	docs.page = 0 
-    docs.name = "build-in help"
-    docs.bg = config.editors.docs.bg
+  docs.name = "build-in help"
+  docs.bg = config.editors.docs.bg
 end
 
 function docs.open()
-    docs.forceDraw = true
+	docs.forceDraw = true
 end
 
 function docs.close()
@@ -127,19 +127,19 @@ function docs.close()
 end
 
 function docs._draw()
-    if docs.forceDraw then
-        docs.redraw()
-        docs.forceDraw = false
-    end 
+	if docs.forceDraw then
+		docs.redraw()
+		docs.forceDraw = false
+	end
+	editors.drawUI()
 end
 
 function docs.redraw()
-    api.cls(docs.bg)
-
-	api.rectfill(0,0,192,128,0)
+	api.cls(docs.bg)
+	api.brectfill(32, 7, 64, 114, 0)
 
 	neko.cart, neko.core = neko.core, neko.cart
-   
+  
 	local k = docs.tab
 	docs.selectPage(content[k])
 	docs.drawTab()
@@ -214,62 +214,19 @@ function docs.selectPage(t)
         end 
     end 
 
+	neko.core, neko.cart = neko.cart, neko.core, neko.cart
 end
 
 function docs._update()
-    
-	lmb = mb
-    lmx = mx
-    lmy = my
-    mx, my, mb = api.mstat(1)
 
-    if mx ~= lmx or my ~= lmy then
-        docs.redrawInfo = true
-    end 
-
-	if mb then
-		if lmb == false then 
-			-- select tab
-			local j = #content
-			if my >= 128-20 and my <= 128-8 then
-				local posX = 2
-				for k,v in pairs(content) do
-					local len = string.len(k)
-					
-					if mx >= posX and mx <= posX + (len+1)*8/2 then
-						docs.tab = k
-						docs.page = 0
-						docs.forceDraw = true
-						return
-					end
-					posX = posX + (len+1)*8/2
-				end
-			end
-			-- select page
-			if my >= 8 and my <= 16 then
-				local j = api.ceil(#content[docs.tab]/9) - 1
-                for i = 0, j do
-                    if mx >= 166 + i * 8 and mx <= 166 + 8 + i * 8 then
-                        docs.page = i
-                        docs.forceDraw = true
-                        return
-                    end
-                end
-            end
-		end
-	end	 	
-end
-
-function docs.mouse(j)
-	
 end
 
 function docs.import(data)
-    docs.data = data
+	docs.data = data
 end
 
 function docs.export()
-    return docs.data
+	return docs.data
 end
 
 return docs

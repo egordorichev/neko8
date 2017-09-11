@@ -53,6 +53,8 @@ function love.touchpressed()
 	end
 end
 
+local mbt = 0
+
 function love.update(dt)
 	if not neko.focus then
 		return
@@ -66,6 +68,12 @@ function love.update(dt)
 
 	if mobile then
 		keyboard.update()
+	end
+
+	if love.mouse.isDown(1) then
+		mbt = mbt + 1
+	else
+		mbt = 0
 	end
 end
 
@@ -483,9 +491,6 @@ function neko.update()
 	end
 
 	triggerCallback("_update")
-	if editors.opened and not neko.cart then
-		editors._update()
-	end
 end
 
 function neko.draw()
@@ -513,7 +518,6 @@ end
 
 function loadCart(name)
 	local cart = {}
-	cart.sandbox = createSandbox()
 
 	local pureName = name
 	local extensions = { "", ".n8" }
@@ -566,6 +570,7 @@ function loadCart(name)
 	end
 
 	cart.code, cart.lang = loadCode(data, cart)
+	cart.sandbox = createSandbox(cart.lang)
 
 	if not cart.code then
 		log.error("failed to load code")
@@ -919,8 +924,8 @@ function try(f, catch, finally)
 	local status, result = pcall(f)
 	if not status then
 		catch(result)
-    elseif finally then
-        return finally(result)
+	elseif finally then
+		return finally(result)
 	end
 end
 
@@ -973,19 +978,22 @@ function runCart(cart)
 		"running cart " .. name
 	)
 
-    if cart.lang == "asm" then
-        cart.code = try(function()
-            return asm.compile(cart.code, DEBUG or false)
-        end,
-        runtimeError,
-        function(result) return result end)
+	local code
+	if cart.lang == "lua" then
+		code = cart.code
+	elseif cart.lang == "asm" then
+		code = try(function()
+			return asm.compile(cart.code, DEBUG or false, true)
+		end,
+		runtimeError,
+		function(result) return result end)
 
-        api.print(
-            "successfully compiled " .. cart.pureName
-        )
-    end
+		api.print(
+			"successfully compiled " .. cart.pureName
+		)
+	end
 	local ok, f, e = pcall(
-		load, patchLua(cart.code), name
+		load, patchLua(code), name
 	)
 
 	if not ok or f == nil then
@@ -1094,13 +1102,13 @@ function initApi()
 	}
 end
 
-function createSandbox()
+function createSandbox(lang)
 	return {
 		pcall = pcall,
 		loadstring = loadstring,
 
-        -- this is required by the asm.lua callx operator
-        table = {unpack = table.unpack},
+		-- this is required by the asm.lua callx operator
+		unpck = table.unpack,
 
 		printh = print,
 		csize = api.csize,
@@ -1947,7 +1955,8 @@ end
 function api.mstat(b)
 	return api.flr((love.mouse.getX() - canvas.x)
 		/ canvas.scaleX), api.flr((love.mouse.getY() - canvas.y)
-		/ canvas.scaleY), love.mouse.isDown(b or 1)
+		/ canvas.scaleY), love.mouse.isDown(b or 1),
+	mbt > 1
 end
 
 function api.count(a)
@@ -2009,9 +2018,9 @@ function commands.help(a)
 		api.color(7)
 		api.print("https://github.com/egordorichev/neko8")
 		api.print("")
-		api.print("ls   - list files  rm     - delete file")
+		api.print("ls   - list files  rm	 - delete file")
 		api.print("cd   - change dir  mkdir  - create dir")
-		api.print("new  - new cart    run    - run cart")
+		api.print("new  - new cart	run	- run cart")
 		api.print("load - load cart   save   - save cart")
 		api.print("reboot, shutdown, cls, edit")
 	else
@@ -2202,23 +2211,23 @@ function commands.cd(a)
 	local p = dir:match("(.+)")
 
   if p then
-    p = "/" .. p .. "/";
+	p = "/" .. p .. "/";
 		local dirs = {}
-    p = p:gsub("/","//"):sub(2, -1)
+	p = p:gsub("/","//"):sub(2, -1)
 
-    for path in string.gmatch(p, "/(.-)/") do
-      if path == "." then
+	for path in string.gmatch(p, "/(.-)/") do
+	  if path == "." then
 
-      elseif path == ".." then
-        if #dirs > 0 then
-          table.remove(dirs, #dirs)
-        end
-      elseif dir ~= "" then
-        table.insert(dirs, path)
-      end
-    end
+	  elseif path == ".." then
+		if #dirs > 0 then
+		  table.remove(dirs, #dirs)
+		end
+	  elseif dir ~= "" then
+		table.insert(dirs, path)
+	  end
+	end
 
-    dir = table.concat(dirs, "/")
+	dir = table.concat(dirs, "/")
 
 		if dir:sub(1, 1) ~= "/" then
 			dir = "/" .. dir
@@ -2451,11 +2460,11 @@ local _tostring = tostring
 local tostring = function(...)
   local t = {}
   for i = 1, select("#", ...) do
-    local x = select(i, ...)
-    if type(x) == "number" then
-      x = round(x, .01)
-    end
-    t[#t + 1] = _tostring(x)
+	local x = select(i, ...)
+	if type(x) == "number" then
+	  x = round(x, .01)
+	end
+	t[#t + 1] = _tostring(x)
   end
   return table.concat(t, " ")
 end
@@ -2463,32 +2472,32 @@ end
 for i, x in ipairs(modes) do
   local nameupper = x.name:upper()
   log[x.name] = function(...)
-    -- Return early if we"re below the log level
-    if i < levels[log.level] then
-      return
-    end
+	-- Return early if we"re below the log level
+	if i < levels[log.level] then
+	  return
+	end
 
-    local msg = tostring(...)
-    local info = debug.getinfo(2, "Sl")
-    local lineinfo = info.short_src .. ":" .. info.currentline
+	local msg = tostring(...)
+	local info = debug.getinfo(2, "Sl")
+	local lineinfo = info.short_src .. ":" .. info.currentline
 
-    -- Output to console
-    print(string.format("%s[%-6s%s]%s %s: %s",
-      log.usecolor and x.color or "",
-      nameupper,
-      os.date("%H:%M:%S"),
-      log.usecolor and "\27[0m" or "",
-      lineinfo,
-      msg))
+	-- Output to console
+	print(string.format("%s[%-6s%s]%s %s: %s",
+	  log.usecolor and x.color or "",
+	  nameupper,
+	  os.date("%H:%M:%S"),
+	  log.usecolor and "\27[0m" or "",
+	  lineinfo,
+	  msg))
 
-    -- Output to log file
-    if log.outfile then
-      local fp = io.open(log.outfile, "a")
-      local str = string.format("[%-6s%s] %s: %s\n",
-        nameupper, os.date(), lineinfo, msg)
+	-- Output to log file
+	if log.outfile then
+	  local fp = io.open(log.outfile, "a")
+	  local str = string.format("[%-6s%s] %s: %s\n",
+		nameupper, os.date(), lineinfo, msg)
 
 			fp:write(str)
-      fp:close()
-    end
+	  fp:close()
+	end
   end
 end

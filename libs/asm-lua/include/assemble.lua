@@ -1,12 +1,12 @@
 
 local mklabel = function(name, value)
-    label = label + 1
-    labels[name] = label
-    return string.format('_D[%d]=%s', label, value or '')
+    _ASM.label = _ASM.label + 1
+    _ASM.labels[name] = _ASM.label
+    return string.format('_D[%d]=%s', _ASM.label, value or '')
 end
 
 local mkext = function(name)
-    externs[name] = label
+    _ASM.externs[name] = _ASM.label
     return string.format('_X["%s"]=%s', name, name)
 end
 
@@ -19,7 +19,7 @@ comp['while'] = {pattern = 'while _R.f.%s do', arg = {'cond'}}
 comp['until'] = {pattern = 'until _R.f.%s', arg = {'cond'}}
 
 local section = 'text'
-local parseop = require(root .. 'include/parseop')
+local parseop = require(_ASM.root .. 'include/parseop')
 local expr_to_lua = function(expr, verbose)
     local type = expr.type
 

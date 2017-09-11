@@ -1,3 +1,5 @@
+local UiManager = require "ui.manager"
+local UiButton = require "ui.button"
 local editors = {}
 
 function editors.init()
@@ -19,10 +21,32 @@ function editors.init()
   }
 
   editors.current = editors.modes[1]
+	editors.ui = UiManager()
 
-  for e in api.all(editors.modes) do
+  for i, e in ipairs(editors.modes) do
     e.init()
+		editors.ui:add(UiButton(
+			e.icon, 21 + i * 7 - 7, 0, 8, 8, 6
+		):onClick(function(b)
+			for i, e in ipairs(editors.modes) do
+				editors.ui.components[e.name].active = false
+			end
+
+			b.active = true
+			editors.current.close()
+			editors.current = e
+			editors.current.open()
+		end), e.name)
   end
+
+	-- exit button
+
+	editors.ui:add(UiButton(
+		14, config.canvas.width - 7,
+		config.canvas.height - 7, 8, 8, 6
+	):onClick(function(b)
+		editors.close()
+	end), "exit")
 end
 
 function editors.open()
@@ -53,6 +77,10 @@ function editors.toggle()
 end
 
 function editors.drawUI()
+  if not editors.opened then
+    return
+  end
+
 	local mx, my, mb = api.mstat(1)
 
   api.rectfill(
@@ -68,24 +96,9 @@ function editors.drawUI()
   )
 
 	api.print("neko8", 1, 1, config.editors.ui.fg)
-
 	neko.core, neko.cart = neko.cart, neko.core
 
-	for i = 1, #editors.modes do
-		local m = editors.modes[i]
-		local c = m == editors.current and m.bg or
-			config.editors.ui.bg
-
-		if m == editors.current then
-			api.pal(6, config.editors.ui.icons.selected)
-		else
-			api.pal(6, config.editors.ui.icons.default)
-		end
-
-		api.brectfill(21 + i * 7 - 7, 0, 7, 7, c)
-		api.spr(m.icon, 21 + i * 7 - 7, 0)
-		api.pal()
-	end
+	editors.ui:draw()
 
 	api.print(
 		editors.current.name, config.canvas.width
@@ -93,38 +106,7 @@ function editors.drawUI()
 		1, config.editors.ui.fg
 	)
 
-	api.spr(13, config.canvas.width - 7,
-		config.canvas.height - 7)
-
 	neko.core, neko.cart = neko.cart, neko.core
-end
-
-local lmb, mb, mx, my
-
-function editors._update()
-	lmb = mb
-	mx, my, mb = api.mstat(1)
-
-	if mb ~= lmb then
-		for i = 1, #editors.modes do
-			local m = editors.modes[i]
-			local x = i * 7 - 7 + 21
-			if mb and mx >= x and mx <= x + 7 and
-				my >= 0 and my <= 7 then
-				editors.current.close()
-				editors.current = m
-				m.open()
-			end
-		end
-
-		if mx >= config.canvas.width - 7
-			and mx <= config.canvas.width
-			and my >= config.canvas.height - 7
-			and my <= config.canvas.height then
-
-			editors.close()
-		end
-	end
 end
 
 return editors
