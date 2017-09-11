@@ -10,6 +10,7 @@ Currently it features:
 * Code editor
 * Sprite editor
 * Terminal
+* Online API docs
 
 #### Installing ang running
 
