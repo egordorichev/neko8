@@ -20,12 +20,13 @@ function music._draw()
 		music.redraw()
 		music.forceDraw = false
 	end
+
+	editors.drawUI()
 end
 
 function music.redraw()
 	api.cls(music.bg)
 	api.print("work in progress", 1, 8, 7)
-	editors.drawUI()
 end
 
 function music._update()

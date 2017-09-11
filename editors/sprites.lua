@@ -118,6 +118,8 @@ function sprites._draw()
 		sprites.forceDraw = false
 	end
 
+	editors.drawUI()
+
 	if sprites.redrawInfo then
 		sprites.drawInfo()
 		sprites.redrawInfo = false
@@ -250,15 +252,12 @@ function sprites.redraw()
 		)
 	end
 
-	editors.drawUI()
 	neko.cart = nil -- see spr and sspr
 end
 
 local mx, my, mb, lmb, lmx, lmy
 
 function sprites.drawInfo()
-	editors.drawUI()
-
 	local s = sprites.sprite
 	local mx = api.flr(mx / (8 * sprites.scale))
 	local my = api.flr((my - 8) / (8 * sprites.scale))

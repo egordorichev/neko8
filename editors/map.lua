@@ -32,6 +32,8 @@ function map._draw()
 		map.forceDraw = false
 	end
 
+	editors.drawUI()
+
 	if map.redrawInfo then
 		map.drawInfo()
 		map.redrawInfo = true
@@ -101,15 +103,11 @@ function map.redraw()
 
 		neko.cart, neko.core = neko.core, neko.cart
 	end
-
-	editors.drawUI()
 end
 
 local mx, my, mb, lmb, lmx, lmy
 
 function map.drawInfo()
-	editors.drawUI()
-
 	if map.window.active and mx >= map.window.x
 		and mx <= map.window.x + 66
 		and my >= map.window.y and my <= map.window.y + 74 then

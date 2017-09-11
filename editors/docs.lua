@@ -7,10 +7,10 @@ local docs1 = {}
 docs1.neko8 = {
 	{name="specs",desc=
 		[[Memory: 65k code space
-		Sprites: 512 sprites 
-		Map: 128*128 tile map 
-		Music/SFX: 4 channel, 64 definable chip blerps 
-		Display: 128*192, 16 colors 
+		Sprites: 512 sprites
+		Map: 128*128 tile map
+		Music/SFX: 4 channel, 64 definable chip blerps
+		Display: 128*192, 16 colors
 		80k planned memory]]},
 }
 
@@ -108,7 +108,7 @@ function docs.init()
     docs.forceDraw = false
     docs.icon = 14
 	docs.tab = "input"
-	docs.page = 0 
+	docs.page = 0
     docs.name = "online help docs"
     docs.bg = config.editors.docs.bg
 end
@@ -125,7 +125,8 @@ function docs._draw()
     if docs.forceDraw then
         docs.redraw()
         docs.forceDraw = false
-    end 
+    end
+		editors.drawUI()
 end
 
 function docs.redraw()
@@ -134,13 +135,12 @@ function docs.redraw()
 	api.rectfill(0,0,192,128,0)
 
 	neko.cart, neko.core = neko.core, neko.cart
-   
+
 	local k = docs.tab
 	docs.selectPage(content[k])
 	docs.drawTab()
-	
-	neko.core, neko.cart = neko.cart, neko.core, neko.cart	
-	editors.drawUI()
+
+	neko.core, neko.cart = neko.cart, neko.core, neko.cart
 end
 
 function docs.drawTab()
@@ -150,36 +150,36 @@ function docs.drawTab()
 	 	-- draw tab
 		api.print(k, posX, 116, k == docs.tab and 12 or 13)
 		posX = posX + (len+1) * 8/2
-	end	
+	end
 end
 
 function docs.selectPage(t)
 
 	-- page buttons
-    local function multiPages(j) 
-        for i = 0, j  or 0  do  
+    local function multiPages(j)
+        for i = 0, j  or 0  do
             api.spr(
                 i == docs.page and 7 or 6,
                 168 + i * 8, 8
-            )   
+            )
 
             api.print(
                 i, 170 + i * 8, 10, i == docs.page and 12 or 5
-            )   
-        end 
-    end   
-        
+            )
+        end
+    end
+
     l = #t
 	--print(l)
-        
+
     for k,v in pairs(t) do
-        local nameY,descY = 12*(k-1)+8, 12*(k-1)+14 
+        local nameY,descY = 12*(k-1)+8, 12*(k-1)+14
         if l <= 9 then
             api.print(v.name, 1, nameY, 7)
             api.print(v.desc, 6, descY, 6)
         elseif l > 9 then
             multiPages( api.ceil(l/9) - 1)
-                
+
             if docs.page == 0 and nameY <= 128-24 then
                 api.print(v.name, 1, nameY, 7)
                 api.print(v.desc, 6, descY, 6)
@@ -189,14 +189,14 @@ function docs.selectPage(t)
             elseif docs.page == 2 and nameY > 128*2-24-16 then
                 api.print(v.name, 1, nameY-(128*2-40), 7)
                 api.print(v.desc, 6, descY-(128*2-40), 6)
-            end 
-        end 
-    end 
+            end
+        end
+    end
 
 end
 
 function docs._update()
-    
+
 	lmb = mb
     lmx = mx
     lmy = my
@@ -204,17 +204,17 @@ function docs._update()
 
     if mx ~= lmx or my ~= lmy then
         docs.redrawInfo = true
-    end 
+    end
 
 	if mb then
-		if lmb == false then 
+		if lmb == false then
 			-- select tab
 			local j = #content
 			if my >= 128-20 and my <= 128-8 then
 				local posX = 2
 				for k,v in pairs(content) do
 					local len = string.len(k)
-					
+
 					if mx >= posX and mx <= posX + (len+1)*8/2 then
 						docs.tab = k
 						docs.page = 0
@@ -236,11 +236,11 @@ function docs._update()
                 end
             end
 		end
-	end	 	
+	end
 end
 
 function docs.mouse(j)
-	
+
 end
 
 function docs.import(data)

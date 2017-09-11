@@ -53,6 +53,8 @@ function love.touchpressed()
 	end
 end
 
+local lmb = false
+
 function love.update(dt)
 	if not neko.focus then
 		return
@@ -67,6 +69,9 @@ function love.update(dt)
 	if mobile then
 		keyboard.update()
 	end
+
+	local mx, my, mb = api.mstat(1)
+	lmb = mb
 end
 
 function love.draw()
@@ -483,9 +488,6 @@ function neko.update()
 	end
 
 	triggerCallback("_update")
-	if editors.opened and not neko.cart then
-		editors._update()
-	end
 end
 
 function neko.draw()
@@ -1950,7 +1952,8 @@ end
 function api.mstat(b)
 	return api.flr((love.mouse.getX() - canvas.x)
 		/ canvas.scaleX), api.flr((love.mouse.getY() - canvas.y)
-		/ canvas.scaleY), love.mouse.isDown(b or 1)
+		/ canvas.scaleY), love.mouse.isDown(b or 1),
+	lmb
 end
 
 function api.count(a)
