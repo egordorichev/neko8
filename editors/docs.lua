@@ -15,12 +15,14 @@ docs1.neko8 = {
 }
 
 content.sys = {
-	{name="pcall(f [, arg1, ··· ])",desc="Origin function in lua"},
-	{name="loadstring(str)",desc="Origin function in lua"},
+	{name="pcall(f [, arg1, ··· ])",desc="Origin function pcall in lua"},
+	{name="loadstring(str)",desc="Origin function loadstring in lua"},
+	{name="memcpy(dest_addr, source_addr, len)",desc="Copy memory"},
+	{name="unpck()",desc="Origin function table.unpack in lua"}
 }
 
 content.graph = {
-	{name="printh(...)",desc="Origin function in lua"},
+	{name="printh(...)",desc="Origin function print in lua"},
 	{name="csize()",desc="Return canvas width,height"},
 	{name="rect(x0, y0, x1, y1, c)",desc="Draw rect from x0,y0 to x1,y1 with color:c"},
 	{name="rectfill(x0, y0, x1, y1, c)",desc="Draw filled rect with x0,y0,x1,y1,c"},
@@ -45,10 +47,6 @@ content.graph = {
 	{name="pal(c0,c1,p)",desc="Switch color c0 to c1"},
 	{name="palt(c, t)",desc="Set transparency for color to t (boolean)"},
 	{name="map(cx, cy, sx, sy, cw, ch, bitmask)",desc="Draw map"},
-}
-
-content.mem = {
-	{name="memcpy(dest_addr, source_addr, len)",desc="Copy memory"},
 }
 
 content.input = {
@@ -85,6 +83,7 @@ content.cmd = {
 	{name="cd(a)",desc="Change directory to a"},
 	{name="rm(a)",desc="Remove directory a"},
 	{name="edit()",desc="Open editor"},
+	{name="minify(a)",desc="Run minify"},
 }
 
 content.table = {
@@ -98,10 +97,16 @@ content.table = {
 	{name="foreach(a, f)",desc="Iterate items in table a with function f"},
 }
 
-content.message = {
+content.msg = {
 	{name="smes(s)",desc="Show message at the bottom of screen"},
 	{name="nver()",desc="Return neko version"},
 	{name="mstat()",desc="Return status of mouse"},
+}
+
+content.keys = {
+	{name="toggle editor",desc="esc"},
+	{name="save cart",desc="ctrl + s "},
+	{name="run cart",desc="ctrl + r"},
 }
 
 function docs.init()
@@ -109,7 +114,7 @@ function docs.init()
     docs.icon = 14
 	docs.tab = "input"
 	docs.page = 0 
-    docs.name = "online help docs"
+    docs.name = "build-in help"
     docs.bg = config.editors.docs.bg
 end
 
@@ -174,12 +179,12 @@ function docs.selectPage(t)
         
     for k,v in pairs(t) do
         local nameY,descY = 12*(k-1)+8, 12*(k-1)+14
-		local name, para = string.match(v.name, "%a*"), string.match(v.name, "[%(].*[%)]")
-        local paraX = 1 + string.len(name) * 8/2
+		-- 1st name match "words words " in docs.keys, 2nd name match "words" in other docs
+		local name, para = string.match(v.name,"[%a*%s]*") or string.match(v.name, "%a*"), string.match(v.name, "[%(].*[%)]") or ":"
+		local paraX = 1 + string.len(name) * 8/2
 		if l <= 9 then
 			if v.name == "btnp(b, p)" then
 				local p1,p2,p3 = string.sub(v.desc, 1,15*3),string.sub(v.desc,15*3,30*3), string.sub(v.desc,30*3,-1)
-				--local paraX = 1 + string.len(name) * 8 
 				api.print(name, 1, nameY, 7)
 				api.print(para, 1 + paraX , nameY, 8)  
 				api.print(p1, 6, descY, 6)
