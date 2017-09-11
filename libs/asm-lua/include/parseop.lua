@@ -32,8 +32,18 @@ ops['sub'] = {pattern = '%s=%s-%s', arg = {'a', 'a', 'b'}}
 ops['mul'] = {pattern = '%s=%s*%s', arg = {'a', 'a', 'b'}}
 ops['div'] = {pattern = '%s=%s/%s', arg = {'a', 'a', 'b'}}
 
-local parsearg = require(root .. 'include/parsearg')
+local neko8 = false
+
+local parsearg = require(_ASM.root .. 'include/parsearg')
 local parseop = function(expr, verbose)
+    if _ASM.neko8 and not neko8 then
+        neko8 = true
+        for k, v in pairs(ops) do
+            v.pattern = string.gsub(v.pattern, 'table%.unpack', 'unpck')
+            v.pattern = string.gsub(v.pattern, 'bit%.([^b])', 'b%1')
+        end
+    end
+
     local err = false
 
     for k, v in pairs(expr) do
