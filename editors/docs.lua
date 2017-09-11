@@ -5,12 +5,13 @@ local content = docs.content
 
 local docs1 = {}
 docs1.neko8 = {
-	{name="specs",desc=[[Memory: 65k code space
-						Sprites: 512 sprites 
-						Map: 128*128 tile map 
-						Music/SFX: 4 channel, 64 definable chip blerps 
-						Display: 128*192, 16 colors 
-						80k planned memory]]},
+	{name="specs",desc=
+		[[Memory: 65k code space
+		Sprites: 512 sprites 
+		Map: 128*128 tile map 
+		Music/SFX: 4 channel, 64 definable chip blerps 
+		Display: 128*192, 16 colors 
+		80k planned memory]]},
 }
 
 content.sys = {
@@ -216,6 +217,7 @@ function docs._update()
 					
 					if mx >= posX and mx <= posX + (len+1)*8/2 then
 						docs.tab = k
+						docs.page = 0
 						docs.forceDraw = true
 						return
 					end
