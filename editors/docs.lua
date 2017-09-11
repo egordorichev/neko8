@@ -13,12 +13,12 @@ docs1.neko8 = {
 						80k planned memory]]},
 }
 
-content.system = {
+content.sys = {
 	{name="pcall",desc="Origin function in lua"},
 	{name="loadstring",desc="Origin function in lua"},
 }
 
-content.graphics = {
+content.graph = {
 	{name="printh",desc="Origin function in lua"},
 	{name="csize()",desc="Return canvas width,height"},
 	{name="rect(x0, y0, x1, y1, c)",desc="Draw rect from x0,y0 to x1,y1 with color:c"},
@@ -46,7 +46,7 @@ content.graphics = {
 	{name="map(cx, cy, sx, sy, cw, ch, bitmask)",desc="Draw map"},
 }
 
-content.memory = {
+content.mem = {
 	{name="memcpy(dest_addr, source_addr, len)",desc="Copy memory"},
 }
 
@@ -70,7 +70,7 @@ content.math = {
 	{name="sgn(n)",desc="Return n sign: -1 or 1"},
 }
 
-content.neko_commands = {
+content.cmd = {
 	{name="help(a)",desc="Show summary of neko commands info"},
 	{name="folder()",desc="Open neko carts folder"},
 	{name="ls(a)",desc="List files at current directory"},
@@ -86,7 +86,7 @@ content.neko_commands = {
 	{name="edit()",desc="Open editor"},
 }
 
-content.neko_table = {
+content.table = {
 	{name="pairs",desc="Used in 'for k,v in pairs(t)' loops"},
 	{name="ipairs",desc="Used in 'for k,v in ipairs(t)' loops"},
 	{name="string",desc="----"},
@@ -106,8 +106,8 @@ content.message = {
 function docs.init()
     docs.forceDraw = false
     docs.icon = 14
-	docs.tab = 0
-	docs.page = 0
+	docs.tab = "input"
+	docs.page = 0 
     docs.name = "online help docs"
     docs.bg = config.editors.docs.bg
 end
@@ -133,15 +133,23 @@ function docs.redraw()
 	api.rectfill(0,0,192,128,0)
 
 	neko.cart, neko.core = neko.core, neko.cart
-    
-	docs.selectPage(content.graphics)
-
+   
+	local k = docs.tab
+	docs.selectPage(content[k])
+	docs.drawTab()
+	
 	neko.core, neko.cart = neko.cart, neko.core, neko.cart	
 	editors.drawUI()
 end
 
 function docs.drawTab()
-	--todo	
+	local posX = 2
+	for k,v in pairs(content) do
+		local len = string.len(k)
+	 	-- draw tab
+		api.print(k, posX, 116, k == docs.tab and 12 or 13)
+		posX = posX + (len+1) * 8/2
+	end	
 end
 
 function docs.selectPage(t)
@@ -202,12 +210,16 @@ function docs._update()
 			-- select tab
 			local j = #content
 			if my >= 128-20 and my <= 128-8 then
-				for i = 0, j do
-					if mx >= 0 + i*8 and mx <= 85 + 8 + i*8 then
-						docs.tab = i
+				local posX = 2
+				for k,v in pairs(content) do
+					local len = string.len(k)
+					
+					if mx >= posX and mx <= posX + (len+1)*8/2 then
+						docs.tab = k
 						docs.forceDraw = true
 						return
 					end
+					posX = posX + (len+1)*8/2
 				end
 			end
 			-- select page
