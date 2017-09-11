@@ -164,7 +164,7 @@ function docs.selectPage(t)
             )   
 
             api.print(
-                i, 170 + i * 8, 10, 12
+                i, 170 + i * 8, 10, i == docs.page and 12 or 5
             )   
         end 
     end   

@@ -175,7 +175,7 @@ function sprites.redraw()
 		)
 
 		api.print(
-			i, 89 + i * 8, 74, 13
+			i, 89 + i * 8, 74, i == sprites.page and 12 or 13
 		)
 	end
 
