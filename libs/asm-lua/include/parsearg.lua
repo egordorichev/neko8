@@ -16,10 +16,10 @@ local arg = {
     {type = 'mem', pattern = '%[(0b[01]+)%]', out = {'ptr'}, numeric = true},
     {type = 'mem', pattern = '%[([%d]+)%]', out = {'ptr'}, numeric = true},
     {type = 'memvar', pattern = '%[([%a%d_%-]+)%]', out = {'name'}},
-    {type = 'immediate', pattern = '(0x[%da-fA-F]*%.?[%da-fA-F]+)', out = {'val'}, numeric = true},
-    {type = 'immediate', pattern = '(0[0-7]*%.?[0-7]+)', out = {'val'}, numeric = true},
-    {type = 'immediate', pattern = '(0b[01]*%.?[01]+)', out = {'val'}, numeric = true},
-    {type = 'immediate', pattern = '([%d]*%.?[%d]+)', out = {'val'}, numeric = true},
+    {type = 'immediate', pattern = '(%-?0x[%da-fA-F]*%.?[%da-fA-F]+)', out = {'val'}, numeric = true},
+    {type = 'immediate', pattern = '(%-?0[0-7]*%.?[0-7]+)', out = {'val'}, numeric = true},
+    {type = 'immediate', pattern = '(%-?0b[01]*%.?[01]+)', out = {'val'}, numeric = true},
+    {type = 'immediate', pattern = '(%-?[%d]*%.?[%d]+)', out = {'val'}, numeric = true},
     {type = 'var', pattern = '([%a%d_%-]+)', out = {'name'}}
 }
 

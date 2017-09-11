@@ -10,7 +10,7 @@ function _init()
  t=0
  cx=0
 
- commads={
+ commands={
   help=help,
   ls=ls,
   cd=cd,
@@ -23,7 +23,8 @@ function _init()
   new=new,
   save=save,
   folder=folder,
-  cls=cls,
+-- cls expects a number, but all commands receive a table. See issue #9
+  cls=function(a) cls(a and unpck(a)) end,
   edit=edit,
  minify=minify
  }
@@ -192,12 +193,10 @@ function run_command(c)
  cmd=args[1]
  del(args,cmd)
 
- for k,v in pairs(commads) do
-  if k==cmd then
+ if commands[cmd] then
    color(7)
-   v(args)
+   commands[cmd](args)
    return
-  end
  end
  color(14)
  print("unknown command")
