@@ -582,7 +582,7 @@ function api.flip()
 		)
 	end
 
-	if editors.opened then
+	if editors.opened and neko.cart == nil then
 		local mx, my = api.mstat()
 		neko.cart, neko.core = neko.core, neko.cart
 
