@@ -92,6 +92,9 @@ function createSandbox(lang)
 		palt = api.palt,
 		map = api.map,
 
+		tri = api.tri,
+		trifill = api.trifill,
+
 		memcpy = api.memcpy,
 
 		btn = api.btn,
@@ -144,8 +147,32 @@ function createSandbox(lang)
 
 		smes = api.smes,
 		nver = api.nver,
-		mstat = api.mstat
+		mstat = api.mstat,
 	}
+end
+
+function api.tri(x0, y0, x1, y1, x2, y2, c)
+	if not x0 or not y0 or not x1 or not y1 or not x2 or not y2 then
+		return
+	end
+
+	if c ~= nil then
+		api.color(c)
+	end
+
+	love.graphics.polygon("line", x0, y0, x1, y1, x2, y2)
+end
+
+function api.trifill(x0, y0, x1, y1, x2, y2, c)
+	if not x0 or not y0 or not x1 or not y1 or not x2 or not y2 then
+		return
+	end
+
+	if c ~= nil then
+		api.color(c)
+	end
+
+	love.graphics.polygon("fill", x0, y0, x1, y1, x2, y2)
 end
 
 function setCamera()
