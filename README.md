@@ -2,7 +2,7 @@
 
 ![](https://media.discordapp.net/attachments/314487938949971980/355710597528027146/Peek_2017-09-08_16-43.gif)
 
-[**Neko8**](https://egordorichev.itch.io/neco8) is a **fantasy console**, inspired by [**pico8**](https://www.lexaloffle.com/pico-8.php), [**liko12**](https://ramilego4game.itch.io/liko12) and [**tic80**](https://tic.computer/). It is open-source and fully free. Its goal is to be a fun and useful tool for game development and **especially for game jams**. 
+[**Neko8**](https://egordorichev.itch.io/neko8) is a **fantasy console**, inspired by [**pico8**](https://www.lexaloffle.com/pico-8.php), [**liko12**](https://ramilego4game.itch.io/liko12) and [**tic80**](https://tic.computer/). It is open-source and fully free. Its goal is to be a fun and useful tool for game development and **especially for game jams**. 
 
 Currently it features:
 

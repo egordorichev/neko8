@@ -86,15 +86,16 @@ function carts.load(name)
 		return cart
 	end
 
+	cart.music = carts.loadMusic(data, cart)
+
+	if not cart.music then
+		log.error("failed to load music")
+		return cart
+	end
+
 	if loadData then
 		carts.import(cart)
 	end
-
-	--
-	-- possible futures:
-	-- music
-	-- sfx
-	--
 
 	love.graphics.setShader(
 		colors.drawShader
@@ -113,6 +114,7 @@ function carts.import(cart)
 	editors.sprites.import(cart.sprites)
 	editors.map.import(cart.map)
 	editors.sfx.import(cart.sfx)
+	editors.music.import(cart.music)
 end
 
 function carts.export()
@@ -124,6 +126,9 @@ function carts.export()
 
 	neko.loadedCart.sfx =
 		editors.sfx.export()
+
+	neko.loadedCart.music =
+		editors.music.export()
 end
 
 function carts.create(lang)
@@ -398,7 +403,17 @@ end
 function carts.loadSFX(data, cart)
 	local sfx = {}
 
+	-- todo
+
 	return sfx
+end
+
+function carts.loadMusic(data, cart)
+	local music = {}
+
+	-- todo
+
+	return music
 end
 
 function carts.patchLua(code)
@@ -442,10 +457,12 @@ function carts.run(cart)
 	end
 
 	local name = cart.name
+
 	if not name then
 		name = "new cart"
-		carts.export()
 	end
+
+	carts.export()
 
 	log.info(
 		"running cart " .. name

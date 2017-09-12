@@ -54,9 +54,9 @@ local neko8 = {
 config = {
 	version = {
 		major = 0,
-		minor = 0.1,
-		name = "kitten",
-		string = "v0.0.3 kitten"
+		minor = 0.4, -- don't forget to change ;P
+		name = "web",
+		string = "v0.0.4 web"
 	},
 
 	window = {
