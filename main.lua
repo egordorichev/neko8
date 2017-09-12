@@ -29,8 +29,8 @@ hostTime = 0
 
 asm = require "asm-lua"
 
-neko = require "neko8"
 api = require "api"
+neko = require "neko8"
 carts = require "carts"
 commands = require "commands"
 
