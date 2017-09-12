@@ -1,37 +1,28 @@
 neko8 cart
 __lua__
--- math flower
--- by @egordorichev
+-- Random filled and empty rects
+-- by @FreeBlues
 
 function _init()
+ filled = false
+ print("Hello rects")
  cls()
- am=30
- amt=am
- c=7
- ct=0
- t=0
 end
 
 function _update()
- t+=0.01
- ct=max(0,ct-0.05)
- amt+=cos(t*2)*5
- 
- if ct==0 and abs(amt)<2 then
-  c=rnd(8)+7
-  ct=1
- end
+ if key("q") then reboot() end
+ if key("f") then cls(); filled = true end
+ if key("e") then cls(); filled = false end
 end
 
 function _draw()
- for i=0,299 do
-  circ(rnd(196),rnd(128),1,0)
- end
- for i=0,am/3 do
-  local id=i/am*3+t
-  local x=sin(id)*amt+64
-  local y=cos(id)*amt+64
-  circfill(x,y,5,i%2+c)
+ print("press q to exit",2,2,12)
+ print("press f/e to switch empty to filled",2,8,12)
+
+ if filled then 
+  rectfill(rnd(192),rnd(24,128),rnd(192),rnd(24,128),rnd(16))
+ else  
+  rect(rnd(192),rnd(24,128),rnd(192),rnd(24,128),rnd(16)) 
  end
 end
 __gfx__

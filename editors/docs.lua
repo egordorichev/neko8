@@ -114,10 +114,10 @@ content.keys = {
 }
 
 function docs.init()
-	docs.forceDraw = false
-	docs.icon = 13
-	docs.tab = "neko8"
-	docs.page = 0 
+    docs.forceDraw = false
+    docs.icon = 13
+    docs.tab = "neko8"
+    docs.page = 0 
     docs.name = "build-in help"
     docs.bg = config.editors.docs.bg
 end
