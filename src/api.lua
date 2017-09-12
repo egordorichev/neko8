@@ -4,6 +4,11 @@
 
 local api = {}
 
+camera = {
+	x = 0,
+	y = 0
+}
+
 function initApi()
 	love.graphics.setLineWidth(1)
 	love.graphics.setLineStyle("rough")
@@ -41,10 +46,17 @@ function createSandbox(lang)
 		pcall = pcall,
 		loadstring = loadstring,
 		setmetatable = setmetatable,
+		require = require,
 
 		-- this is required by the asm.lua callx operator
 		unpck = table.unpack,
 
+		camera = api.camera,
+		clip = api.clip,
+		fget = api.fget,
+		fset = api.fset,
+		mget = api.mget,
+		mset = api.mset,
 		printh = print,
 		csize = api.csize,
 		rect = api.rect,
@@ -117,6 +129,57 @@ function createSandbox(lang)
 		nver = api.nver,
 		mstat = api.mstat
 	}
+end
+
+function setCamera()
+	love.graphics.origin()
+	love.graphics.translate(-camera.x, -camera.y)
+end
+
+function api.camera(x, y)
+	camera.x = x or 0
+	camera.y = y or 0
+end
+
+function setClip()
+	if clip then
+		love.graphics.setScissor(unpack(clip))
+	else
+		love.graphics.setScissor(
+			0, 0, config.canvas.width,
+			config.canvas.height
+		)
+	end
+end
+
+function api.clip(x, y, w, h)
+	if type(x) == "number" then
+		love.graphics.setScissor(x, y, w, h)
+		clip = { x, y, w, h }
+	else
+		love.graphics.setScissor(
+			0, 0, config.canvas.width,
+			config.canvas.height
+		)
+
+		clip = nil
+	end
+end
+
+function api.fget()
+
+end
+
+function api.fset()
+
+end
+
+function api.mget()
+
+end
+
+function api.mset()
+
 end
 
 function api.csize()
@@ -357,8 +420,6 @@ function api.print(s, x, y, c)
 		api.scroll(6)
 		y = 114
 
-
-
 		api.color(c)
 		api.cursor(0, y + 6)
 		api.flip()
@@ -379,6 +440,8 @@ function api.flip()
 		gif:frame(canvas.renderable:newImageData())
 	end
 
+	love.graphics.setScissor()
+	love.graphics.origin()
 	love.graphics.setCanvas(canvas.message)
 	love.graphics.clear()
 
@@ -440,6 +503,9 @@ function api.flip()
 	love.graphics.present()
 	love.graphics.setShader(colors.drawShader)
 	love.graphics.setCanvas(canvas.renderable)
+
+	setClip()
+	setCamera()
 end
 
 function api.cursor(x, y)

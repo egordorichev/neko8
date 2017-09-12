@@ -98,6 +98,9 @@ function love.draw()
 		colors.drawShader
 	)
 
+	setClip()
+	setCamera()
+
 	neko.draw()
 	api.flip()
 
@@ -170,6 +173,8 @@ function love.keypressed(
 			handled = false
 			if neko.cart then
 				neko.cart = nil
+				api.camera(0, 0)
+				api.clip()
 			elseif editors.opened then
 				editors.close()
 			else
@@ -235,11 +240,15 @@ function try(f, catch, finally)
 end
 
 function runtimeError(error)
+	api.clip()
+	api.camera(0, 0)
+
 	log.error("runtime error:")
 	log.error(error)
 	editors.close()
 
 	neko.cart = nil
+
 	local pos = error:find("\"]:")
 	if pos then
 		error = "line " .. error:sub(pos + 3)
@@ -252,6 +261,9 @@ function runtimeError(error)
 end
 
 function syntaxError(error)
+	api.camera(0, 0)
+	api.clip()
+
 	log.error("syntax error:")
 	log.error(e)
 	editors.close()

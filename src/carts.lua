@@ -92,7 +92,6 @@ function carts.load(name)
 
 	--
 	-- possible futures:
-	-- maps
 	-- music
 	-- sfx
 	--
@@ -100,6 +99,9 @@ function carts.load(name)
 	love.graphics.setShader(
 		colors.drawShader
 	)
+
+	setCamera()
+	setClip()
 
 	neko.loadedCart = cart
 
@@ -133,8 +135,8 @@ function carts.create(lang)
     cart.lang = lang or "lua"
     if cart.lang == "lua" then
 	    cart.code = [[
--- see https://github.com/egordorichev/neko8
--- for help
+-- cart name
+-- by @author
 
 function _init()
 
@@ -458,18 +460,20 @@ function carts.run(cart)
 	elseif cart.lang == "asm" then
 		code = try(function()
 			return asm.compile(cart.code, DEBUG or false, true)
-		end,
-		runtimeError,
-		function(result) return result end)
-        if not code then
-            return false
-        end
+		end, runtimeError,
+		function(result)
+			return result
+		end)
+
+		if not code then
+      return false
+    end
 
 		api.print(
 			"successfully compiled " .. cart.pureName
 		)
-    else
-        runtimeError("unrecognized language tag")
+  else
+    runtimeError("unrecognized language tag")
 	end
 
 	local ok, f, e = pcall(
@@ -488,6 +492,9 @@ function carts.run(cart)
 	love.graphics.setShader(
 		colors.drawShader
 	)
+
+	setClip()
+	setCamera()
 
 	local result
 	setfenv(f, cart.sandbox)

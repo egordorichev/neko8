@@ -58,6 +58,8 @@ end
 
 function commands.edit()
 	neko.cart = nil
+	api.camera(0, 0)
+	setClip()
 	editors.open()
 end
 
