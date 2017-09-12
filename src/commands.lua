@@ -133,11 +133,12 @@ function commands.run()
 	end
 end
 
-function commands.new()
-	neko.loadedCart = carts.create()
+function commands.new(a)
+    local lang = a[1] or "lua"
+	neko.loadedCart = carts.create(lang)
 	carts.import(neko.loadedCart)
 	api.color(7)
-	api.print("created new cart")
+	api.print(string.format("created new %s cart", lang))
 	editors.current.close()
 	editors.current = editors.code
 end

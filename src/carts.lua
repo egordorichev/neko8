@@ -127,10 +127,12 @@ function carts.export()
 		editors.sfx.export()
 end
 
-function carts.create()
+function carts.create(lang)
 	local cart = {}
 	cart.sandbox = createSandbox()
-	cart.code = [[
+    cart.lang = lang or "lua"
+    if cart.lang == "lua" then
+	    cart.code = [[
 -- see https://github.com/egordorichev/neko8
 -- for help
 
@@ -146,6 +148,33 @@ function _draw()
  cls()
 end
 ]]
+    elseif cart.lang == "asm" then
+        cart.code = [[
+section .data
+
+section .text
+
+extern _init
+extern _update
+extern _draw
+
+init:
+ ret
+end
+
+update:
+ ret
+end
+
+draw:
+ ret
+end
+
+mov [_init], [init]
+mov [_update], [update]
+mov [_draw], [draw]
+]]
+    end
 
 	cart.sprites = {}
 	cart.sprites.data =
@@ -432,11 +461,17 @@ function carts.run(cart)
 		end,
 		runtimeError,
 		function(result) return result end)
+        if not code then
+            return false
+        end
 
 		api.print(
 			"successfully compiled " .. cart.pureName
 		)
+    else
+        runtimeError("unrecognized language tag")
 	end
+
 	local ok, f, e = pcall(
 		load, carts.patchLua(code), name
 	)
@@ -489,7 +524,7 @@ function carts.save(name)
 
 	local data = "neko8 cart\n"
 
-	data = data .. "__lua__\n"
+	data = data .. string.format("__%s__\n", neko.loadedCart.lang)
 	data = data .. neko.loadedCart.code
 	data = data .. "__gfx__\n"
 	data = data .. editors.sprites.exportGFX()

@@ -40,7 +40,6 @@ function editors.init()
   end
 
 	-- exit button
-
 	editors.ui:add(UiButton(
 		14, config.canvas.width - 7,
 		config.canvas.height - 7, 8, 8, 6

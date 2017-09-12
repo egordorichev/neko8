@@ -9,34 +9,64 @@ local asmnot=function() return {lt=not _R.f.lt,gt=not _R.f.gt,le=not _R.f.le,ge=
 ]]
 
 local neko8_prelude = [[
-local printh=function() printh(_R.ss) end
-local csize=function() _R.a,_R.d = csize() end
-local rect=function() rect(_R.a,_R.b,_R.c,_R.d) end
-local rectfill=function() rectfill(_R.a,_R.b,_R.c,_R.d) end
-local brect=function() brect(_R.a,_R.b,_R.c,_R.d) end
-local brectfill=function() brectfill(_R.a,_R.b,_R.c,_R.d) end
-local color=function() color(_R.a) end
-local cls=cls
-local circ=function() circ(_R.a,_R.b,_R.d) end
-local circfill=function() circfill(_R.a,_R.b,_R.d) end
-local pset=function() pset(_R.a,_R.b) end
-local pget=function() _R.a=pget(_R.a,_R.b) end
-local line=function() line(_R.a,_R.b,_R.c,_R.d) end
-local print=function() print(_R.ss) end
-local flip=flip
-local cursor=function() cursor(_R.a,_R.b) end
-local cget=function() _R.a,_R.b=cget() end
-local scroll=function() scroll(_R.a) end
-local spr=function() spr(_R.d, _R.a, _R.b) end
-local sspr=sspr
-local sget=function() _R.a=sget(_R.a, _R.b) end
-local sset=function() sset(_R.a, _R.b, _R.d) end
-local pal=pal
-local palt=palt
-local map=map
-local btn=function() _R.f.eq=btn(_R.ss) end
-local btnp=btnp
-local key=function() _R.f.eq=key(_R.ss) end
+
+local _printh=printh
+local _csize=csize
+local _rect=rect
+local _rectfill=rectfill
+local _brect=brect
+local _brectfill=brectfill
+local _color=color
+local _cls=cls
+local _circ=circ
+local _circfill=circfill
+local _pset=pset
+local _pget=pget
+local _line=line
+local _print=print
+local _flip=flip
+local _cursor=cursor
+local _cget=cget
+local _scroll=scroll
+local _spr=spr
+local _sspr=sspr
+local _sget=sget
+local _sset=sset
+local _pal=pal
+local _palt=palt
+local _map=map
+local _btn=btn
+local _btnp=btnp
+local _key=key
+
+local printh=function() _printh(_R.ss) end
+local csize=function() _R.a,_R.d = _csize() end
+local rect=function() _rect(_R.a,_R.b,_R.c,_R.d) end
+local rectfill=function() _rectfill(_R.a,_R.b,_R.c,_R.d) end
+local brect=function() _brect(_R.a,_R.b,_R.c,_R.d) end
+local brectfill=function() _brectfill(_R.a,_R.b,_R.c,_R.d) end
+local color=function() _color(_R.a) end
+local cls=_cls
+local circ=function() _circ(_R.a,_R.b,_R.d) end
+local circfill=function() _circfill(_R.a,_R.b,_R.d) end
+local pset=function() _pset(_R.a,_R.b) end
+local pget=function() _R.a=_pget(_R.a,_R.b) end
+local line=function() _line(_R.a,_R.b,_R.c,_R.d) end
+local print=function() _print(_R.ss) end
+local flip=_flip
+local cursor=function() _cursor(_R.a,_R.b) end
+local cget=function() _R.a,_R.b=_cget() end
+local scroll=function() _scroll(_R.a) end
+local spr=function() _spr(_R.d, _R.a, _R.b) end
+local sspr=_sspr
+local sget=function() _R.a=_sget(_R.a, _R.b) end
+local sset=function() _sset(_R.a, _R.b, _R.d) end
+local pal=_pal
+local palt=_palt
+local map=_map
+local btn=function() _R.f.eq=_btn(_R.ss) end
+local btnp=_btnp
+local key=function() _R.f.eq=_key(_R.ss) end
 
 local memset=function() for i=0,_R.c-1 do _D[_R.b+i]=_R.a end end
 local memcpy=function() for i=0,_R.c-1 do _D[_R.b+i]=_D[_R.a+i] end end
