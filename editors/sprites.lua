@@ -274,11 +274,6 @@ function sprites.drawInfo()
 	end
 end
 
-local function flip(byte, b)
-  b = 2 ^ b
-  return bit.bxor(byte, b)
-end
-
 function sprites._update()
 	lmb = mb
 	lmx = mx
@@ -322,8 +317,11 @@ function sprites._update()
 			if mx >= 10 and mx <= 18 then
 				for i = 0, 7 do
 					if my >= 68 + i * 6 and my <= 76 + i * 6 then
-						local b = sprites.data.flags[sprites.sprite]
-						sprites.data.flags[sprites.sprite] = flip(b, i)
+						api.fset(
+							sprites.sprite, i,
+							not api.fget(sprites.sprite, i)
+						)
+
 						sprites.forceDraw = true
 						return
 					end

@@ -109,6 +109,14 @@ function createSandbox(lang)
 		mid = api.mid,
 		abs = api.abs,
 		sgn = api.sgn,
+		atan2 = api.atan2,
+		band = band,
+		bnot = bnot,
+		bor = bor,
+		bxor = bxor,
+		shl = shl,
+		shr = shr,
+		sqrt = api.sqrt,
 
 		help = commands.help,
 		folder = commands.folder,
@@ -190,20 +198,14 @@ function api.fget(n, f)
 	return neko.loadedCart.sprites.flags[n]
 end
 
-function api.fset(n, v, f)
-	if v == nil then
-		v, f = f, nil
-	end
 
-	if f then
-		if f then
-			neko.loadedCart.sprites.flags[n] = bor(neko.loadedCart.sprites.flags[n], shl(1, f))
-		else
-			neko.loadedCart.sprites.flags[n] = band(bnot(neko.loadedCart.sprites.flags[n], shl(1, f)))
-		end
-	else
-		neko.loadedCart.sprites.flags[n] = v
-	end
+local function flip(byte, b)
+  b = 2 ^ b
+  return bit.bxor(byte, b)
+end
+
+function api.fset(n, v, f)
+	-- fixme: implement
 end
 
 function api.mget(x, y)
@@ -906,6 +908,10 @@ function api.flr(n)
 	return math.floor(n or 0)
 end
 
+function api.sqrt(n)
+	return math.sqrt(n or 0)
+end
+
 function api.ceil(n)
 	return math.ceil(n or 0)
 end
@@ -920,6 +926,13 @@ function api.sin(n)
 	return math.sin(
 		-(n or 0) * (math.pi * 2)
 	)
+end
+
+function api.atan2(x, y)
+	x = x or 0
+	y = y or 0
+
+	return (0.75 + math.atan2(x, y) / (math.pi * 2)) % 1.0
 end
 
 function api.rnd(min, max)
