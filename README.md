@@ -12,6 +12,8 @@ Currently it features:
 * Terminal
 * Build-in API docs
 
+Our developers can be found on [discord](https://discord.gg/DPBN8Xn).
+
 #### Installing ang running
 
 Download and extract the source. In the root folder run:
