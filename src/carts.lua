@@ -355,7 +355,12 @@ end
 function carts.loadMap(data, cart)
 	local map = {}
 	local _, mapStart = data:find("\n__map__\n")
-	local mapEnd = data:find("\n__end__\n")
+	local mapEnd = data:find("\n__sfx__\n")
+
+	if not mapEnd then -- older versions
+		mapEnd = data:find("\n__end__\n")
+	end
+
 	data = data:sub(mapStart, mapEnd)
 
 	for y = 0, 127 do
@@ -456,6 +461,8 @@ function carts.run(cart)
 		return
 	end
 
+	editors.close()
+
 	local name = cart.name
 
 	if not name then
@@ -553,6 +560,10 @@ function carts.save(name)
 	data = data .. editors.sprites.exportGFF()
 	data = data .. "__map__\n"
 	data = data .. editors.map.export()
+	-- data = data .. "__sfx__\n"
+	-- data = data .. editors.sfx.export()
+	-- data = data .. "__music__\n"
+	-- data = data .. editors.music.export()
 	data = data .. "__end__\n"
 
 	love.filesystem.write(

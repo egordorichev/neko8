@@ -360,8 +360,8 @@ function api.circ(ox, oy, r, c)
 		api.color(c)
 	end
 
-	ox = api.flr(ox + r)
-	oy = api.flr(oy + r)
+	ox = api.flr(ox)
+	oy = api.flr(oy)
 	r = api.flr(r)
 
 	local points = {}
@@ -419,8 +419,8 @@ function api.circfill(cx, cy, r, c)
 		api.color(c)
 	end
 
-	cx = api.flr(cx + r)
-	cy = api.flr(cy + r)
+	cx = api.flr(cx)
+	cy = api.flr(cy)
 	r = api.flr(r)
 
 	local x = r
@@ -520,6 +520,12 @@ function api.print(s, x, y, c)
 		api.color(c)
 		api.cursor(0, y + 6)
 		api.flip()
+	end
+
+	if scroll then
+		local c = colors.current
+		api.brectfill(api.flr(x), api.flr(y) - 1, #s * 4, 7, 0)
+		api.color(c)
 	end
 
 	love.graphics.setShader(
