@@ -91,7 +91,7 @@ function createSandbox(lang)
 		pal = api.pal,
 		palt = api.palt,
 		map = api.map,
-		ppget = api.pgget,
+		ppget = api.ppget,
 
 		tri = api.tri,
 		trifill = api.trifill,
@@ -155,7 +155,7 @@ function createSandbox(lang)
 end
 
 function api.ppget()
-	pgetData = canvas.renderable:getImageData()
+	pgetData = canvas.renderable:newImageData()
 end
 
 function api.tri(x0, y0, x1, y1, x2, y2, c)
@@ -360,8 +360,8 @@ function api.circ(ox, oy, r, c)
 		api.color(c)
 	end
 
-	ox = api.flr(ox)
-	oy = api.flr(oy)
+	ox = api.flr(ox + r)
+	oy = api.flr(oy + r)
 	r = api.flr(r)
 
 	local points = {}
@@ -419,8 +419,8 @@ function api.circfill(cx, cy, r, c)
 		api.color(c)
 	end
 
-	cx = api.flr(cx)
-	cy = api.flr(cy)
+	cx = api.flr(cx + r)
+	cy = api.flr(cy + r)
 	r = api.flr(r)
 
 	local x = r
@@ -456,7 +456,7 @@ function api.pget(x, y)
 		return 0
 	end
 
-	return pgetData:getPixel(x, y) / 16
+	return api.flr(pgetData:getPixel(x, y) / 17)
 end
 
 function api.pset(x, y, c)
