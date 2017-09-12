@@ -40,6 +40,7 @@ function createSandbox(lang)
 	return {
 		pcall = pcall,
 		loadstring = loadstring,
+		setmetatable = setmetatable,
 
 		-- this is required by the asm.lua callx operator
 		unpck = table.unpack,
