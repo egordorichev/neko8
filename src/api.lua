@@ -4,6 +4,15 @@
 
 local api = {}
 
+local bit = require "bit"
+
+band = bit.band
+bor = bit.bor
+bxor = bit.bxor
+bnot = bit.bnot
+shl = bit.lshift
+shr = bit.rshift
+
 camera = {
 	x = 0,
 	y = 0
@@ -166,12 +175,35 @@ function api.clip(x, y, w, h)
 	end
 end
 
-function api.fget()
+function api.fget(n, f)
+	if n == nil then return nil end
+	n = api.flr(n)
 
+	if f ~= nil then
+		if not neko.loadedCart.sprites.flags[n] then
+			return 0
+		end
+
+		return band(neko.loadedCart.sprites.flags[n], shl(1, f)) ~= 0
+	end
+
+	return neko.loadedCart.sprites.flags[n]
 end
 
-function api.fset()
+function api.fset(n, v, f)
+	if v == nil then
+		v, f = f, nil
+	end
 
+	if f then
+		if f then
+			neko.loadedCart.sprites.flags[n] = bor(neko.loadedCart.sprites.flags[n], shl(1, f))
+		else
+			neko.loadedCart.sprites.flags[n] = band(bnot(neko.loadedCart.sprites.flags[n], shl(1, f)))
+		end
+	else
+		neko.loadedCart.sprites.flags[n] = v
+	end
 end
 
 function api.mget()
@@ -773,13 +805,14 @@ function api.map(
 	cw = cw and api.flr(cw) or 24
 	ch = ch and api.flr(ch) or 16
 
-
 	for y = 0, ch - 1 do
 		if cy + y < 64 and cy + y >= 0 then
 			for x = 0, cw - 1 do
 				if cx + x < 128 and cx + x >= 0 then
 					local v =
-						neko.loadedCart.map[api.flr(cy + y)][api.flr(cx + x)]
+						neko.loadedCart.map
+						[api.flr(cy + y)]
+						[api.flr(cx + x)]
 
 					if v > 0 then
 						if bitmask == nil or bitmask == 0 then

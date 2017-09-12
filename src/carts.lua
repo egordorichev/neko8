@@ -122,9 +122,6 @@ function carts.export()
 	neko.loadedCart.sprites =
 		editors.sprites.export()
 
-	neko.loadedCart.map =
-		editors.map.export()
-
 	neko.loadedCart.sfx =
 		editors.sfx.export()
 end
@@ -132,9 +129,9 @@ end
 function carts.create(lang)
 	local cart = {}
 	cart.sandbox = createSandbox()
-    cart.lang = lang or "lua"
-    if cart.lang == "lua" then
-	    cart.code = [[
+  cart.lang = lang or "lua"
+  if cart.lang == "lua" then
+	   cart.code = [[
 -- cart name
 -- by @author
 
@@ -150,8 +147,8 @@ function _draw()
  cls()
 end
 ]]
-    elseif cart.lang == "asm" then
-        cart.code = [[
+  elseif cart.lang == "asm" then
+    cart.code = [[
 section .data
 
 section .text
@@ -176,7 +173,7 @@ mov [_init], [init]
 mov [_update], [update]
 mov [_draw], [draw]
 ]]
-    end
+  end
 
 	cart.sprites = {}
 	cart.sprites.data =
