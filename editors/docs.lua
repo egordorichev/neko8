@@ -12,8 +12,11 @@ content.neko8 = {
 }
 
 content.sys = {
-	{name = "pcall(f [, arg1, ··· ])", desc = "Origin function in lua"},
-	{name = "loadstring(str)", desc = "Origin function in lua"},
+	{name = "pcall(f [, arg1, ··· ])", desc = "Origin function pcall in lua"},
+	{name = "loadstring(str)", desc = "Origin function loadstring in lua"},
+	{name = "setmetatable(t1,t2)", desc = "Origin function setmetatable in lua"},
+	{name = "unpck(t)", desc = "Origin function table.unpack in lua"},
+	{name = "memcpy(dest_addr, source_addr, len)", desc = "Copy memory"},
 }
 
 content.graph = {
@@ -42,10 +45,6 @@ content.graph = {
 	{name = "pal(c0,c1,p)", desc = "Switch color c0 to c1"},
 	{name = "palt(c, t)", desc = "Set transparency for color to t (boolean)"},
 	{name = "map(cx, cy, sx, sy, cw, ch, bitmask)", desc = "Draw map"},
-}
-
-content.mem = {
-	{name = "memcpy(dest_addr, source_addr, len)", desc = "Copy memory"},
 }
 
 content.input = {
@@ -115,10 +114,10 @@ content.keys = {
 }
 
 function docs.init()
-	docs.forceDraw = false
-	docs.icon = 13
-	docs.tab = "neko8"
-	docs.page = 0
+    docs.forceDraw = false
+    docs.icon = 13
+    docs.tab = "neko8"
+    docs.page = 0 
     docs.name = "build-in help"
     docs.bg = config.editors.docs.bg
 end
