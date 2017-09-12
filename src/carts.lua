@@ -560,10 +560,10 @@ function carts.save(name)
 	data = data .. editors.sprites.exportGFF()
 	data = data .. "__map__\n"
 	data = data .. editors.map.export()
-	data = data .. "__sfx__\n"
-	data = data .. editors.sfx.export()
-	data = data .. "__music__\n"
-	data = data .. editors.music.export()
+	-- data = data .. "__sfx__\n"
+	-- data = data .. editors.sfx.export()
+	-- data = data .. "__music__\n"
+	-- data = data .. editors.music.export()
 	data = data .. "__end__\n"
 
 	love.filesystem.write(
