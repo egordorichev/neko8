@@ -360,8 +360,8 @@ function api.circ(ox, oy, r, c)
 		api.color(c)
 	end
 
-	ox = api.flr(ox + r)
-	oy = api.flr(oy + r)
+	ox = api.flr(ox)
+	oy = api.flr(oy)
 	r = api.flr(r)
 
 	local points = {}
@@ -419,8 +419,8 @@ function api.circfill(cx, cy, r, c)
 		api.color(c)
 	end
 
-	cx = api.flr(cx + r)
-	cy = api.flr(cy + r)
+	cx = api.flr(cx)
+	cy = api.flr(cy)
 	r = api.flr(r)
 
 	local x = r
