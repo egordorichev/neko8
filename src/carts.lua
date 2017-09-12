@@ -461,6 +461,8 @@ function carts.run(cart)
 		return
 	end
 
+	editors.close()
+
 	local name = cart.name
 
 	if not name then
