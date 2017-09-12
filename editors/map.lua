@@ -149,10 +149,10 @@ function map._update()
 			end
 		else
 			if my > 7 and my < config.canvas.height - 7 then
-				local x = api.mid(0, 127, api.flr(mx / 8))
-				local y = api.mid(0, 127, api.flr((my - 8) / 8))
+				local x = mx / 8
+				local y = (my - 8) / 8
 
-				neko.loadedCart.map[y][x] = editors.sprites.sprite
+				api.mset(x, y, editors.sprites.sprite)
 				map.forceDraw = true
 			end
 		end

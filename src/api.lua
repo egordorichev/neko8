@@ -206,12 +206,28 @@ function api.fset(n, v, f)
 	end
 end
 
-function api.mget()
+function api.mget(x, y)
+	if x == nil or y == nil
+	 	or x < 0 or x > 127 or y < 0
+		or y > 127 then
+		return 0
+	end
 
+	return neko.loadedCart.map
+		[api.flr(y)]
+		[api.flr(x)]
 end
 
-function api.mset()
+function api.mset(x, y, v)
+	if x == nil or y == nil
+	 	or x < 0 or x > 127 or y < 0
+		or y > 127 then
+		return
+	end
 
+	neko.loadedCart.map
+		[api.flr(y)]
+		[api.flr(x)] = v or 0
 end
 
 function api.csize()
@@ -809,10 +825,7 @@ function api.map(
 		if cy + y < 64 and cy + y >= 0 then
 			for x = 0, cw - 1 do
 				if cx + x < 128 and cx + x >= 0 then
-					local v =
-						neko.loadedCart.map
-						[api.flr(cy + y)]
-						[api.flr(cx + x)]
+					local v = api.mget(cx + x, cy + y)
 
 					if v > 0 then
 						if bitmask == nil or bitmask == 0 then
