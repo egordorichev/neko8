@@ -94,6 +94,8 @@ function createSandbox(lang)
 
 		tri = api.tri,
 		trifill = api.trifill,
+		poly = api.poly,
+		polyfill = api.polyfill,
 
 		memcpy = api.memcpy,
 
@@ -173,6 +175,14 @@ function api.trifill(x0, y0, x1, y1, x2, y2, c)
 	end
 
 	love.graphics.polygon("fill", x0, y0, x1, y1, x2, y2)
+end
+
+function api.poly(...)
+	love.graphics.polygon("line", ...)
+end
+
+function api.polyfill(...)
+	love.graphics.polygon("fill", ...)
 end
 
 function setCamera()

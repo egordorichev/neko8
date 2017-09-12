@@ -121,6 +121,7 @@ function love.conf(t)
 	t.window.minwidth = config.canvas.width
 	t.window.minheight = config.canvas.height
 	t.identity = "neko8"
+	t.externalstorage = true
 
 	return t
 end
