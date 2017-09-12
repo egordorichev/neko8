@@ -117,7 +117,7 @@ function docs.init()
     docs.forceDraw = false
     docs.icon = 13
     docs.tab = "neko8"
-    docs.page = 0 
+    docs.page = 0
     docs.name = "build-in help"
     docs.bg = config.editors.docs.bg
 end
@@ -140,7 +140,6 @@ end
 
 function docs.redraw()
 	api.cls(docs.bg)
-	api.brectfill(0, 7, 191, 127, 0)
 
 	neko.cart, neko.core = neko.core, neko.cart
 

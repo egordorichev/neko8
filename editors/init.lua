@@ -26,7 +26,8 @@ function editors.init()
   for i, e in ipairs(editors.modes) do
     e.init()
 		editors.ui:add(UiButton(
-			e.icon, 21 + i * 7 - 7, 0, 8, 8, 6
+			e.icon, 21 + i * 7 - 7, 0, 8, 8, 6,
+			e.bg
 		):onClick(function(b)
 			for i, e in ipairs(editors.modes) do
 				editors.ui.components[e.name].active = false
@@ -38,6 +39,8 @@ function editors.init()
 			editors.current.open()
 		end), e.name)
   end
+
+	editors.ui.components[editors.code.name].active = true
 
 	-- exit button
 	editors.ui:add(UiButton(
