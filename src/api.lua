@@ -522,6 +522,11 @@ function api.print(s, x, y, c)
 		api.flip()
 	end
 
+	local c = colors.current
+
+	api.brectfill(api.flr(x), api.flr(y) - 1, #s * 4, 7, 0)
+	api.color(c)
+
 	love.graphics.setShader(
 		colors.textShader
 	)

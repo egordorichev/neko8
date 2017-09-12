@@ -49,6 +49,7 @@ function code._draw()
 	end
 
 	editors.drawUI()
+	code.drawInfo()
 end
 
 local function cursorBlink()
@@ -223,15 +224,17 @@ function code.redraw()
     0, 8, config.canvas.width,
     8, config.editors.code.bg
   )
+end
 
-  api.print(
-    "line " .. code.cursor.y .. "/"
-    .. #code.lines .. ", char "
-    .. code.cursor.x .. "/"
-    .. #code.lines[code.cursor.y + 1],
-    1, config.canvas.height - 6,
-    config.editors.ui.fg
-  )
+function code.drawInfo()
+	api.print(
+		"line " .. code.cursor.y .. "/"
+		.. #code.lines .. ", char "
+		.. code.cursor.x .. "/"
+		.. #code.lines[code.cursor.y + 1],
+		1, config.canvas.height - 6,
+		config.editors.ui.fg
+	)
 end
 
 function code.close()
