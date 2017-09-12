@@ -4,8 +4,9 @@
 
 local requirePath = love.filesystem.getRequirePath()
 love.filesystem.setRequirePath(requirePath ..
-                               ';src/?.lua;src/?/init.lua' ..
-                               ';libs/?.lua;libs/?/init.lua')
+	';src/?.lua;src/?/init.lua;' ..
+	'libs/?.lua;libs/?/init.lua'
+)
 
 OS = love.system.getOS()
 mobile = OS == "Android" or OS == "iOS"
