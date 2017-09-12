@@ -91,6 +91,10 @@ function love.update(dt)
 end
 
 function love.draw()
+	if not neko.focus then
+		return
+	end
+
 	love.graphics.setCanvas(
 		canvas.renderable
 	)

@@ -227,52 +227,56 @@ function commands.cd(a)
 
 	local dir = neko.currentDirectory
 
-	if dir:sub(-1, -1) ~= "/" then
-		dir = dir .. "/"
-	end
-
-	dir = dir .. a[1]
-	dir = dir:gsub("\\","/")
-
-	if #dir:sub(-1, -1) == "/" then
+	if a[1] == "/" then
 		dir = "/"
-	end
-
-	local p = dir:match("(.+)")
-
-  if p then
-	p = "/" .. p .. "/";
-		local dirs = {}
-	p = p:gsub("/","//"):sub(2, -1)
-
-	for path in string.gmatch(p, "/(.-)/") do
-	  if path == "." then
-
-	  elseif path == ".." then
-		if #dirs > 0 then
-		  table.remove(dirs, #dirs)
-		end
-	  elseif dir ~= "" then
-		table.insert(dirs, path)
-	  end
-	end
-
-	dir = table.concat(dirs, "/")
-
-		if dir:sub(1, 1) ~= "/" then
-			dir = "/" .. dir
-		end
-
+	else
 		if dir:sub(-1, -1) ~= "/" then
 			dir = dir .. "/"
 		end
-  end
 
-	local flag = string.find(dir, "//")
-	while flag do
-	  dir = string.gsub(dir, "//", "/")
-	  flag = string.find(dir, "//")
-	end
+		dir = dir .. a[1]
+		dir = dir:gsub("\\","/")
+
+		if #dir:sub(-1, -1) == "/" then
+			dir = "/"
+		end
+
+		local p = dir:match("(.+)")
+
+	  if p then
+		p = "/" .. p .. "/";
+			local dirs = {}
+		p = p:gsub("/","//"):sub(2, -1)
+
+		for path in string.gmatch(p, "/(.-)/") do
+		  if path == "." then
+
+		  elseif path == ".." then
+			if #dirs > 0 then
+			  table.remove(dirs, #dirs)
+			end
+		  elseif dir ~= "" then
+			table.insert(dirs, path)
+		  end
+		end
+
+		dir = table.concat(dirs, "/")
+
+			if dir:sub(1, 1) ~= "/" then
+				dir = "/" .. dir
+			end
+
+			if dir:sub(-1, -1) ~= "/" then
+				dir = dir .. "/"
+			end
+	  end
+
+		local flag = string.find(dir, "//")
+		while flag do
+		  dir = string.gsub(dir, "//", "/")
+		  flag = string.find(dir, "//")
+		end
+	end	
 
 	if not love.filesystem.isDirectory(dir) then
 		api.print(

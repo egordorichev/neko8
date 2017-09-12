@@ -91,6 +91,7 @@ function createSandbox(lang)
 		pal = api.pal,
 		palt = api.palt,
 		map = api.map,
+		ppget = api.pgget,
 
 		tri = api.tri,
 		trifill = api.trifill,
@@ -151,6 +152,10 @@ function createSandbox(lang)
 		nver = api.nver,
 		mstat = api.mstat,
 	}
+end
+
+function api.ppget()
+	pgetData = canvas.renderable:getImageData()
 end
 
 function api.tri(x0, y0, x1, y1, x2, y2, c)
@@ -445,8 +450,13 @@ function api.circfill(cx, cy, r, c)
 	end
 end
 
-function api.pget(x, y, c)
-	return 0 -- todo
+function api.pget(x, y)
+	if not pgetData or x < 0 or x > config.canvas.width
+		or y < 0 or y > config.canvas.height then
+		return 0
+	end
+
+	return pgetData:getPixel(x, y) / 16
 end
 
 function api.pset(x, y, c)
