@@ -35,6 +35,8 @@ carts = require "carts"
 commands = require "commands"
 
 function love.load(arg)
+	love.filesystem.unmount(love.filesystem.getSource())
+
 	if arg then
 		DEBUG = arg[2] == "-d"
 

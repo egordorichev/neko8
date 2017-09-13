@@ -215,6 +215,20 @@ mov [_draw], [draw]
 		end
 	end
 
+	cart.sfx = {}
+
+	for i = 0, 63 do
+		cart.sfx[i] = {
+			speed = 16,
+			loopStart = 0,
+			loopEnd = 0
+		}
+
+		for j = 0, 31 do
+			cart.sfx[i][j] = { 0, 0, 0, 0}
+		end
+	end
+
 	return cart
 end
 
@@ -408,8 +422,6 @@ end
 function carts.loadSFX(data, cart)
 	local sfx = {}
 
-	-- todo
-
 	return sfx
 end
 
@@ -564,7 +576,7 @@ function carts.save(name)
 	-- data = data .. editors.sfx.export()
 	-- data = data .. "__music__\n"
 	-- data = data .. editors.music.export()
-	data = data .. "__end__\n"
+	data = data .. "__end__"
 
 	love.filesystem.write(
 		name .. ".n8", data, #data
