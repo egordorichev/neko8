@@ -434,12 +434,15 @@ function carts.loadSFX(data, cart)
 		end
 	end
 
-	local sfxStart = data:find("__sfx__") + 8
-	local sfxEnd = data:find("__music__") - 1
+	local sfxStart = data:find("__sfx__")
+	local sfxEnd = data:find("__music__")
 
 	if not sfxStart or not sfxEnd then
 		return sfx -- old versions
 	end
+
+	sfxStart = sfxStart + 8
+	sfxEnd = sfxEnd - 1
 
 	local sfxData = data:sub(sfxStart, sfxEnd)
 	local _sfx = 0
@@ -493,12 +496,15 @@ function carts.loadMusic(data, cart)
 		}
 	end
 
-	local musicStart = data:find("__music__") + 10
-	local musicEnd = data:find("__end__") - 1
+	local musicStart = data:find("__music__")
+	local musicEnd = data:find("__end__")
 
 	if not musicStart or not musicEnd then
 		return music -- old versions
 	end
+
+	musicStart = musicStart + 10
+	musicEnd = musicEnd - 1
 
 	local musicData = data:sub(musicStart, musicEnd)
 
