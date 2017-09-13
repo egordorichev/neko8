@@ -436,22 +436,26 @@ function carts.loadSFX(data, cart)
 
 	local sfxStart = data:find("__sfx__") + 8
 	local sfxEnd = data:find("__music__") - 1
-	local sfxdata = data:sub(sfxStart,sfxEnd)
 
+	if not sfxStart or not sfxEnd then
+		return sfx -- old versions
+	end
+
+	local sfxData = data:sub(sfxStart, sfxEnd)
 	local _sfx = 0
 	local step = 0
 
 	local nextLine = 1
 
 	while nextLine do
-		local lineEnd = sfxdata:find('\n', nextLine)
+		local lineEnd = sfxData:find('\n', nextLine)
 
 		if lineEnd == nil then
 			break
 		end
 
 		lineEnd = lineEnd - 1
-		local line = sfxdata:sub(nextLine, lineEnd)
+		local line = sfxData:sub(nextLine, lineEnd)
 
 		sfx[_sfx].speed = tonumber(line:sub(3, 4), 16)
 		sfx[_sfx].loop_start = tonumber(line:sub(5, 6), 16)
@@ -470,7 +474,7 @@ function carts.loadSFX(data, cart)
 
 		_sfx = _sfx + 1
 		step = 0
-		nextLine = sfxdata:find('\n', lineEnd) + 1
+		nextLine = sfxData:find('\n', lineEnd) + 1
 	end
 
 	return sfx
@@ -479,7 +483,49 @@ end
 function carts.loadMusic(data, cart)
 	local music = {}
 
-	-- todo
+	for i = 0, 63 do
+		music[i] = {
+			loop = 0,
+			[0] = 1,
+			[1] = 2,
+			[2] = 3,
+			[3] = 4
+		}
+	end
+
+	local musicStart = data:find("__music__") + 10
+	local musicEnd = data:find("__end__") - 1
+
+	if not musicStart or not musicEnd then
+		return music -- old versions
+	end
+
+	local musicData = data:sub(musicStart, musicEnd)
+
+	local _music = 0
+	local nextLine = 1
+
+	while nextLine do
+		local lineEnd = musicData:find('\n', nextLine)
+
+		if lineEnd == nil then
+			break
+		end
+
+		lineEnd = lineEnd - 1
+		local line = musicData:sub(nextLine, lineEnd)
+
+		music[_music] = {
+			loop = tonumber(line:sub(1, 2), 16),
+			[0] = tonumber(line:sub(4, 5), 16),
+			[1] = tonumber(line:sub(6, 7), 16),
+			[2] = tonumber(line:sub(8, 9), 16),
+			[3] = tonumber(line:sub(10, 11), 16)
+		}
+
+		_music = _music + 1
+		nextLine = musicData:find('\n', lineEnd) + 1
+	end
 
 	return music
 end
@@ -626,7 +672,7 @@ function carts.save(name)
 	data = data .. "__sfx__\n"
 	data = data .. editors.sfx.export()
 	data = data .. "__music__\n"
-	-- data = data .. editors.music.export()
+	data = data .. editors.music.export()
 	data = data .. "__end__"
 
 	love.filesystem.write(
