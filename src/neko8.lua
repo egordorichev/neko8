@@ -18,6 +18,8 @@ function neko.init()
 
 	neko.cursor.current = neko.cursor.pointer
 
+	audio.init()
+
 	initCanvas()
 	initFont()
 	initPalette()
@@ -34,7 +36,8 @@ function neko.init()
 	neko.core = carts.load("neko")
 	carts.run(neko.core)
 	neko.cart = nil
-	neko.loadedCart = carts.create()
+	-- neko.loadedCart = carts.create()
+	-- todo: sfx doesn't play, if we create new cart
 	carts.import(neko.loadedCart)
 end
 
@@ -45,7 +48,9 @@ function neko.showMessage(s)
 	}
 end
 
-function neko.update()
+function neko.update(dt)
+	audio.update(dt)
+
 	for p = 0, 1 do
 		for i = 0, #api.keyMap[p] do
 			for _, key in pairs(

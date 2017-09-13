@@ -92,6 +92,8 @@ function createSandbox(lang)
 		palt = api.palt,
 		map = api.map,
 		ppget = api.ppget,
+		sfx = api.sfx,
+		music = api.music,
 
 		tri = api.tri,
 		trifill = api.trifill,
@@ -152,6 +154,42 @@ function createSandbox(lang)
 		nver = api.nver,
 		mstat = api.mstat,
 	}
+end
+
+function api.sfx(n, channel, offset)
+	channel = channel or -1
+
+	if n == -1 and channel >= 0 then
+		audio.sfx[channel].sfx = nil
+		return
+	elseif n == -2 and channel >= 0 then
+		audio.sfx[channel].loop = false
+	end
+
+	offset = offset or 0
+
+	if channel == -1 then
+		for i = 0, 3 do
+			if audio.sfx[i].sfx == nil then
+				channel = i
+			end
+		end
+	end
+
+	if channel == -1 then
+		return
+	end
+
+	local ch = audio.sfx[channel]
+
+	ch.sfx = n
+	ch.offset = offset
+	ch.lastStep = offset - 1
+	ch.loop = true
+end
+
+function api.music()
+
 end
 
 function api.ppget()
@@ -891,7 +929,7 @@ function api.map(
 								sy + 8 * y
 							)
 						else
-							if band(__pico_spriteflags[v],bitmask) ~= 0 then
+							if band(neko.loadedCart.sprites.flags[v], bitmask) ~= 0 then
 								love.graphics.draw(
 									neko.loadedCart.sprites.sheet,
 									neko.loadedCart.sprites.quads[v],
@@ -909,9 +947,7 @@ function api.map(
 	love.graphics.setShader(colors.drawShader)
 end
 
-function api.memcpy(
-	dest_addr, source_addr, len
-)
+function api.memcpy(dest, source, len)
 	-- todo
 end
 

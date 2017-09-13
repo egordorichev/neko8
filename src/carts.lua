@@ -215,6 +215,32 @@ mov [_draw], [draw]
 		end
 	end
 
+	cart.sfx = {}
+
+	for i = 0, 63 do
+		cart.sfx[i] = {
+			speed = 16,
+			loopStart = 0,
+			loopEnd = 0
+		}
+
+		for j = 0, 31 do
+			cart.sfx[i][j] = { 0, 0, 0, 0}
+		end
+	end
+
+	cart.music = {}
+
+	for i = 0, 63 do
+		cart.music[i] = {
+			loop = 0,
+			[0] = 1,
+			[1] = 2,
+			[2] = 3,
+			[3] = 4
+		}
+	end
+
 	return cart
 end
 
@@ -358,7 +384,7 @@ function carts.loadMap(data, cart)
 	local mapEnd = data:find("\n__sfx__\n")
 
 	if not mapEnd then -- older versions
-		mapEnd = data:find("\n__end__\n")
+		mapEnd = data:find("\n__end__\n") or #data - 1
 	end
 
 	data = data:sub(mapStart, mapEnd)
@@ -408,7 +434,67 @@ end
 function carts.loadSFX(data, cart)
 	local sfx = {}
 
-	-- todo
+	for i = 0, 63 do
+		sfx[i] = {
+			speed = 16,
+			loopStart = 0,
+			loopEnd = 0
+		}
+
+		for j = 0, 31 do
+			sfx[i][j] = { 0, 0, 0, 0 }
+		end
+	end
+
+	local sfxStart = data:find("__sfx__")
+	local sfxEnd = data:find("__music__")
+
+	if not sfxStart or not sfxEnd then
+		log.info("old file")
+		return sfx -- old versions
+	end
+
+	sfxStart = sfxStart + 8
+	sfxEnd = sfxEnd - 1
+
+	local sfxData = data:sub(sfxStart, sfxEnd)
+	local _sfx = 0
+	local step = 0
+
+	local nextLine = 1
+
+	while nextLine do
+		local lineEnd = sfxData:find('\n', nextLine)
+
+		if lineEnd == nil then
+			break
+		end
+
+		lineEnd = lineEnd - 1
+		local line = sfxData:sub(nextLine, lineEnd)
+
+		sfx[_sfx].speed = tonumber(line:sub(3, 4), 16)
+		sfx[_sfx].loopStart = tonumber(line:sub(5, 6), 16)
+		sfx[_sfx].loopEnd = tonumber(line:sub(7, 8), 16)
+
+		for i = 9, #line, 5 do
+			local v = line:sub(i, i + 4)
+			assert(#v == 5)
+			local note = tonumber(line:sub(i, i + 1), 16)
+			local instr = tonumber(line:sub(i + 2, i + 2), 16)
+			local vol = tonumber(line:sub(i + 3, i + 3), 16)
+			local fx = tonumber(line:sub(i + 4, i + 4), 16)
+
+			sfx[_sfx][step] = { note, instr, vol, fx }
+			step = step + 1
+		end
+
+		_sfx = _sfx + 1
+		step = 0
+		nextLine = sfxData:find('\n', lineEnd) + 1
+	end
+
+	assert(_sfx == 64)
 
 	return sfx
 end
@@ -416,7 +502,53 @@ end
 function carts.loadMusic(data, cart)
 	local music = {}
 
-	-- todo
+	for i = 0, 63 do
+		music[i] = {
+			loop = 0,
+			[0] = 1,
+			[1] = 2,
+			[2] = 3,
+			[3] = 4
+		}
+	end
+
+	local musicStart = data:find("__music__")
+	local musicEnd = data:find("\n__end__\n") or #data - 1
+
+	if not musicStart or not musicEnd then
+		log.info("old file")
+		return music -- old versions
+	end
+
+	musicStart = musicStart + 10
+	musicEnd = musicEnd - 1
+
+	local musicData = data:sub(musicStart, musicEnd)
+
+	local _music = 0
+	local nextLine = 1
+
+	while nextLine do
+		local lineEnd = musicData:find('\n', nextLine)
+
+		if lineEnd == nil then
+			break
+		end
+
+		lineEnd = lineEnd - 1
+		local line = musicData:sub(nextLine, lineEnd)
+
+		music[_music] = {
+			loop = tonumber(line:sub(1, 2), 16),
+			[0] = tonumber(line:sub(4, 5), 16),
+			[1] = tonumber(line:sub(6, 7), 16),
+			[2] = tonumber(line:sub(8, 9), 16),
+			[3] = tonumber(line:sub(10, 11), 16)
+		}
+
+		_music = _music + 1
+		nextLine = musicData:find('\n', lineEnd) + 1
+	end
 
 	return music
 end
@@ -469,7 +601,9 @@ function carts.run(cart)
 		name = "new cart"
 	end
 
-	carts.export()
+	if cart ~= neko.core then
+		carts.export()
+	end
 
 	log.info(
 		"running cart " .. name
@@ -560,11 +694,11 @@ function carts.save(name)
 	data = data .. editors.sprites.exportGFF()
 	data = data .. "__map__\n"
 	data = data .. editors.map.export()
-	-- data = data .. "__sfx__\n"
-	-- data = data .. editors.sfx.export()
-	-- data = data .. "__music__\n"
-	-- data = data .. editors.music.export()
-	data = data .. "__end__\n"
+	data = data .. "__sfx__\n"
+	data = data .. editors.sfx.export()
+	data = data .. "__music__\n"
+	data = data .. editors.music.export()
+	data = data .. "__end__"
 
 	love.filesystem.write(
 		name .. ".n8", data, #data

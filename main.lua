@@ -29,12 +29,15 @@ hostTime = 0
 
 asm = require "asm-lua"
 
+audio = require "audio"
 api = require "api"
 neko = require "neko8"
 carts = require "carts"
 commands = require "commands"
 
 function love.load(arg)
+	love.filesystem.unmount(love.filesystem.getSource())
+
 	if arg then
 		DEBUG = arg[2] == "-d"
 
@@ -87,7 +90,7 @@ function love.update(dt)
 		lurker.update()
 	end
 
-	neko.update()
+	neko.update(dt)
 
 	if mobile then
 		keyboard.update()

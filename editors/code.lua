@@ -756,13 +756,14 @@ function code.import(c)
 end
 
 function code.export()
-  local data = ""
+  local data = {}
 
   for l in api.all(code.lines) do
-    data = data .. l .. "\n"
+    table.insert(data, l)
+		table.insert(data, "\n")
   end
 
-  return data
+  return table.concat(data)
 end
 
 return code

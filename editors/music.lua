@@ -38,7 +38,39 @@ function music.import(data)
 end
 
 function music.export()
-	return music.data
+	local data = {}
+
+	for i = 0, 63 do
+		table.insert(data, "00 ")
+
+		table.insert(
+			data, string.format(
+				"%02x", music.data[i][0]
+			)
+		)
+
+		table.insert(
+			data, string.format(
+				"%02x", music.data[i][1]
+			)
+		)
+
+		table.insert(
+			data, string.format(
+				"%02x", music.data[i][2]
+			)
+		)
+
+		table.insert(
+			data, string.format(
+				"%02x", music.data[i][3]
+			)
+		)
+
+		table.insert(data, "\n")
+	end
+
+	return table.concat(data)
 end
 
 return music
