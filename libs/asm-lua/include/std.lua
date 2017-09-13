@@ -2,17 +2,6 @@
 local std = {}
 
 -- base operations, included in prelude
-std.include = [[local include=function() require(_R.ss) end]]
-std.putc = [[local putc=function() io.write(string.sub(_R.ss,1,1)) end]]
-std.puts = [[local puts=function() print(_R.ss) end]]
-std.endl = [[local endl=function() io.write('\n') end]]
-std.sprintf = [[local sprintf=function()
-local args={}
-_R.sp=_R.sp-_R.a
-for i=0,_R.a-1 do args[i+1]=_D[_R.sp+i] end
-_R.ds=string.format(_R.ss,table.unpack(args))
-end]]
-std.printf = [[local printf=function() sprintf();io.write(_R.ds) end]]
 std.itoa = [[local itoa=function() _R.ds=tostring(_R.a) end]]
 std.atoi = [[local atoi=function() _R.ds=tostring(_R.a) end]]
 std.memset = [[local memset=function() for i=0,_R.c-1 do _D[_R.b+i]=_R.a end end]]
@@ -55,11 +44,5 @@ std.strmatch = [[local strmatch=function() _R.ds=string.find(_R.ss,_R.ds) end]]
 
 std.ord = [[local ord=function() _R.a=string.byte(_R.ss,1,1) end]]
 std.chr = [[local chr=function() _R.ds=string.char(_R.a) end]]
-
--- os functions, to be made into syscalls
-std.system = [[local system=function() _R.a=os.execute(_R.ss) end]]
-std.exit = [[local exit=function() os.exit(_R.b) end]]
-std.env = [[local env=function() _R.ds=os.getenv(_R.ss) end]]
-std.time = [[local time=function() _R.a=os.time() end]]
 
 return std
