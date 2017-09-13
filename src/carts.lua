@@ -384,7 +384,7 @@ function carts.loadMap(data, cart)
 	local mapEnd = data:find("\n__sfx__\n")
 
 	if not mapEnd then -- older versions
-		mapEnd = data:find("\n__end__\n")
+		mapEnd = data:find("\n__end__\n") or #data - 1
 	end
 
 	data = data:sub(mapStart, mapEnd)
@@ -474,8 +474,8 @@ function carts.loadSFX(data, cart)
 		local line = sfxData:sub(nextLine, lineEnd)
 
 		sfx[_sfx].speed = tonumber(line:sub(3, 4), 16)
-		sfx[_sfx].loop_start = tonumber(line:sub(5, 6), 16)
-		sfx[_sfx].loop_end = tonumber(line:sub(7, 8), 16)
+		sfx[_sfx].loopStart = tonumber(line:sub(5, 6), 16)
+		sfx[_sfx].loopEnd = tonumber(line:sub(7, 8), 16)
 
 		for i = 9, #line, 5 do
 			local v = line:sub(i, i + 4)
@@ -484,6 +484,7 @@ function carts.loadSFX(data, cart)
 			local instr = tonumber(line:sub(i + 2, i + 2), 16)
 			local vol = tonumber(line:sub(i + 3, i + 3), 16)
 			local fx = tonumber(line:sub(i + 4, i + 4), 16)
+
 			sfx[_sfx][step] = { note, instr, vol, fx }
 			step = step + 1
 		end
@@ -492,6 +493,8 @@ function carts.loadSFX(data, cart)
 		step = 0
 		nextLine = sfxData:find('\n', lineEnd) + 1
 	end
+
+	assert(_sfx == 64)
 
 	return sfx
 end
@@ -510,7 +513,7 @@ function carts.loadMusic(data, cart)
 	end
 
 	local musicStart = data:find("__music__")
-	local musicEnd = data:find("__end__")
+	local musicEnd = data:find("\n__end__\n") or #data - 1
 
 	if not musicStart or not musicEnd then
 		log.info("old file")

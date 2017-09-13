@@ -80,7 +80,7 @@ function love.update(dt)
 		lurker.update()
 	end
 
-	neko.update()
+	neko.update(dt)
 
 	if mobile then
 		keyboard.update()

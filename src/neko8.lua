@@ -42,8 +42,8 @@ function neko.showMessage(s)
 	}
 end
 
-function neko.update()
-	audio.update()
+function neko.update(dt)
+	audio.update(dt)
 
 	for p = 0, 1 do
 		for i = 0, #api.keyMap[p] do
