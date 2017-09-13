@@ -38,7 +38,36 @@ function sfx.import(data)
 end
 
 function sfx.export()
-	return sfx.data
+	local data = ""
+
+	for i = 0, 63 do
+		data = data .. "00" .. string.format(
+			"%02x", sfx.data[i].speed)
+
+		data = data .. string.format(
+			"%02x", sfx.data[i].loopStart)
+
+		data = data .. string.format(
+			"%02x", sfx.data[i].loopEnd)
+
+		for j = 0, 31 do
+			data = data .. string.format(
+				"%02x", sfx.data[i][j][1])
+
+			data = data .. string.format(
+				"%01x", sfx.data[i][j][2])
+
+			data = data .. string.format(
+				"%01x", sfx.data[i][j][3])
+
+			data = data .. string.format(
+				"%01x", sfx.data[i][j][4])
+		end
+
+		data = data .. "\n"
+	end
+
+	return data
 end
 
 return sfx

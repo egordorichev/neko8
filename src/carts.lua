@@ -422,6 +422,57 @@ end
 function carts.loadSFX(data, cart)
 	local sfx = {}
 
+	for i = 0, 63 do
+		sfx[i] = {
+			speed = 16,
+			loopStart = 0,
+			loopEnd = 0
+		}
+
+		for j = 0, 31 do
+			sfx[i][j] = { 0, 0, 0, 0 }
+		end
+	end
+
+	local sfxStart = data:find("__sfx__") + 8
+	local sfxEnd = data:find("__music__") - 1
+	local sfxdata = data:sub(sfxStart,sfxEnd)
+
+	local _sfx = 0
+	local step = 0
+
+	local nextLine = 1
+
+	while nextLine do
+		local lineEnd = sfxdata:find('\n', nextLine)
+
+		if lineEnd == nil then
+			break
+		end
+
+		lineEnd = lineEnd - 1
+		local line = sfxdata:sub(nextLine, lineEnd)
+
+		sfx[_sfx].speed = tonumber(line:sub(3, 4), 16)
+		sfx[_sfx].loop_start = tonumber(line:sub(5, 6), 16)
+		sfx[_sfx].loop_end = tonumber(line:sub(7, 8), 16)
+
+		for i = 9, #line, 5 do
+			local v = line:sub(i, i + 4)
+			assert(#v == 5)
+			local note = tonumber(line:sub(i, i + 1), 16)
+			local instr = tonumber(line:sub(i + 2, i + 2), 16)
+			local vol = tonumber(line:sub(i + 3, i + 3), 16)
+			local fx = tonumber(line:sub(i + 4, i + 4), 16)
+			sfx[_sfx][step] = { note, instr, vol, fx }
+			step = step + 1
+		end
+
+		_sfx = _sfx + 1
+		step = 0
+		nextLine = sfxdata:find('\n', lineEnd) + 1
+	end
+
 	return sfx
 end
 
@@ -572,9 +623,9 @@ function carts.save(name)
 	data = data .. editors.sprites.exportGFF()
 	data = data .. "__map__\n"
 	data = data .. editors.map.export()
-	-- data = data .. "__sfx__\n"
-	-- data = data .. editors.sfx.export()
-	-- data = data .. "__music__\n"
+	data = data .. "__sfx__\n"
+	data = data .. editors.sfx.export()
+	data = data .. "__music__\n"
 	-- data = data .. editors.music.export()
 	data = data .. "__end__"
 
