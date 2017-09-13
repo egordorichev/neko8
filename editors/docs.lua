@@ -17,6 +17,7 @@ content.sys = {
 	{name = "setmetatable(t1,t2)", desc = "Origin function setmetatable in lua"},
 	{name = "unpck(t)", desc = "Origin function table.unpack in lua"},
 	{name = "memcpy(dest_addr, source_addr, len)", desc = "Copy memory"},
+	{name = "require(str)", desc= "Origin function require in lua"},
 }
 
 content.graph = {
@@ -45,7 +46,16 @@ content.graph = {
 	{name = "pal(c0,c1,p)", desc = "Switch color c0 to c1"},
 	{name = "palt(c, t)", desc = "Set transparency for color to t (boolean)"},
 	{name = "map(cx, cy, sx, sy, cw, ch, bitmask)", desc = "Draw map"},
+	{name = "mget(x, y)", desc = "get map value at x,y"},
+	{name = "mset(x, y, v)", desc = "set map value to v at x,y"},
+	{name = "camera([x, y])", desc = "Set camera position"},
+	{name = "clip([x, y, w, h])", desc = "Set screen clipping region"},
+	{name = "tri(x0, y0, x1, y1, x2, y2)", desc = "Draw triangle"},
+	{name = "trifill(x0, y0, x1, y1, x2, y2, c)", desc = "Draw triangle with color:c"},
+	{name = "poly(...)", desc = "Draw polygon"},
+	{name = "polyfill(...)", desc = "draw polygon with filled color"},
 }
+
 
 content.input = {
 	{name = "btn(b, p)", desc = "Get button b state for player p"},
@@ -65,7 +75,15 @@ content.math = {
 	{name = "mid(x, y, z)", desc = "Middle of x,y,z"},
 	{name = "abs(n)", desc = "Absolute value of n"},
 	{name = "sgn(n)", desc = "Return n sign: -1 or 1"},
+	{name = "atan2(dx, dy)", desc = "Convert (dx, dy) to an angle in [0..1]"},
+	{name = "band(x, y)", desc = "Bitwise conjunction"},
+	{name = "bnot(x)", desc = "Bitwise negation"},
+	{name = "bor(x, y)", desc = "Bitwise disjunction"},
+	{name = "shl(y, n)", desc = "Shift left"},
+	{name = "shr(x, n)", desc = "Shift left"},
+	{name = "sqrt(x)", desc = "Return x square root"},
 }
+
 
 content.cmd = {
 	{name = "help(a)", desc = "Show summary of neko commands info"},
@@ -165,14 +183,15 @@ function docs.selectPage(t)
 
 	-- page buttons
     local function multiPages(j)
-        for i = 0, j  or 0  do
+        local posX, posY = 168-12, 8
+		for i = 0, j  or 0  do
             api.spr(
                 i == docs.page and 7 or 6,
-                168 + i * 8, 8
+                posX + i * 8, posY
             )
 
             api.print(
-                i, 170 + i * 8, 10, i == docs.page and 12 or 5
+                i, posX+2 + i * 8, posY+2, i == docs.page and 12 or 5
             )
         end
     end
@@ -220,10 +239,14 @@ function docs.selectPage(t)
 					api.print(name, 1, nameY-(128-20), 7)
 					api.print(para, 1 + paraX, nameY-(128-20), 8)
 					api.print(v.desc, 6, descY-(128-20), 6)
-				elseif docs.page == 2 and nameY > 128*2-24-16 then
+				elseif docs.page == 2 and nameY > 128*2-24-16 and nameY <= 128*3-40-16 then
 					api.print(name, 1, nameY-(128*2-40), 7)
 					api.print(para, 1 + paraX, nameY-(128*2-40), 8)
 					api.print(v.desc, 6, descY-(128*2-40), 6)
+				elseif docs.page == 3 and nameY > 128*3-40-16 then
+					api.print(name, 1, nameY-(128*3-60), 7)
+					api.print(para, 1 + paraX, nameY-(128*3-60), 8)
+					api.print(v.desc, 6, descY-(128*3-60), 6)
 				end
 			end
 		end
@@ -260,9 +283,10 @@ function docs._update()
 			end
 			-- select page
 			if my >= 8 and my <= 16 then
+				local posX = 166 - 12
 				local j = api.ceil(#content[docs.tab]/9) - 1
 				for i = 0, j do
-					if mx >= 166 + i * 8 and mx <= 166 + 8 + i * 8 then
+					if mx >= posX + i * 8 and mx <= posX + 8 + i * 8 then
 						docs.page = i
 						docs.forceDraw = true
 						return
