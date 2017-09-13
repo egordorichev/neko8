@@ -92,6 +92,8 @@ function createSandbox(lang)
 		palt = api.palt,
 		map = api.map,
 		ppget = api.ppget,
+		sfx = api.sfx,
+		music = api.music,
 
 		tri = api.tri,
 		trifill = api.trifill,
@@ -152,6 +154,42 @@ function createSandbox(lang)
 		nver = api.nver,
 		mstat = api.mstat,
 	}
+end
+
+function api.sfx(n, channel, offset)
+	--[[channel = channel or -1
+
+	if n == -1 and channel >= 0 then
+		__pico_audio_channels[channel].sfx = nil
+		return
+	elseif n == -2 and channel >= 0 then
+		__pico_audio_channels[channel].loop = false
+	end
+
+	offset = offset or 0
+
+	if channel == -1 then
+		for i=0,3 do
+			if __pico_audio_channels[i].sfx == nil then
+				channel = i
+			end
+		end
+	end
+
+	if channel == -1 then
+		return
+	end
+
+	local ch = __pico_audio_channels[channel]
+
+	ch.sfx = n
+	ch.offset = offset
+	ch.last_step = offset - 1
+	ch.loop = true--]]
+end
+
+function api.music()
+
 end
 
 function api.ppget()

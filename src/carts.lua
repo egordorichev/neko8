@@ -229,6 +229,18 @@ mov [_draw], [draw]
 		end
 	end
 
+	cart.music = {}
+
+	for i = 0, 63 do
+		cart.music[i] = {
+			loop = 0,
+			[0] = 1,
+			[1] = 2,
+			[2] = 3,
+			[3] = 4
+		}
+	end
+
 	return cart
 end
 
@@ -438,6 +450,7 @@ function carts.loadSFX(data, cart)
 	local sfxEnd = data:find("__music__")
 
 	if not sfxStart or not sfxEnd then
+		log.info("old file")
 		return sfx -- old versions
 	end
 
@@ -500,6 +513,7 @@ function carts.loadMusic(data, cart)
 	local musicEnd = data:find("__end__")
 
 	if not musicStart or not musicEnd then
+		log.info("old file")
 		return music -- old versions
 	end
 

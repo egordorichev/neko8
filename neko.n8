@@ -47,6 +47,7 @@ function start_screen()
   pset(x,y,sc[flr(rnd(#sc))+1])
   end
  end
+ sfx(0)
  delay(6)
  for x=0,192,4 do
   for y=0,128,2 do

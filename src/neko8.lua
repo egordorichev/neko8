@@ -18,6 +18,8 @@ function neko.init()
 
 	neko.cursor.current = neko.cursor.pointer
 
+	audio.init()
+
 	initCanvas()
 	initFont()
 	initPalette()
@@ -41,6 +43,8 @@ function neko.showMessage(s)
 end
 
 function neko.update()
+	audio.update()
+
 	for p = 0, 1 do
 		for i = 0, #api.keyMap[p] do
 			for _, key in pairs(
