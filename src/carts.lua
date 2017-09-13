@@ -601,7 +601,9 @@ function carts.run(cart)
 		name = "new cart"
 	end
 
-	carts.export()
+	if cart ~= neko.core then
+		carts.export()
+	end
 
 	log.info(
 		"running cart " .. name

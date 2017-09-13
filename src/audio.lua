@@ -173,7 +173,7 @@ function audio.update(time)
 				if api.flr(ch.offset) > ch.lastStep then
 					ch.lastNote = ch.note
 					ch.note, ch.instr, ch.vol, ch.fx = unpack(sfx[api.flr(ch.offset)])
-					print(unpack(sfx[api.flr(ch.offset)]))
+
 					if ch.instr ~= 6 then
 						ch.osc = audio.osc[ch.instr]
 					else
