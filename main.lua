@@ -63,6 +63,16 @@ function love.touchpressed()
 	if editors.current == editors.modes[1] then
 		love.keyboard.setTextInput(true)
 	end
+
+	--[[
+	kbEnable = love.keyboard.hasTextInput()
+	
+	if kbEnable then 
+		api.scroll(50)
+	else
+		api.scroll(-50)
+	end
+	--]]
 end
 
 -- XXX Why is this in the global scope? Why isn't this part of some table?
@@ -194,8 +204,8 @@ function love.keypressed(
 			s:encode("png", file)
 			api.smes("saved screenshot")
 		elseif key == "f8" then
-			-- gif = giflib.new("neko8.gif")
-			-- api.smes("started recording gif")
+			gif = giflib.new("neko8.gif")
+			api.smes("started recording gif")
 			api.smes("gif recording is not supported")
 		elseif key == "f9" then
 			if not gif then return end
