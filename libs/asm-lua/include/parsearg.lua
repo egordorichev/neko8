@@ -29,7 +29,7 @@ for _, v in ipairs(arg) do
     v.pattern = b .. v.pattern .. e
 end
 
-local match_arg = function(expr, arg, result, verbose, std)
+local match_arg = function(expr, arg, result, verbose)
     local out = {string.match(expr, arg.pattern)}
     if #out == 0 then
         return false
@@ -51,13 +51,9 @@ local match_arg = function(expr, arg, result, verbose, std)
             result.type = 'immediate'
             result.val = _ASM.labels[result.name] 
             result.name = nil
-        elseif std and _ASM.std[result.name] then
+        elseif _ASM.std and _ASM.std[result.name] then
             result.type = 'immediate'
             result.val = result.name
-            if not _ASM.stdsymbols[result.name] then
-                _ASM.prelude = _ASM.prelude .. _ASM.std[result.name] .. '\n'
-                _ASM.stdsymbols[result.name] = true
-            end
             result.name = nil
         elseif _ASM.externs[result.name] then
             result.type = 'extern'
@@ -72,7 +68,7 @@ local match_arg = function(expr, arg, result, verbose, std)
         elseif _ASM.externs[result.name] then
             result.type = 'extern'
             result.name = result.name
-        elseif std and _ASM.std[result.name] then
+        elseif _ASM.std and _ASM.std[result.name] then
             error(string.format('cannot access static std member: %s', result.name))
         else
             error(string.format('invalid identifier: %s', result.name))
@@ -86,12 +82,12 @@ local match_arg = function(expr, arg, result, verbose, std)
     return true
 end
 
-local gentype = function(expr, verbose, std)
+local gentype = function(expr, verbose)
     if not string.match(expr, '^%s*$') then
         local found = false
         for _, v in ipairs(arg) do
             local result = {}
-            if match_arg(expr, v, result, verbose, std) then
+            if match_arg(expr, v, result, verbose) then
                 return result
             end
         end
@@ -117,8 +113,8 @@ local type_to_lua = function(expr, verbose)
     return lua
 end
 
-local parsearg = function(expr, verbose, std, is_dst)
-    return type_to_lua(gentype(expr, verbose, std), verbose)
+local parsearg = function(expr, verbose)
+    return type_to_lua(gentype(expr, verbose), verbose)
 end
 
 return parsearg

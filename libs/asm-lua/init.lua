@@ -7,7 +7,7 @@ _P={}
 _PD={}
 _MMAP={{a=0,b=0,set=function()end,get=function()end},{a=1,b=81920,set=function(p,x) _D[p]=x end,get=function(p) return _D[p] end}}
 _M=function(p,x)
-for i=#_MMAP,0,-1 do
+for i=#_MMAP,1,-1 do
  local v=_MMAP[i]
  if p>=v.a and p<=v.b then
   if x then v.set(p,x) else return v.get(p) end
@@ -45,13 +45,10 @@ table.unpack = table.unpack or unpack
 
 local name = ...
 _ASM.root = string.gsub(name, '/init$', '') .. '/'
-_ASM.std = require(_ASM.root .. 'include/std')
 
 _ASM.label = 0x0
 _ASM.labels = {}
 _ASM.externs = {}
-
-_ASM.stdsymbols = {}
 
 local parseline = require(_ASM.root .. 'include/parseline')
 local genast = function(src, verbose)
@@ -86,16 +83,26 @@ end
 
 local assemble = require(_ASM.root .. 'include/assemble')
 local compile = function(src, verbose, std, ports, mmap)
-    local ast = genast(src, verbose)
-    local asm = assemble(ast, verbose, std)
+    _ASM.std = nil
 
     local prelude = prelude
-    if std or std == nil then
+    if type(std) == 'table' then
+        _ASM.std = std
+    elseif type(std) == 'string' then
+        _ASM.std = {std}
+    elseif std then
+        _ASM.std = require(_ASM.root .. 'include/std')
         prelude = prelude .. port_std
+    end
+
+    if _ASM.std then
         for _, v in pairs(_ASM.std) do
             prelude = prelude .. v .. '\n'
         end
     end
+
+    local ast = genast(src, verbose)
+    local asm = assemble(ast, verbose)
 
     if ports then
         for _, v in ipairs(ports) do

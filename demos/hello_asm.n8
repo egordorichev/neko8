@@ -2,13 +2,15 @@ neko8 cart
 __asm__
 section .data
 
-def msg "Hello, world!"
+def msg "Hello, asm.lua!"
 
 section .text
 
 extern _init
 extern _update
 extern _draw
+extern _color
+extern _cls
 
 init:
  ret
@@ -19,14 +21,34 @@ update:
 end
 
 draw:
+ -- most functions aren't native yet
  mov a, 0
- call color
- call cls
+ push a
+ call _color, 1
+ call _cls, 0
 
  mov a, 7
- call color
- mov ss, [msg]
- call print
+ push a
+ call _color, 1
+
+ -- 0x14401 is the first address of neko stdout
+ mov a, 0x14401
+
+ -- load msg to ss
+ ld ss, msg
+ -- store msg at a, i.e. store "Hello, asm.lua!" at 0x14401
+ st a, ss
+
+ -- y coordinate, 2 * 32
+ mov d, 2
+ mul d, 32
+ add a, d
+
+ -- x coordinate, 2
+ add a, 2
+
+ -- store msg at a, i.e. store "Hello, asm.lua!" at 0x14401 + 32 * 2 + 2
+ st a, ss
  ret
 end
 
