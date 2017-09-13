@@ -7,7 +7,7 @@ end
 
 local mkext = function(name)
     _ASM.externs[name] = _ASM.label
-    return string.format('_X["%s"]=%s', name, name)
+    return '-- extern ' .. name
 end
 
 local comp = {}
@@ -20,14 +20,14 @@ comp['until'] = {pattern = 'until _R.f.%s', arg = {'cond'}}
 
 local section = 'text'
 local parseop = require(_ASM.root .. 'include/parseop')
-local expr_to_lua = function(expr, verbose)
+local expr_to_lua = function(expr, verbose, std)
     local type = expr.type
 
     if type == 'section' then
         section = expr.name
-        return ''
+        return '-- .' .. expr.name
     elseif type == 'op' then -- TODO
-        return parseop(expr, verbose)
+        return parseop(expr, verbose, std)
     elseif type == 'def' then
         return mklabel(expr.name, expr.val)
     elseif type == 'extern' then
@@ -44,14 +44,14 @@ local expr_to_lua = function(expr, verbose)
     end
 end
 
-local assemble = function(ast, verbose)
+local assemble = function(ast, verbose, std)
     local dst = ''
 
     local err = false
 
     for _, v in ipairs(ast) do
         local lua
-        local status, result = pcall(expr_to_lua, v, verbose)
+        local status, result = pcall(expr_to_lua, v, verbose, std)
         if status then
             lua = result
             if verbose and verbose >= 2 then

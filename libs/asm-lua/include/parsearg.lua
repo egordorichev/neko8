@@ -29,9 +29,7 @@ for _, v in ipairs(arg) do
     v.pattern = b .. v.pattern .. e
 end
 
-local match_arg = function(expr, arg, result, verbose)
-    local neko = require(_ASM.root .. 'include/neko')
-
+local match_arg = function(expr, arg, result, verbose, std)
     local out = {string.match(expr, arg.pattern)}
     if #out == 0 then
         return false
@@ -53,7 +51,7 @@ local match_arg = function(expr, arg, result, verbose)
             result.type = 'immediate'
             result.val = _ASM.labels[result.name] 
             result.name = nil
-        elseif _ASM.std[result.name] then
+        elseif std and _ASM.std[result.name] then
             result.type = 'immediate'
             result.val = result.name
             if not _ASM.stdsymbols[result.name] then
@@ -62,11 +60,8 @@ local match_arg = function(expr, arg, result, verbose)
             end
             result.name = nil
         elseif _ASM.externs[result.name] then
-            result.type = 'externref'
+            result.type = 'extern'
             result.name = result.name
-        elseif _ASM.neko8 and neko[result.name] then
-            result.type = 'immediate'
-            result.val = result.name
         else
             error(string.format('invalid identifier: %s', result.name))
         end
@@ -77,10 +72,7 @@ local match_arg = function(expr, arg, result, verbose)
         elseif _ASM.externs[result.name] then
             result.type = 'extern'
             result.name = result.name
-        elseif _ASM.neko8 and neko[result.name] then
-            result.type = 'immediate'
-            result.val = result.name
-        elseif _ASM.std[result.name] then
+        elseif std and _ASM.std[result.name] then
             error(string.format('cannot access static std member: %s', result.name))
         else
             error(string.format('invalid identifier: %s', result.name))
@@ -94,12 +86,12 @@ local match_arg = function(expr, arg, result, verbose)
     return true
 end
 
-local gentype = function(expr, verbose)
+local gentype = function(expr, verbose, std)
     if not string.match(expr, '^%s*$') then
         local found = false
         for _, v in ipairs(arg) do
             local result = {}
-            if match_arg(expr, v, result, verbose) then
+            if match_arg(expr, v, result, verbose, std) then
                 return result
             end
         end
@@ -110,8 +102,7 @@ end
 local types = {}
 types['reg'] = {pattern = '_R.%s', arg = {'reg'}}
 types['immediate'] = {pattern = '%s', arg = {'val'}}
-types['mem'] = {pattern = '_D[%d]', arg = {'ptr'}}
-types['externref'] = {pattern = '_X["%s"]', arg = {'name'}}
+types['mem'] = {pattern = '_M(%d)', arg = {'ptr'}}
 types['extern'] = {pattern = '%s', arg = {'name'}}
 
 local type_to_lua = function(expr, verbose)
@@ -126,8 +117,8 @@ local type_to_lua = function(expr, verbose)
     return lua
 end
 
-local parsearg = function(expr, verbose)
-    return type_to_lua(gentype(expr, verbose), verbose)
+local parsearg = function(expr, verbose, std, is_dst)
+    return type_to_lua(gentype(expr, verbose, std), verbose)
 end
 
 return parsearg
