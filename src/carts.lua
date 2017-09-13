@@ -153,7 +153,7 @@ function _draw()
 end
 ]]
   elseif cart.lang == "asm" then
-    cart.code = [[
+	cart.code = [[
 section .data
 
 section .text
@@ -253,13 +253,13 @@ function carts.loadCode(data, cart)
 	for _, v in ipairs(codeTypes) do
 		_, codeStart = data:find("\n__" .. v .. "__\n")
 		if codeStart then
-      codeType = v
-    	break
-    end
+	  codeType = v
+		break
+	end
 	end
 
 	if not codeStart then
-    runtimeError("Could't find a valid code section in cart")
+	runtimeError("Could't find a valid code section in cart")
 		return
   end
 
@@ -613,22 +613,52 @@ function carts.run(cart)
 	if cart.lang == "lua" then
 		code = cart.code
 	elseif cart.lang == "asm" then
+		local std = {}
+		local asm_std = require "asm-lua.include.std"
+        -- createSandbox is used because it's guaranteed to have every symbol
+        -- in _G, 'cause it IS _G
+		for k, _ in pairs(createSandbox()) do
+			local _k = "_" .. k
+			std[_k] = string.format("local %s=%s", _k, k)
+		end
+		std.memset = asm_std.memset
+		std.memcpy = asm_std.memcpy
+		std.memcmp = asm_std.memcmp
+
+		local ports = {}
+		local mmap = {
+			{min = 0x14001, max = 0x14400, set = "function(_, v) _printh(v) end"},
+			{min = 0x14401, max = 0x14800, set = "function(p, v)" ..
+                                                     "p=p-0x14401\n" ..
+													 "local x=p%32\n" ..
+													 "local y=_flr(p/32)\n" ..
+													 "_print(v,x*4,y*6)" ..
+												 "end"},
+			{min = 0x16001, max = 0x1c000, set = "function(p, v)\n" ..
+                                                     "p=p-0x16001\n" ..
+													 "local x=p%192\n" ..
+													 "local y=_flr(p/192)\n" ..
+													 "pset(x+1,y+1,v)" ..
+												 "end"},
+		}
+
 		code = try(function()
-			return asm.compile(cart.code, DEBUG or false, true)
-		end, runtimeError,
+			return asm.compile(cart.code, DEBUG or false, std, ports, mmap)
+		end,
+		runtimeError,
 		function(result)
 			return result
 		end)
 
 		if not code then
-      return false
-    end
+			return false
+		end
 
 		api.print(
 			"successfully compiled " .. cart.pureName
 		)
-  else
-    runtimeError("unrecognized language tag")
+	else
+		runtimeError("unrecognized language tag")
 	end
 
 	local ok, f, e = pcall(
