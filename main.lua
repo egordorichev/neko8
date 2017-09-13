@@ -10,6 +10,7 @@ love.filesystem.setRequirePath(requirePath ..
 
 OS = love.system.getOS()
 mobile = OS == "Android" or OS == "iOS"
+RELEASE = 0
 
 require "minify"
 require "log"
