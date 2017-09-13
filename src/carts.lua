@@ -638,7 +638,7 @@ function carts.run(cart)
                                                      "p=p-0x16001\n" ..
 													 "local x=p%192\n" ..
 													 "local y=_flr(p/192)\n" ..
-													 "pset(x+1,y+1,v)" ..
+													 "pset(x,y+1,v)" ..
 												 "end"},
 		}
 
