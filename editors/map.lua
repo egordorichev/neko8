@@ -164,16 +164,17 @@ function map.import(data)
 end
 
 function map.export()
-	local data = ""
+	local data = {}
 
 	for y = 0, 127 do
 		for x = 0, 127 do
-			data = data .. string.format("%02x", map.data[y][x])
+			table.insert(data, string.format("%02x", map.data[y][x]))
 		end
-		data = data .. "\n"
+
+		table.insert(data, "\n")
 	end
 
-	return data
+	return table.concat(data)
 end
 
 function map._keydown(k)

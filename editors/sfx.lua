@@ -38,36 +38,59 @@ function sfx.import(data)
 end
 
 function sfx.export()
-	local data = ""
+	local data = {}
 
 	for i = 0, 63 do
-		data = data .. "00" .. string.format(
-			"%02x", sfx.data[i].speed)
+		table.insert(data, "00")
 
-		data = data .. string.format(
-			"%02x", sfx.data[i].loopStart)
+		table.insert(
+			data, string.format(
+				"%02x", sfx.data[i].speed
+			)
+		)
 
-		data = data .. string.format(
-			"%02x", sfx.data[i].loopEnd)
+		table.insert(
+			data, string.format(
+				"%02x", sfx.data[i].loopStart
+			)
+		)
+
+		table.insert(
+			data, string.format(
+				"%02x", sfx.data[i].loopEnd
+			)
+		)
 
 		for j = 0, 31 do
-			data = data .. string.format(
-				"%02x", sfx.data[i][j][1])
+			table.insert(
+				data, string.format(
+					"%02x", sfx.data[i][j][1]
+				)
+			)
 
-			data = data .. string.format(
-				"%01x", sfx.data[i][j][2])
+			table.insert(
+				data, string.format(
+					"%02x", sfx.data[i][j][2]
+				)
+			)
 
-			data = data .. string.format(
-				"%01x", sfx.data[i][j][3])
+			table.insert(
+				data, string.format(
+					"%02x", sfx.data[i][j][3]
+				)
+			)
 
-			data = data .. string.format(
-				"%01x", sfx.data[i][j][4])
+			table.insert(
+				data, string.format(
+					"%02x", sfx.data[i][j][4]
+				)
+			)
 		end
 
-		data = data .. "\n"
+		table.insert(data, "\n")
 	end
 
-	return data
+	return table.concat(data)
 end
 
 return sfx
