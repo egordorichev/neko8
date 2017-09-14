@@ -5,6 +5,11 @@
 
 local commands = {}
 
+function commands.version(a)
+	api.print(config.version.string)
+	return
+end
+
 function commands.minify(a)
 	if neko.loadedCart == nil then
 		api.color(8)

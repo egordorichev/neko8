@@ -48,6 +48,10 @@ function carts.load(name)
 		return cart
 	end
 
+	if OS == "Windows" and not RELEASE then
+		data = data:gsub("\r\n", "\n") -- FIX CRLF file endings
+	end
+
 	-- local loadData = neko.core
 	local loadData = true
 	local header = "neko8 cart"
@@ -250,10 +254,6 @@ function carts.loadCode(data, cart)
 	local codeType
 	local codeStart
 
-	if (OS == "Windows") and (RELEASE == 0) then
-		data = data:gsub("\r\n", "\n") -- FIX CRLF file endings
-	end
-
 	for _, v in ipairs(codeTypes) do
 		_, codeStart = data:find("\n__" .. v .. "__\n")
 		if codeStart then
@@ -284,10 +284,6 @@ function carts.loadSprites(cdata, cart)
 
 	sprites.quads = {}
 	sprites.flags = {}
-
-	if (OS == "Windows") and (RELEASE == 0) then
-		cdata = cdata:gsub("\r\n", "\n") -- FIX CRLF file endings
-	end
 
 	local _, gfxStart = cdata:find("\n__gfx__\n")
 	local gfxEnd = cdata:find("\n__gff__\n")
@@ -388,10 +384,6 @@ end
 
 function carts.loadMap(data, cart)
 
-	if (OS == "Windows") and (RELEASE == 0) then
-		data = data:gsub("\r\n", "\n") -- FIX CRLF file endings
-	end
-
 	local map = {}
 	local _, mapStart = data:find("\n__map__\n")
 	local mapEnd = data:find("\n__sfx__\n")
@@ -445,10 +437,6 @@ function carts.loadMap(data, cart)
 end
 
 function carts.loadSFX(data, cart)
-
-	if (OS == "Windows") and (RELEASE == 0) then
-		data = data:gsub("\r\n", "\n") -- FIX CRLF file endings
-	end
 
 	local sfx = {}
 
@@ -519,10 +507,6 @@ end
 
 function carts.loadMusic(data, cart)
 
-	if (OS == "Windows") and (RELEASE == 0) then
-		data = data:gsub("\r\n", "\n") -- FIX CRLF file endings
-	end
-
 	local music = {}
 
 	for i = 0, 63 do
@@ -577,10 +561,6 @@ function carts.loadMusic(data, cart)
 end
 
 function carts.patchLua(code)
-
-	if (OS == "Windows") and (RELEASE == 0) then
-		code = code:gsub("\r\n", "\n") -- FIX CRLF file endings
-	end
 
 	code = code:gsub("!=","~=")
 	code = code:gsub(
