@@ -116,7 +116,8 @@ function audio.update(time)
 
 	for i = 0, samples - 1 do
 		if audio.currentMusic then
-			audio.currentMusic.offset = audio.currentMusic.offset + 7350 / (61 * audio.currentMusic.speed * sr)
+			audio.currentMusic.offset =
+			audio.currentMusic.offset + 7350 / (61 * audio.currentMusic.speed * sr)
 			if audio.currentMusic.offset >= 32 then
 				local nextTrack = audio.currentMusic.music
 				if neko.loadedCart.music[nextTrack].loop == 2 then

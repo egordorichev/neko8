@@ -8,6 +8,7 @@ love.filesystem.setRequirePath(requirePath ..
 	'libs/?.lua;libs/?/init.lua'
 )
 
+RELEASE = false
 OS = love.system.getOS()
 mobile = OS == "Android" or OS == "iOS"
 
@@ -41,7 +42,6 @@ function love.load(arg)
 
 	if arg then
 		DEBUG = arg[2] == "-d"
-		RELEASE = not DEBUG
 
 		if DEBUG then
 			lurker = require "lurker"

@@ -15,7 +15,7 @@ function UiButton:draw()
 		api.pal(self.c, 7)
 		if self.bg ~= nil then
 			api.brectfill(
-				self.x, self.y, self.w - 1,
+				self.x - 1, self.y - 1, self.w - 1,
 				self.h - 1, self.bg
 			)
 		end

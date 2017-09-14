@@ -136,6 +136,8 @@ function carts.export()
 end
 
 function carts.create(lang)
+	audio.currentMusic = nil
+
 	local cart = {}
 	cart.sandbox = createSandbox()
   cart.lang = lang or "lua"

@@ -538,10 +538,13 @@ function api.circfill(cx, cy, r, c)
 end
 
 function api.pget(x, y)
-	if not pgetData or x < 0 or x > config.canvas.width
-		or y < 0 or y > config.canvas.height then
+	if not pgetData or x < 0 or x > config.canvas.width - 1
+		or y < 0 or y > config.canvas.height - 1 then
 		return 0
 	end
+
+	x = api.flr(x)
+	y = api.flr(y)
 
 	return api.flr(pgetData:getPixel(x, y) / 17)
 end
