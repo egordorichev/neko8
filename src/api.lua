@@ -189,7 +189,54 @@ function api.sfx(n, channel, offset)
 	ch.loop = true
 end
 
-function api.music()
+function api.music(n, fadeLen, channelMask)
+	if n == -1 then
+			for i = 0, 3 do
+				if audio.currentMusic and neko.loadedCart.music[audio.currentMusic.music][i] < 64 then
+					audio.sfx[i].sfx = nil
+					audio.sfx[i].offset = 0
+					audio.sfx[i].lastStep = -1
+				end
+			end
+			audio.currentMusic = nil
+			return
+		end
+
+		local m = neko.loadedCart.music[n]
+
+		if not m then
+			return
+		end
+
+		local slowestSpeed = nil
+		local slowestChannel = nil
+
+		for i = 0, 3 do
+			if m[i] < 64 then
+				local sfx = neko.loadedCart.sfx[m[i]]
+
+				if slowestSpeed == nil or slowestSpeed > sfx.speed then
+					slowestSpeed = sfx.speed
+					slowestChannel = i
+				end
+			end
+		end
+
+		audio.sfx[slowestChannel].loop = false
+		audio.currentMusic = {
+			music = n,
+			offset = 0,
+			channelMask = channelMask or 15,
+			speed = slowestSpeed
+		}
+
+		for i = 0, 3 do
+			if neko.loadedCart.music[n][i] < 64 then
+				audio.sfx[i].sfx = neko.loadedCart.music[n][i]
+				audio.sfx[i].offset = 0
+				audio.sfx[i].lastStep = -1
+			end
+		end
 
 end
 

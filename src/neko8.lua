@@ -29,7 +29,7 @@ function neko.init()
 	-- Only use to remove wrong neko.n8 in the system saved folder
 	--cmd = require "commands"
 	--cmd.rm({"neko.n8"})
-	
+
 	editors = require "editors"
 	editors.init()
 
@@ -49,8 +49,6 @@ function neko.showMessage(s)
 end
 
 function neko.update(dt)
-	audio.update(dt)
-
 	for p = 0, 1 do
 		for i = 0, #api.keyMap[p] do
 			for _, key in pairs(

@@ -36,16 +36,15 @@ function _init()
 end
 
 function delay(t)
- --for i=0,t or 6 do
---  flip()
--- end
+ for i=0,t or 6 do
+  flip()
+ end
 end
 
 sc={1,2,3,4}
 
 function start_screen()
  cls()
- sfx(0)
  music(0)
  for x=2,192,8 do
   for y=0,128 do

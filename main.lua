@@ -378,31 +378,41 @@ function love.run()
 				if e == "quit" then
 					if not love.quit
 						or not love.quit() then
+
 						if love.audio then
 							love.audio.stop()
 						end
+
 						return
 					end
 				end
+
 				love.handlers[e](a,b,c,d)
 			end
 		end
+
 		if love.timer then
 			love.timer.step()
 			dt = dt + love.timer.getDelta()
 		end
+
 		local render = false
+
 		while dt >= frameTime do
 			hostTime = hostTime + dt
 			if hostTime >= 65536 then
 				hostTime = hostTime - 65536
 			end
+
 			if love.update then
 				love.update(frameTime)
+				audio.update(frameTime)
 			end
+
 			dt = dt - frameTime
 			render = true
 		end
+
 		if render and love.window
 			and love.graphics
 			and love.window.isCreated() then
@@ -410,9 +420,11 @@ function love.run()
 			love.graphics.origin()
 			if love.draw then love.draw() end
 		end
+
 		if love.timer then
 			love.timer.sleep(0.001)
 		end
+
 	end
 end
 
