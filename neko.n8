@@ -28,8 +28,9 @@ function _init()
 -- cls expects a number, but all commands receive a table. See issue #9
   cls=function(a) cls(a and unpck(a)) end,
   edit=edit,
- minify=minify,
- version=version
+  minify=minify,
+  version=version,
+  pwd=pwd
  }
 
  start_screen()
