@@ -198,8 +198,8 @@ function love.keypressed(
 			s:encode("png", file)
 			api.smes("saved screenshot")
 		elseif key == "f8" then
-			-- gif = giflib.new("neko8.gif")
-			-- api.smes("started recording gif")
+			gif = giflib.new("neko8.gif")
+			api.smes("started recording gif")
 			api.smes("gif recording is not supported")
 		elseif key == "f9" then
 			if not gif then return end
