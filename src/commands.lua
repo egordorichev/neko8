@@ -194,8 +194,6 @@ function commands.ls(a)
 		return
 	end
 
-	print(dir)
-
 	if not love.filesystem.isDirectory(dir) then
 		api.print(
 			"no such directory", nil, nil, 14
