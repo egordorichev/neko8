@@ -45,7 +45,7 @@ sc={1,2,3,4}
 
 function start_screen()
  cls()
- --music(0)
+ music(0)
  for x=2,192,8 do
 	for y=0,128 do
 	pset(x,y,sc[flr(rnd(#sc))+1])

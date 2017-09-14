@@ -149,7 +149,7 @@ function audio.update(time)
 			local freq
 
 			if ch.bufferpos == 0 or ch.bufferpos == nil then
-				ch.buffer = love.sound.newSoundData(config.audio.bufferSize, sr, bits, channels)
+				ch.buffer = love.sound.newSoundData(config.audio.bufferSize, sr, 16, 1)
 				ch.bufferpos = 0
 			end
 

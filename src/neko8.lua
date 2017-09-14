@@ -36,7 +36,7 @@ function neko.init()
 	neko.core = carts.load("neko")
 	carts.run(neko.core)
 	neko.cart = nil
-	neko.loadedCart = carts.create()
+	-- neko.loadedCart = carts.create()
 	-- todo: sfx doesn't play, if we create new cart
 	carts.import(neko.loadedCart)
 end
