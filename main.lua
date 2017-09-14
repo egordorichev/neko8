@@ -10,10 +10,10 @@ love.filesystem.setRequirePath(requirePath ..
 
 OS = love.system.getOS()
 mobile = OS == "Android" or OS == "iOS"
-RELEASE = false
 
 require "minify"
 require "log"
+require "error"
 
 -- DEBUG!
 -- mobile = true
@@ -41,6 +41,7 @@ function love.load(arg)
 
 	if arg then
 		DEBUG = arg[2] == "-d"
+		RELEASE = not DEBUG
 
 		if DEBUG then
 			lurker = require "lurker"
@@ -61,6 +62,9 @@ function love.load(arg)
 
 	love.window.setDisplaySleepEnabled(false)
 	neko.init()
+	-- error :P
+
+	tesFuntion()
 end
 
 function love.touchpressed()
