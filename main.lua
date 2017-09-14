@@ -177,7 +177,7 @@ function love.keypressed(
 		end
 	else
 		local shiftDown = love.keyboard.isDown("lshift")
-					or love.keyboard.isDown("rshift")
+			or love.keyboard.isDown("rshift")
 		if (key == "escape" or (key == "return" and shiftDown))
 			and not isRepeat then
 			handled = false
@@ -190,7 +190,23 @@ function love.keypressed(
 			else
 				editors.open()
 			end
-		elseif key == "f1" then
+		elseif neko.cart == nil and editors.opened then
+			if key == "f1" then
+				editors.openEditor(1)
+			elseif key == "f2" then
+				editors.openEditor(2)
+			elseif key == "f3" then
+				editors.openEditor(3)
+			elseif key == "f4" then
+				editors.openEditor(4)
+			elseif key == "f5" then
+				editors.openEditor(5)
+			elseif key == "f6" then
+				editors.openEditor(6)
+			else
+				handled = false
+			end
+		elseif key == "f7" then
 			local s =
 				love.graphics.newScreenshot(false)
 			local file = "neko8-"

@@ -141,13 +141,12 @@ function commands.run()
 end
 
 function commands.new(a)
-    local lang = a[1] or "lua"
+	local lang = a[1] or "lua"
 	neko.loadedCart = carts.create(lang)
 	carts.import(neko.loadedCart)
 	api.color(7)
 	api.print(string.format("created new %s cart", lang))
-	editors.current.close()
-	editors.current = editors.code
+	editors.openEditor(1)
 end
 
 function commands.mkdir(a)
@@ -281,7 +280,7 @@ function commands.cd(a)
 		  dir = string.gsub(dir, "//", "/")
 		  flag = string.find(dir, "//")
 		end
-	end	
+	end
 
 	if not love.filesystem.isDirectory(dir) then
 		api.print(
