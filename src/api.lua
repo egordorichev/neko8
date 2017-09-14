@@ -586,14 +586,6 @@ function api.print(s, x, y, c)
 		if not scroll then
 			y = cursor.y
 		end
-
-		if scroll and type(x) == "boolean" and #s * 4 + cursor.x > config.canvas.width then
-			local xy = api.flr(config.canvas.width - #s * 4 - 5 - cursor.x)
-			api.print(s:sub(1, xy), x, y, c)
-			api.print(s:sub(xy, -1), x, y, c)
-			log.info(s)
-			return
-		end
 	end
 
 	if type(x) == "boolean" then
@@ -602,6 +594,14 @@ function api.print(s, x, y, c)
 	end
 
 	if scroll then
+		--[[ if #s * 4 + cursor.x > config.canvas.width then
+			local xy = api.ceil((config.canvas.width - cursor.x) / 4 - #s - 1)
+			log.info(s:sub(1, xy))
+			api.print(s:sub(1, xy), x, y, c)
+			api.print(s:sub(xy, -1), x, y, c)
+			return
+		end --]] -- todo: scrolling
+
 		y = cursor.y
 		cursor.y = cursor.y + 6
 	end
