@@ -663,7 +663,7 @@ end
 
 function code._wheel(a)
 	if a < 0 then
-		code.view.y = api.max(0, api.min(code.view.y + 1, #code.lines - th + 1))
+		code.view.y = api.max(0, api.min(code.view.y + 1, #code.lines - th + 2))
 	elseif a > 0 then
 		code.view.y = api.max(code.view.y - 1, 0)
 	end
