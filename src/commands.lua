@@ -6,7 +6,7 @@
 local commands = {}
 
 function commands.version(a)
-	api.print(config.version.string)
+	api.print("neko8 " .. config.version.string .. (not release and " dev" or " release"))
 	return
 end
 
@@ -50,11 +50,14 @@ function commands.help(a)
 		api.color(7)
 		api.print("https://github.com/egordorichev/neko8")
 		api.print("")
-		api.print("ls   - list files  rm	 - delete file")
-		api.print("cd   - change dir  mkdir  - create dir")
-		api.print("new  - new cart	run	- run cart")
-		api.print("load - load cart   save   - save cart")
-		api.print("reboot, shutdown, cls, edit")
+		api.print("ls     - list files   new      - new cart")
+		api.print("cd     - change dir   mkdir    - create dir")
+		api.print("rm	 - delete file  load     - load cart")
+		api.print("run	- run cart     reboot   - reboots neko8")
+		api.print("save   - save cart    shutdown - shutdowns neko8")
+		api.print("edit   - opens editor cls      - clear screen")
+		api.print("folder - open working folder on host os")
+		api.print("version- prints neko8 version")
 	else
 		-- todo
 		api.print("subject " .. a[1] .. " is not found")
