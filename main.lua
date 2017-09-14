@@ -62,9 +62,6 @@ function love.load(arg)
 
 	love.window.setDisplaySleepEnabled(false)
 	neko.init()
-	-- error :P
-
-	tesFuntion()
 end
 
 function love.touchpressed()
