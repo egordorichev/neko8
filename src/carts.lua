@@ -625,8 +625,8 @@ function carts.run(cart)
 	elseif cart.lang == "asm" then
 		local std = {}
 		local asm_std = require "asm-lua.include.std"
-        -- createSandbox is used because it's guaranteed to have every symbol
-        -- in _G, 'cause it IS _G
+		-- createSandbox is used because it's guaranteed to have every symbol
+		-- in _G, 'cause it IS _G
 		for k, _ in pairs(createSandbox()) do
 			local _k = "_" .. k
 			std[_k] = string.format("local %s=%s", _k, k)
@@ -635,20 +635,52 @@ function carts.run(cart)
 		std.memcpy = asm_std.memcpy
 		std.memcmp = asm_std.memcmp
 
-		local ports = {}
+		local ports = {
+            {port = 0x301, func = "function(a) _cls(a) end"},
+			{port = 0x302, func = "function(a) _color(a);_PD[0x302]=a end"},
+			{port = 0x303, func = "function(a) _map(_PD[0x3d4],_PD[0x3d5],_PD[0x3d8],_PD[0x3d9],_PD[0x3d6],_PD[0x3d7],a) end"},
+			{port = 0x304, func = "function(a) if a~=0 then _PD[0x3d6],_PD[0x3d7]=_csize() end end"},
+			{port = 0x305, func = "function(a) _camera(_PD[0x3d4],_PD[0x3d5]) end"},
+			{port = 0x306, func = "function(a) _clip(_PD[0x3d4],_PD[0x3d5],_PD[0x3d6],_PD[0x3d7]) end"},
+			{port = 0x307, func = "function(a) if a~=0 then _flip() end end"},
+			{port = 0x308, func = "function(a) if a~=0 then _scroll(a) end end"},
+			{port = 0x309, func = "function(a) _spr(a,_PD[0x3d4],_PD[0x3d5],_PD[0x3d6],_PD[0x3d7]) end"},
+
+			{port = 0x3d4, func = "function(a) _PD[0x3d4]=a end"}, -- x1 coordinate
+			{port = 0x3d5, func = "function(a) _PD[0x3d5]=a end"}, -- y1 coordinate
+			{port = 0x3d6, func = "function(a) _PD[0x3d6]=a end"}, -- width
+			{port = 0x3d7, func = "function(a) _PD[0x3d7]=a end"}, -- height
+
+			{port = 0x3d8, func = "function(a) _PD[0x3d8]=a end"}, -- x2 coordinate
+			{port = 0x3d9, func = "function(a) _PD[0x3d9]=a end"}, -- y2 coordinate
+
+			{port = 0x401, func = "function(a) _PD[0x401]=_btn(a) and 1 or 0 end"},
+			{port = 0x402, func = "function(a) _PD[0x402]=_key(a) and 1 or 0 end"},
+			{port = 0x403, func = "function(a) if a==1 then _PD[0x3d4],_PD[0x3d5]=_cget() else _cursor(_PD[0x3d4] or 0,_PD[0x3d5] or 0) end end"},
+		}
 		local mmap = {
 			{min = 0x14001, max = 0x14400, set = "function(_, v) _printh(v) end"},
 			{min = 0x14401, max = 0x14800, set = "function(p, v)" ..
-                                                     "p=p-0x14401\n" ..
-													 "local x=p%32\n" ..
-													 "local y=_flr(p/32)\n" ..
-													 "_print(v,x*4,y*6)" ..
+													"p=p-0x14401\n" ..
+													"local x=p%32\n" ..
+													"local y=_flr(p/32)\n" ..
+													"_print(v,x*4,y*6)\n" ..
+													"_D[p+0x14401]=v\n" ..
+												 "end",
+										   get = "function(p)\n" ..
+													"return _D[p]\n" ..
 												 "end"},
 			{min = 0x16001, max = 0x1c000, set = "function(p, v)\n" ..
-                                                     "p=p-0x16001\n" ..
-													 "local x=p%192\n" ..
-													 "local y=_flr(p/192)\n" ..
-													 "pset(x,y+1,v)" ..
+													"p=p-0x16001\n" ..
+													"local x=p%192\n" ..
+													"local y=_flr(p/192)\n" ..
+													"pset(x,y+1,v)\n" ..
+												 "end",
+										   get = "function(p)\n" ..
+													"p=p-0x16001\n" ..
+													"local x=p%192\n" ..
+													"local y=_flr(p/192)\n" ..
+													"return pget(x,y+1)\n" ..
 												 "end"},
 		}
 
@@ -665,10 +697,11 @@ function carts.run(cart)
 		end
 
 		api.print(
-			"successfully compiled " .. cart.pureName
+			"successfully compiled " .. (cart.pureName or 'cart')
 		)
 	else
 		runtimeError("unrecognized language tag")
+		return
 	end
 
 	local ok, f, e = pcall(
@@ -677,7 +710,6 @@ function carts.run(cart)
 
 	if not ok or f == nil then
 		syntaxError(e)
-		return
 	end
 
 	love.graphics.setCanvas(

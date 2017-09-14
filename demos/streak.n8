@@ -13,15 +13,10 @@ section .text
 extern _init
 extern _update
 extern _draw
-extern _color
-extern _cls
 
 init:
     -- clear screen
-    mov a, 0
-    push a
-    callx _color, 1
-    callx _cls, 0
+    out 0x301, 0
     ret
 end
 

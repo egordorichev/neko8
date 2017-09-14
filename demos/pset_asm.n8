@@ -7,8 +7,6 @@ section .text
 extern _init
 extern _update
 extern _draw
-extern _color
-extern _cls
 
 init:
  ret
@@ -19,15 +17,7 @@ update:
 end
 
 draw:
- -- most functions aren't native yet
- mov a, 0
- push a
- call _color, 1
- call _cls, 0
-
- mov a, 7
- push a
- call _color, 1
+ out 0x301, 0
 
  -- 0x16001 is the first address of neko screen buffer
  mov a, 0x16001

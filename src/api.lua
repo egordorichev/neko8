@@ -57,7 +57,7 @@ function createSandbox(lang)
 		setmetatable = setmetatable,
 		require = require,
 
-		-- this is required by the asm.lua callx operator
+		-- this is required by asm.lua
 		unpck = table.unpack,
 
 		ver = api.getversion,
