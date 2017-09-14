@@ -57,7 +57,13 @@ function love.load(arg)
 	end
 
 	log.info(
-		"neko 8 " .. config.version.string
+		"neko 8 " .. config.version.string ..
+		(not release and " dev" or " release")
+	)
+
+	love.window.setTitle(
+		"neko8 " .. config.version.string ..
+		(not release and " dev" or " release")
 	)
 
 	love.window.setDisplaySleepEnabled(false)
