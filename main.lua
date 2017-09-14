@@ -8,7 +8,7 @@ love.filesystem.setRequirePath(requirePath ..
 	'libs/?.lua;libs/?/init.lua'
 )
 
-RELEASETYPE = "RC1" -- "D" == DEBUG - "RCX" == Release Candidate X - "R" == Release
+RELEASETYPE = "D" -- "D" == DEBUG - "RCX" == Release Candidate X - "R" == Release
 OS = love.system.getOS()
 mobile = OS == "Android" or OS == "iOS"
 
