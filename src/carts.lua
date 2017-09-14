@@ -126,13 +126,13 @@ function carts.export()
 		editors.code.export()
 
 	neko.loadedCart.sprites =
-		editors.sprites.export()
+		editors.sprites.data
 
 	neko.loadedCart.sfx =
-		editors.sfx.export()
+		editors.sfx.data
 
 	neko.loadedCart.music =
-		editors.music.export()
+		editors.music.data
 end
 
 function carts.create(lang)
@@ -724,24 +724,26 @@ function carts.save(name)
 
 	carts.export()
 
-	local data = "neko8 cart\n"
+	local data = {}
 
-	data = data .. string.format("__%s__\n", neko.loadedCart.lang)
-	data = data .. neko.loadedCart.code
-	data = data .. "__gfx__\n"
-	data = data .. editors.sprites.exportGFX()
-	data = data .. "__gff__\n"
-	data = data .. editors.sprites.exportGFF()
-	data = data .. "__map__\n"
-	data = data .. editors.map.export()
-	data = data .. "__sfx__\n"
-	data = data .. editors.sfx.export()
-	data = data .. "__music__\n"
-	data = data .. editors.music.export()
-	data = data .. "__end__"
+	table.insert(data, "neko8 cart\n")
+
+	table.insert(data, string.format("__%s__\n", neko.loadedCart.lang))
+	table.insert(data, neko.loadedCart.code)
+	table.insert(data, "__gfx__\n")
+	table.insert(data, editors.sprites.exportGFX())
+	table.insert(data, "__gff__\n")
+	table.insert(data, editors.sprites.exportGFF())
+	table.insert(data, "__map__\n")
+	table.insert(data, editors.map.export())
+	table.insert(data, "__sfx__\n")
+	table.insert(data, editors.sfx.export())
+	table.insert(data, "__music__\n")
+	table.insert(data, editors.music.export())
+	table.insert(data, "__end__")
 
 	love.filesystem.write(
-		name .. ".n8", data, #data
+		name .. ".n8", table.concat(data)
 	)
 
 	-- fixme: wrong names

@@ -58,6 +58,10 @@ function love.errhand(msg)
 	p = string.gsub(p, "\t", "")
 	p = string.gsub(p, "%[string \"(.-)\"%]", "%1")
 
+	if log then
+		log.error(p)
+	end
+
 	love.system.setClipboardText(p)
 
 	local function draw()
