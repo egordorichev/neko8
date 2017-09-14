@@ -8,7 +8,7 @@ love.filesystem.setRequirePath(requirePath ..
 	'libs/?.lua;libs/?/init.lua'
 )
 
-RELEASE = false
+RELEASETYPE = "D" -- "D" == DEBUG - "RCX" == Release Candidate X - "R" == Release
 OS = love.system.getOS()
 mobile = OS == "Android" or OS == "iOS"
 
@@ -58,12 +58,18 @@ function love.load(arg)
 
 	log.info(
 		"neko 8 " .. config.version.string ..
-		(not release and " dev" or " release")
+		(RELEASETYPE == "D" and " dev" or 
+		(RELEASETYPE:match("RC") and " Release Candidate " .. 
+		RELEASETYPE:match("[0-9]") or " Release"))
 	)
+
+	log.info(RELEASETYPE:match("[0-9]"))
 
 	love.window.setTitle(
 		"neko8 " .. config.version.string ..
-		(not release and " dev" or " release")
+		(RELEASETYPE == "D" and " dev" or 
+		(RELEASETYPE:match("RC") and " Release Candidate " .. 
+		RELEASETYPE:match("[0-9]") or " Release"))
 	)
 
 	love.window.setDisplaySleepEnabled(false)
