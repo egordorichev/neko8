@@ -142,6 +142,7 @@ function createSandbox(lang)
 		edit = commands.edit,
 		minify = commands.minify,
 		version = commands.version,
+		pwd = commands.pwd,
 
 		pairs = pairs,
 		ipairs = ipairs,

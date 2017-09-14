@@ -159,6 +159,7 @@ function commands.help(a)
 		api.print("save   - save cart    shutdown - shutdowns neko8")
 		api.print("edit   - opens editor cls      - clear screen")
 		api.print("folder - open working folder on host os")
+		api.print("pwd    - display working directory")
 		api.print("version- prints neko8 version")
 	else
 		-- todo
@@ -178,6 +179,10 @@ function commands.folder()
 		love.filesystem.getSaveDirectory()
 		.. neko.currentDirectory
 	love.system.openURL("file://" .. cdir)
+end
+
+function commands.pwd()
+	api.print(neko.currentDirectory, nil, nil, 12)
 end
 
 function commands.ls(a)
@@ -231,9 +236,9 @@ function commands.ls(a)
 		api.print(f.name, nil, nil, f.color)
 	end
 
-	if #out == 0 then
-		api.print("total: 0", nil, nil, 12)
-	end
+	--if #out == 0 then
+		api.print("total: " .. tostring(#out), nil, nil, 12)
+	--end
 end
 
 function commands.run()
