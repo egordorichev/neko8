@@ -710,6 +710,7 @@ function carts.run(cart)
 
 	if not ok or f == nil then
 		syntaxError(e)
+        return
 	end
 
 	love.graphics.setCanvas(
