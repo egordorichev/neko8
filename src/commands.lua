@@ -3,6 +3,108 @@
 -- commands
 -----------------------------------------
 
+function resolveFile(a, dir)
+	dir = dir .. a
+	dir = dir:gsub("\\","/")
+
+	if #dir:sub(-1, -1) == "/" then
+		dir = "/"
+	end
+
+	local p = dir:match("(.+)")
+
+  if p then
+		p = "/" .. p .. "/";
+			local dirs = {}
+		p = p:gsub("/","//"):sub(2, -1)
+
+		for path in string.gmatch(p, "/(.-)/") do
+		  if path == "." then
+
+		  elseif path == ".." then
+				if #dirs > 0 then
+				  table.remove(dirs, #dirs)
+				end
+			  elseif dir ~= "" then
+				table.insert(dirs, path)
+		  end
+		end
+
+		dir = table.concat(dirs, "/")
+
+		if dir:sub(1, 1) ~= "/" then
+			dir = "/" .. dir
+		end
+
+		local flag = string.find(dir, "//")
+		while flag do
+		  dir = string.gsub(dir, "//", "/")
+		  flag = string.find(dir, "//")
+		end
+	end
+
+	if dir:sub(-1, -1) == "/" then
+		dir = dir:sub(1, -2)
+	end
+
+	return dir
+end
+
+function resolve(a, dir)
+	if a == "/" then
+		dir = "/"
+	else
+		if dir:sub(-1, -1) ~= "/" then
+			dir = dir .. "/"
+		end
+
+		dir = dir .. a
+		dir = dir:gsub("\\","/")
+
+		if #dir:sub(-1, -1) == "/" then
+			dir = "/"
+		end
+
+		local p = dir:match("(.+)")
+
+	  if p then
+			p = "/" .. p .. "/";
+				local dirs = {}
+			p = p:gsub("/","//"):sub(2, -1)
+
+			for path in string.gmatch(p, "/(.-)/") do
+			  if path == "." then
+
+			  elseif path == ".." then
+					if #dirs > 0 then
+					  table.remove(dirs, #dirs)
+					end
+				  elseif dir ~= "" then
+					table.insert(dirs, path)
+			  end
+			end
+
+			dir = table.concat(dirs, "/")
+
+			if dir:sub(1, 1) ~= "/" then
+				dir = "/" .. dir
+			end
+
+			if dir:sub(-1, -1) ~= "/" then
+				dir = dir .. "/"
+		  end
+
+			local flag = string.find(dir, "//")
+			while flag do
+			  dir = string.gsub(dir, "//", "/")
+			  flag = string.find(dir, "//")
+			end
+		end
+	end
+
+	return dir
+end
+
 local commands = {}
 
 function commands.version(a)
@@ -78,17 +180,19 @@ end
 function commands.ls(a)
 	local dir = neko.currentDirectory
 	if #a == 1 then
-		dir = dir .. a[1]
+		dir = resolve(a[1], dir)
 	elseif #a > 1 then
 		api.print("ls (dir)")
 		return
 	end
 
-	if not love.filesystem
-		.isDirectory(dir) then
+	print(dir)
+
+	if not love.filesystem.isDirectory(dir) then
 		api.print(
 			"no such directory", nil, nil, 14
 		)
+
 		return
 	end
 
@@ -192,7 +296,7 @@ function commands.save(a)
 
 	if a then
 		if #a == 1 then
-			name = a[1]
+			name = resolveFile(a[1], neko.currentDirectory)
 		elseif #a > 1 then
 			api.print("save (name)")
 			return
@@ -229,58 +333,7 @@ function commands.cd(a)
 		return
 	end
 
-	local dir = neko.currentDirectory
-
-	if a[1] == "/" then
-		dir = "/"
-	else
-		if dir:sub(-1, -1) ~= "/" then
-			dir = dir .. "/"
-		end
-
-		dir = dir .. a[1]
-		dir = dir:gsub("\\","/")
-
-		if #dir:sub(-1, -1) == "/" then
-			dir = "/"
-		end
-
-		local p = dir:match("(.+)")
-
-	  if p then
-		p = "/" .. p .. "/";
-			local dirs = {}
-		p = p:gsub("/","//"):sub(2, -1)
-
-		for path in string.gmatch(p, "/(.-)/") do
-		  if path == "." then
-
-		  elseif path == ".." then
-			if #dirs > 0 then
-			  table.remove(dirs, #dirs)
-			end
-		  elseif dir ~= "" then
-			table.insert(dirs, path)
-		  end
-		end
-
-		dir = table.concat(dirs, "/")
-
-			if dir:sub(1, 1) ~= "/" then
-				dir = "/" .. dir
-			end
-
-			if dir:sub(-1, -1) ~= "/" then
-				dir = dir .. "/"
-			end
-	  end
-
-		local flag = string.find(dir, "//")
-		while flag do
-		  dir = string.gsub(dir, "//", "/")
-		  flag = string.find(dir, "//")
-		end
-	end
+	local dir = resolve(a[1], neko.currentDirectory)
 
 	if not love.filesystem.isDirectory(dir) then
 		api.print(
@@ -300,10 +353,7 @@ function commands.rm(a)
 		return
 	end
 
-	local file = neko.currentDirectory
-		.. a[1]
-
-	-- todo: fix /test//../ and stuff
+	local file = resolveFile(a[1], neko.currentDirectory)
 
 	if not love.filesystem.exists(file) then
 		api.print(

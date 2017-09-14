@@ -18,13 +18,11 @@ function carts.load(name)
 	local found = false
 
 	for i = 1, #extensions do
-		if love.filesystem.isFile(
-			neko.currentDirectory
-			.. pureName .. extensions[i]
-		) then
+		local n = resolveFile(neko.currentDirectory, pureName .. extensions[i])
+
+		if love.filesystem.isFile(n) then
 			found = true
-			name = neko.currentDirectory
-				.. pureName .. extensions[i]
+			name = n
 			break
 		end
 	end
