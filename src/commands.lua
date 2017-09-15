@@ -108,7 +108,11 @@ end
 local commands = {}
 
 function commands.version(a)
-	api.print("neko8 " .. config.version.string .. (not release and " dev" or " release"))
+	api.print("neko8 " .. config.version.string .. 
+		(RELEASETYPE == "D" and " dev" or 
+		(RELEASETYPE:match("RC") and " Release Candidate " .. 
+		RELEASETYPE:match("[0-9]") or " Release"))
+		)
 	return
 end
 
@@ -143,8 +147,8 @@ end
 
 function commands.help(a)
 	if #a == 0 then
-		api.print("neko8 "
-			.. config.version.string)
+		--commands.version() -- FIXME: It doesn't appear because
+		--							it goes up the screen
 		api.color(6)
 		api.print("made by @egordorichev with love")
 		api.color(7)
@@ -156,9 +160,9 @@ function commands.help(a)
 		api.print("new       new cart")
 		api.print("cd        change dir")
 		api.print("mkdir     create dir")
-		api.print("rm	     delete file")
+		api.print("rm        delete file")
 		api.print("load      load cart")
-		api.print("run	     run cart")
+		api.print("run       run cart")
 		api.print("reboot    reboots neko8")
 		api.print("shutdown  shutdowns neko8")
 		api.print("save      save cart")
@@ -168,7 +172,7 @@ function commands.help(a)
 		api.print("pwd       display working directory")
 		api.print("version   prints neko8 version")
 	else
-		-- todo
+		-- TODO
 		api.print("subject " .. a[1] .. " is not found")
 	end
 end

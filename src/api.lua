@@ -56,6 +56,7 @@ function createSandbox(lang)
 		loadstring = loadstring,
 		setmetatable = setmetatable,
 		require = require,
+		tostring = tostring,
 
 		-- this is required by the asm.lua callx operator
 		unpck = table.unpack,
@@ -1186,7 +1187,8 @@ function api.getversion(a)
 	if a == "string" then return config.version.string
 	elseif a == "minor" then return config.version.minor
 	elseif a == "major" then return config.version.major
-	elseif a == "name" then return config.version.name end
+	elseif a == "name" then return config.version.name
+	elseif a == "type" then return RELEASETYPE end
 	return config.version.minor
 end
 
