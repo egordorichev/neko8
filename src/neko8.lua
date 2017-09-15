@@ -25,33 +25,13 @@ function neko.init()
 	initPalette()
 	initApi()
 
-	local files = love.filesystem.getDirectoryItems("/")
-	local count = 0
-
-	for i, f in ipairs(files) do
-		if isVisible(f, "/") then
-			count = count + 1
-		end
-	end
-
-	if count == 0 then
-		log.info("installing core and demos")
+	if not isVisible("neko.n8", "/") then
+		log.info("installing core")
 
 		love.filesystem.write(
 			"neko.n8",
 			love.filesystem.read("neko.n8")
 		)
-
-		love.filesystem.createDirectory("/demos")
-		local demos = love.filesystem.getDirectoryItems("/demos")
-
-		for i, f in ipairs(demos) do
-			local n = "demos/" .. f
-
-			love.filesystem.write(
-				n, love.filesystem.read(n)
-			)
-		end
 	end
 
 	editors = require "editors"

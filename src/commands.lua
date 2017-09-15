@@ -153,26 +153,40 @@ function commands.help(a)
 		api.color(7)
 		api.print("https://github.com/egordorichev/neko8")
 		api.print("")
-		api.print("Command   Description")
-		api.print("-------   -----------")
-		api.print("ls        list files")
-		api.print("new       new cart")
-		api.print("cd        change dir")
-		api.print("mkdir     create dir")
-		api.print("rm        delete file")
-		api.print("load      load cart")
-		api.print("run       run cart")
-		api.print("reboot    reboots neko8")
-		api.print("shutdown  shutdowns neko8")
-		api.print("save      save cart")
-		api.print("edit      opens editor")
-		api.print("cls       clear screen")
-		api.print("folder    open working folder on host os")
-		api.print("pwd       display working directory")
-		api.print("version   prints neko8 version")
+		api.print("Command       Description")
+		api.print("-------       -----------")
+		api.print("install_demos intall default demos")
+		api.print("ls            list files")
+		api.print("new           new cart")
+		api.print("cd            change dir")
+		api.print("mkdir         create dir")
+		api.print("rm            delete file")
+		api.print("load          load cart")
+		api.print("run           run cart")
+		api.print("reboot        reboots neko8")
+		api.print("shutdown      shutdowns neko8")
+		api.print("save          save cart")
+		api.print("edit          opens editor")
+		api.print("cls           clear screen")
+		api.print("folder        open working folder on host os")
+		api.print("pwd           display working directory")
+		api.print("version       prints neko8 version")
 	else
 		-- TODO
 		api.print("subject " .. a[1] .. " is not found")
+	end
+end
+
+function commands.installDemos()
+	love.filesystem.createDirectory("/demos")
+	local demos = love.filesystem.getDirectoryItems("/demos")
+
+	for i, f in ipairs(demos) do
+		local n = "demos/" .. f
+
+		love.filesystem.write(
+			n, love.filesystem.read(n)
+		)
 	end
 end
 
@@ -382,7 +396,8 @@ function commands.rm(a)
 
 	local file = resolveFile(a[1], neko.currentDirectory)
 
-	if not love.filesystem.exists(file) then
+	if not love.filesystem.exists(file)
+		or not isVisible(a[1], neko.currentDirectory) then
 		api.print(
 			"no such file", nil, nil, 14
 		)
