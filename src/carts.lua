@@ -48,7 +48,7 @@ function carts.load(name)
 		return cart
 	end
 
-	if OS == "Windows" and version.release == "debug" then
+	if OS == "Windows" then
 		data = data:gsub("\r\n", "\n") -- FIXES CRLF file endings
 	end
 
