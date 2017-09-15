@@ -95,7 +95,7 @@ content.cmd = {
 	{name = "folder", desc = "Open neko carts folder"},
 	{name = "ls a", desc = "List files at current directory"},
 	{name = "run", desc = "Run a loaded cartridge"},
-	{name = "new ", desc = "Create a new cartridge"},
+	{name = "new [a]", desc = "Create a new cartridge with language a"},
 	{name = "mkdir a", desc = "Creat a directory with name a"},
 	{name = "load a", desc = "Load cartridge a"},
 	{name = "save a", desc = "Save a cartridge with name a"},
