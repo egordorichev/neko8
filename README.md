@@ -4,6 +4,8 @@
 
 [**Neko8**](https://egordorichev.itch.io/neko8) is a **fantasy console**, inspired by [**pico8**](https://www.lexaloffle.com/pico-8.php), [**liko12**](https://ramilego4game.itch.io/liko12) and [**tic80**](https://tic.computer/). It is open-source and fully free. Its goal is to be a fun and useful tool for game development and **especially for game jams**. 
 
+[![](https://media.discordapp.net/attachments/356934835052478470/358195024808116225/Screenshot_2017-09-15_at_1.18.32_PM.png)](https://egordorichev.itch.io/neko8)
+
 Currently it features:
 
 * Pico8-like api
