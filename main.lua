@@ -84,9 +84,15 @@ end
 
 -- XXX Why is this in the global scope? Why isn't this part of some table?
 mbt = 0
-
+up = true
+x = 0
+c = 0
 function love.update(dt)
-	if not neko.focus then
+	if not neko.focus then -- screensaver
+		c = c > 15 and 0 or (x % 2 == 0 and c + 1 or c)
+		x = up == true and (x < 110 and x + 1 or (function(x) up = false return x - 1 end)(x)) or
+		(x > 0 and x - 1 or (function(x) up = true return x + 1 end)(x))
+		api.print("Hey!, neko8 is there!", x, nil, c)
 		return
 	end
 
