@@ -53,8 +53,8 @@ local neko8 = {
 
 local version = {
 	major = 0,
-	minor = 0.4,
-	name = "web",
+	minor = 0.3,
+	name = "kitten",
 	release = "patch 1"
 }
 
