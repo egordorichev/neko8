@@ -18,6 +18,11 @@ content.sys = {
 	{name = "unpck(t)", desc = "Origin function table.unpack in lua"},
 	{name = "memcpy(dest_addr, source_addr, len)", desc = "Copy memory"},
 	{name = "require(str)", desc= "Origin function require in lua"},
+	{name = "tostring()", desc = "Origin function tostring in lua"},
+	{name = "ver()", desc = "Return main version"},
+	{name = "smes(s)", desc="Show message at the bottom of screen"},
+	{name = "nver()", desc="Return neko cart version"},
+	{name = "mstat()", desc="Return status of mouse"},
 }
 
 content.graph = {
@@ -86,19 +91,21 @@ content.math = {
 
 
 content.cmd = {
-	{name = "help(a)", desc = "Show summary of neko commands info"},
-	{name = "folder()", desc = "Open neko carts folder"},
-	{name = "ls(a)", desc = "List files at current directory"},
-	{name = "run()", desc = "Run a loaded cartridge"},
-	{name = "new()", desc = "Create a new cartridge"},
-	{name = "mkdir(a)", desc = "Creat a directory with name a"},
-	{name = "load(a)", desc = "Load cartridge a"},
-	{name = "save(a)", desc = "Save a cartridge with name a"},
-	{name = "reboot()", desc = "Reboot neko"},
-	{name = "shutdown()", desc = "Exit neko"},
-	{name = "cd(a)", desc = "Change directory to a"},
-	{name = "rm(a)", desc = "Remove directory a"},
-	{name = "edit()", desc = "Open editor"},
+	{name = "help name", desc = "Show summary of neko commands info"},
+	{name = "folder", desc = "Open neko carts folder"},
+	{name = "ls a", desc = "List files at current directory"},
+	{name = "run", desc = "Run a loaded cartridge"},
+	{name = "new [a]", desc = "Create a new cartridge with language a"},
+	{name = "mkdir a", desc = "Creat a directory with name a"},
+	{name = "load a", desc = "Load cartridge a"},
+	{name = "save a", desc = "Save a cartridge with name a"},
+	{name = "reboot", desc = "Reboot neko"},
+	{name = "shutdown", desc = "Exit neko"},
+	{name = "cd a", desc = "Change directory to a"},
+	{name = "rm a", desc = "Remove directory a"},
+	{name = "edit", desc = "Open editor"},
+	{name = "version", desc = "Show version in terminal"},
+	{name = "pwd", desc = "Show current working directory"},
 }
 
 content.table = {
@@ -112,10 +119,9 @@ content.table = {
 	{name = "foreach(a, f)", desc = "Iterate items in table a with function f"},
 	}
 
-content.msg = {
-	{name="smes(s)",desc="Show message at the bottom of screen"},
-	{name="nver()",desc="Return neko version"},
-	{name="mstat()",desc="Return status of mouse"},
+content.audio = {
+	{name="sfx(n, channel, offset)",desc="Play sfx, n:-1 stop in ch, n:-2 release loop"},
+	{name="music(n, fadeLen, channelMask)",desc="Play music; n:-1 stop"},
 }
 
 content.keys = {
@@ -183,8 +189,8 @@ function docs.selectPage(t)
 
 	-- page buttons
     local function multiPages(j)
-        local posX, posY = 168-12, 8
-		for i = 0, j  or 0  do
+        local posX, posY = config.canvas.width-(j+1)*8, 8
+				for i = 0, j  or 0  do
             api.spr(
                 i == docs.page and 7 or 6,
                 posX + i * 8, posY
@@ -283,8 +289,8 @@ function docs._update()
 			end
 			-- select page
 			if my >= 8 and my <= 16 then
-				local posX = 166 - 12
 				local j = api.ceil(#content[docs.tab]/9) - 1
+				local posX = config.canvas.width - (j+1)*8 -2
 				for i = 0, j do
 					if mx >= posX + i * 8 and mx <= posX + 8 + i * 8 then
 						docs.page = i
