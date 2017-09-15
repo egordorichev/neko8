@@ -53,9 +53,9 @@ local neko8 = {
 
 local version = {
 	major = 0,
-	minor = 0.3,
-	name = "kitten",
-	release = "patch 1"
+	minor = 0.4,
+	name = "web",
+	release = "dev"
 }
 
 version.string = version.major .. "." ..
