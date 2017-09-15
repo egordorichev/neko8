@@ -265,7 +265,7 @@ function carts.loadCode(data, cart)
 	end
 
 	if not codeStart then
-	runtimeError("Could't find a valid code section in cart")
+		runtimeError("Could't find a valid code section in cart")
 		return
   end
 
@@ -612,7 +612,7 @@ function carts.run(cart)
 	end
 
 	if cart ~= neko.core then
-		carts.export()
+		carts.save(cart.pureName)
 	end
 
 	log.info(

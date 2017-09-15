@@ -78,6 +78,22 @@ function sfx.redraw()
 	end
 end
 
+function sfx._key(k)
+	if api.key("rctrl") or api.key("lctrl") then
+		if k == "s" then
+			commads.save()
+		end
+	else
+		--if "zxcvbnnmsdghjqwertyu23567":match(k) then
+		--	sfx.typeNote(l)
+		--end
+	end
+end
+
+local keyToNoteMap = {
+
+}
+
 function sfx._update()
 
 end
