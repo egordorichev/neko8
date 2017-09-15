@@ -1,4 +1,19 @@
 local sfx = {}
+local keyToNoteMap = {
+	[ "z" ] = "c ",
+	[ "x" ] = "d ",
+	[ "c" ] = "e ",
+	[ "v" ] = "f ",
+	[ "b" ] = "g ",
+	[ "n" ] = "a ",
+	[ "m" ] = "b ",
+
+	[ "s" ] = "c#",
+	[ "d" ] = "d#",
+	[ "g" ] = "f#",
+	[ "h" ] = "g#",
+	[ "j" ] = "a#"
+}
 
 function sfx.init()
 	sfx.forceDraw = false
@@ -6,6 +21,10 @@ function sfx.init()
 	sfx.name = "sfx editor"
 	sfx.bg = config.editors.sfx.bg
 	sfx.sfx = 0
+	sfx.volume = 5
+	sfx.instrument = 0
+	sfx.fx = 0
+	sfx.octave = 2
 
 	sfx.cursor = {
 		x = 0,
@@ -45,8 +64,8 @@ function sfx.redraw()
 
 		if sfx.cursor.y == i then
 			api.brectfill(
-				x - 1 + sfx.cursor.x * 4, y - 1,
-				5, 7, 8
+				x - 1 + sfx.cursor.x * 4 + (sfx.cursor.x > 0 and 4 or 0),
+				y - 1, sfx.cursor.x > 0 and 5 or 9, 7, 8
 			)
 		end
 
@@ -78,21 +97,53 @@ function sfx.redraw()
 	end
 end
 
-function sfx._key(k)
+function sfx._keydown(k)
 	if api.key("rctrl") or api.key("lctrl") then
 		if k == "s" then
 			commads.save()
 		end
 	else
-		--if "zxcvbnnmsdghjqwertyu23567":match(k) then
-		--	sfx.typeNote(l)
-		--end
+		if k == "up" then
+			sfx.cursor.y = sfx.cursor.y - 1
+			if sfx.cursor.y < 0 then
+				sfx.cursor.y = 31
+			end
+			sfx.forceDraw = true
+		elseif k == "down" then
+			sfx.cursor.y = sfx.cursor.y + 1
+			if sfx.cursor.y > 31 then
+				sfx.cursor.y = 0
+			end
+			sfx.forceDraw = true
+		elseif k == "left" then
+			sfx.cursor.x = sfx.cursor.x - 1
+			if sfx.cursor.x < 0 then
+				sfx.cursor.x = 0
+			end
+			sfx.forceDraw = true
+		elseif k == "right" then
+			sfx.cursor.x = sfx.cursor.x + 1
+			if sfx.cursor.x > 4 then
+				sfx.cursor.x = 4
+			end
+			sfx.forceDraw = true
+		elseif sfx.cursor.x == 0 and (string.match("zxcvbnnmsdghj", k)) then
+			sfx.typeNote(keyToNoteMap[k])
+		end
 	end
 end
 
-local keyToNoteMap = {
+function sfx.typeNote(n)
+	sfx.data[sfx.sfx][sfx.cursor.y][1] = stringToNote(n, sfx.octave)
 
-}
+	if sfx.data[sfx.sfx][sfx.cursor.y][3] == 0 then
+		sfx.data[sfx.sfx][sfx.cursor.y][2] = sfx.instrument
+		sfx.data[sfx.sfx][sfx.cursor.y][3] = sfx.volume
+		sfx.data[sfx.sfx][sfx.cursor.y][4] = sfx.fx
+	end
+
+	sfx.forceDraw = true
+end
 
 function sfx._update()
 

@@ -29,6 +29,24 @@ function noteToString(note)
 	return string.format("%s", noteMap[note], octave)
 end
 
+function stringToNote(string, octave)
+	local note = -1
+
+	for i = 0, #noteMap do
+		if noteMap[i] == string then
+			note = i
+			break
+		end
+	end
+
+	if note == -1 then
+		print(":" .. string .. ":")
+		return 0
+	end
+
+	return note + octave * 12
+end
+
 function noteToOctave(note)
 	local octave = api.flr(note / 12)
 	local note = api.flr(note % 12)
