@@ -8,7 +8,7 @@ local function lerp(a, b, t)
 	return (1 - t) * a + t * b
 end
 
-note_map = {
+noteMap = {
 	[0] = 'C-',
 	'C#',
 	'D-',
@@ -24,9 +24,9 @@ note_map = {
 }
 
 function noteToString(note)
-	local octave = flr(note/12)
-	local note = flr(note%12)
-	return string.format('%s%d',note_map[note],octave)
+	local octave = flr(note / 12)
+	local note = flr(note % 12)
+	return string.format("%s%d", noteMap[note], octave)
 end
 
 local function oldosc(osc)
@@ -38,33 +38,33 @@ local function oldosc(osc)
 end
 
 function audio.init()
-	audio.sfx = {} -- TMP
+	audio.sfx = {}
 	audio.osc = {}
 	-- tri
 	audio.osc[0] = function(x)
-		return (api.abs((x%1) * 2 - 1) * 2 - 1) * 0.7
+		return (api.abs((x % 1) * 2 - 1) * 2 - 1) * 0.7
 	end
 	-- uneven tri
 	audio.osc[1] = function(x)
-		local t = x%1
+		local t = x % 1
 		return (((t < 0.875) and (t * 16 / 7) or ((1 - t) * 16)) - 1) * 0.7
 	end
 	-- saw
 	audio.osc[2] = function(x)
-		return (x%1 - 0.5) * 0.9
+		return (x % 1 - 0.5) * 0.9
 	end
 	-- sqr
 	audio.osc[3] = function(x)
-		return (x%1 < 0.5 and 1 or - 1) * 1 / 3
+		return (x % 1 < 0.5 and 1 or - 1) * 1 / 3
 	end
 	-- pulse
 	audio.osc[4] = function(x)
-		return (x%1 < 0.3125 and 1 or - 1) * 1 / 3
+		return (x % 1 < 0.3125 and 1 or - 1) * 1 / 3
 	end
 	-- tri/2
 	audio.osc[5] = function(x)
 		x = x * 4
-		return (api.abs((x%2) - 1) - 0.5 + (api.abs(((x * 0.5)%2) - 1) - 0.5) / 2 - 0.1) * 0.7
+		return (api.abs((x % 2) - 1) - 0.5 + (api.abs(((x * 0.5) % 2) - 1) - 0.5) / 2 - 0.1) * 0.7
 	end
 	-- noise
 	audio.osc[6] = function()
@@ -88,7 +88,7 @@ function audio.init()
 	end
 	-- saw from 0 to 1, used for arppregiator
 	audio.osc['saw_lfo'] = function(x)
-		return x%1
+		return x % 1
 	end
 
 	audio.channels = {
@@ -116,7 +116,8 @@ function audio.update(time)
 
 	for i = 0, samples - 1 do
 		if audio.currentMusic then
-			audio.currentMusic.offset = audio.currentMusic.offset + 7350 / (61 * audio.currentMusic.speed * sr)
+			audio.currentMusic.offset =
+			audio.currentMusic.offset + 7350 / (61 * audio.currentMusic.speed * sr)
 			if audio.currentMusic.offset >= 32 then
 				local nextTrack = audio.currentMusic.music
 				if neko.loadedCart.music[nextTrack].loop == 2 then
@@ -148,7 +149,7 @@ function audio.update(time)
 			local freq
 
 			if ch.bufferpos == 0 or ch.bufferpos == nil then
-				ch.buffer = love.sound.newSoundData(config.audio.bufferSize, sr, bits, channels)
+				ch.buffer = love.sound.newSoundData(config.audio.bufferSize, sr, 16, 1)
 				ch.bufferpos = 0
 			end
 

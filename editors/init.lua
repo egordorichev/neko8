@@ -29,14 +29,7 @@ function editors.init()
 			e.icon, 21 + i * 7 - 7, 0, 8, 8, 6,
 			e.bg
 		):onClick(function(b)
-			for i, e in ipairs(editors.modes) do
-				editors.ui.components[e.name].active = false
-			end
-
-			b.active = true
-			editors.current.close()
-			editors.current = e
-			editors.current.open()
+			editors.openEditor(i)
 		end), e.name)
   end
 
@@ -49,6 +42,18 @@ function editors.init()
 	):onClick(function(b)
 		editors.close()
 	end), "exit")
+end
+
+function editors.openEditor(i)
+	for i, e in ipairs(editors.modes) do
+		editors.ui.components[e.name].active = false
+	end
+
+
+	editors.current.close()
+	editors.current = editors.modes[i]
+	editors.ui.components[editors.current.name].active = true
+	editors.current.open()
 end
 
 function editors.open()

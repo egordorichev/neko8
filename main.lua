@@ -8,11 +8,13 @@ love.filesystem.setRequirePath(requirePath ..
 	'libs/?.lua;libs/?/init.lua'
 )
 
+RELEASETYPE = "D" -- "D" == DEBUG - "RCX" == Release Candidate X - "R" == Release
 OS = love.system.getOS()
 mobile = OS == "Android" or OS == "iOS"
 
 require "minify"
 require "log"
+require "error"
 
 -- DEBUG!
 -- mobile = true
@@ -55,7 +57,19 @@ function love.load(arg)
 	end
 
 	log.info(
-		"neko 8 " .. config.version.string
+		"neko 8 " .. config.version.string ..
+		(RELEASETYPE == "D" and " dev" or 
+		(RELEASETYPE:match("RC") and " Release Candidate " .. 
+		RELEASETYPE:match("[0-9]") or " Release"))
+	)
+
+	log.info(RELEASETYPE:match("[0-9]"))
+
+	love.window.setTitle(
+		"neko8 " .. config.version.string ..
+		(RELEASETYPE == "D" and " dev" or 
+		(RELEASETYPE:match("RC") and " Release Candidate " .. 
+		RELEASETYPE:match("[0-9]") or " Release"))
 	)
 
 	love.window.setDisplaySleepEnabled(false)
@@ -175,7 +189,7 @@ function love.keypressed(
 		end
 	else
 		local shiftDown = love.keyboard.isDown("lshift")
-					or love.keyboard.isDown("rshift")
+			or love.keyboard.isDown("rshift")
 		if (key == "escape" or (key == "return" and shiftDown))
 			and not isRepeat then
 			handled = false
@@ -188,7 +202,23 @@ function love.keypressed(
 			else
 				editors.open()
 			end
-		elseif key == "f1" then
+		elseif neko.cart == nil and editors.opened then
+			if key == "f1" then
+				editors.openEditor(1)
+			elseif key == "f2" then
+				editors.openEditor(2)
+			elseif key == "f3" then
+				editors.openEditor(3)
+			elseif key == "f4" then
+				editors.openEditor(4)
+			elseif key == "f5" then
+				editors.openEditor(5)
+			elseif key == "f6" then
+				editors.openEditor(6)
+			else
+				handled = false
+			end
+		elseif key == "f7" then
 			local s =
 				love.graphics.newScreenshot(false)
 			local file = "neko8-"
@@ -376,31 +406,41 @@ function love.run()
 				if e == "quit" then
 					if not love.quit
 						or not love.quit() then
+
 						if love.audio then
 							love.audio.stop()
 						end
+
 						return
 					end
 				end
+
 				love.handlers[e](a,b,c,d)
 			end
 		end
+
 		if love.timer then
 			love.timer.step()
 			dt = dt + love.timer.getDelta()
 		end
+
 		local render = false
+
 		while dt >= frameTime do
 			hostTime = hostTime + dt
 			if hostTime >= 65536 then
 				hostTime = hostTime - 65536
 			end
+
 			if love.update then
 				love.update(frameTime)
+				audio.update(frameTime)
 			end
+
 			dt = dt - frameTime
 			render = true
 		end
+
 		if render and love.window
 			and love.graphics
 			and love.window.isCreated() then
@@ -408,9 +448,11 @@ function love.run()
 			love.graphics.origin()
 			if love.draw then love.draw() end
 		end
+
 		if love.timer then
 			love.timer.sleep(0.001)
 		end
+
 	end
 end
 

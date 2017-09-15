@@ -48,12 +48,12 @@ ops['out'] = {pattern = '_P[%s](%s)', arg = {'a', 'b'}}
 ops['in'] = {pattern = '%s = _PD[%s]()', arg = {'a', 'b'}}
 
 local parsearg = require(_ASM.root .. 'include/parsearg')
-local parseop = function(expr, verbose, std)
+local parseop = function(expr, verbose)
     local err = false
 
     for k, v in pairs(expr) do
         if k == 'a' or k == 'b' or k == 'c' then
-            local status, result = pcall(parsearg, v, verbose, std)
+            local status, result = pcall(parsearg, v, verbose)
             if status then
                 expr[k] = result
             else

@@ -70,19 +70,19 @@ function sfx.export()
 
 			table.insert(
 				data, string.format(
-					"%02x", sfx.data[i][j][2]
+					"%01x", sfx.data[i][j][2]
 				)
 			)
 
 			table.insert(
 				data, string.format(
-					"%02x", sfx.data[i][j][3]
+					"%01x", sfx.data[i][j][3]
 				)
 			)
 
 			table.insert(
 				data, string.format(
-					"%02x", sfx.data[i][j][4]
+					"%01x", sfx.data[i][j][4]
 				)
 			)
 		end

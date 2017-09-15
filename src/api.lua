@@ -56,10 +56,12 @@ function createSandbox(lang)
 		loadstring = loadstring,
 		setmetatable = setmetatable,
 		require = require,
+		tostring = tostring,
 
 		-- this is required by the asm.lua callx operator
 		unpck = table.unpack,
 
+		ver = api.getversion,
 		camera = api.camera,
 		clip = api.clip,
 		fget = api.fget,
@@ -140,6 +142,8 @@ function createSandbox(lang)
 		rm = commands.rm,
 		edit = commands.edit,
 		minify = commands.minify,
+		version = commands.version,
+		pwd = commands.pwd,
 
 		pairs = pairs,
 		ipairs = ipairs,
@@ -188,7 +192,54 @@ function api.sfx(n, channel, offset)
 	ch.loop = true
 end
 
-function api.music()
+function api.music(n, fadeLen, channelMask)
+	if n == -1 then
+			for i = 0, 3 do
+				if audio.currentMusic and neko.loadedCart.music[audio.currentMusic.music][i] < 64 then
+					audio.sfx[i].sfx = nil
+					audio.sfx[i].offset = 0
+					audio.sfx[i].lastStep = -1
+				end
+			end
+			audio.currentMusic = nil
+			return
+		end
+
+		local m = neko.loadedCart.music[n]
+
+		if not m then
+			return
+		end
+
+		local slowestSpeed = nil
+		local slowestChannel = nil
+
+		for i = 0, 3 do
+			if m[i] < 64 then
+				local sfx = neko.loadedCart.sfx[m[i]]
+
+				if slowestSpeed == nil or slowestSpeed > sfx.speed then
+					slowestSpeed = sfx.speed
+					slowestChannel = i
+				end
+			end
+		end
+
+		audio.sfx[slowestChannel].loop = false
+		audio.currentMusic = {
+			music = n,
+			offset = 0,
+			channelMask = channelMask or 15,
+			speed = slowestSpeed
+		}
+
+		for i = 0, 3 do
+			if neko.loadedCart.music[n][i] < 64 then
+				audio.sfx[i].sfx = neko.loadedCart.music[n][i]
+				audio.sfx[i].offset = 0
+				audio.sfx[i].lastStep = -1
+			end
+		end
 
 end
 
@@ -489,10 +540,13 @@ function api.circfill(cx, cy, r, c)
 end
 
 function api.pget(x, y)
-	if not pgetData or x < 0 or x > config.canvas.width
-		or y < 0 or y > config.canvas.height then
+	if not pgetData or x < 0 or x > config.canvas.width - 1
+		or y < 0 or y > config.canvas.height - 1 then
 		return 0
 	end
+
+	x = api.flr(x)
+	y = api.flr(y)
 
 	return api.flr(pgetData:getPixel(x, y) / 17)
 end
@@ -529,11 +583,6 @@ function api.print(s, x, y, c)
 
 	local scroll = (y == nil)
 
-	if type(x) == "boolean" then
-		x = cursor.x
-		cursor.x = cursor.x + #s*4
-	end
-
 	if type(y) == "boolean" then
 		scroll = y
 		if not scroll then
@@ -541,7 +590,20 @@ function api.print(s, x, y, c)
 		end
 	end
 
+	if type(x) == "boolean" then
+		x = cursor.x
+		cursor.x = cursor.x + #s * 4
+	end
+
 	if scroll then
+		--[[ if #s * 4 + cursor.x > config.canvas.width then
+			local xy = api.ceil((config.canvas.width - cursor.x) / 4 - #s - 1)
+			log.info(s:sub(1, xy))
+			api.print(s:sub(1, xy), x, y, c)
+			api.print(s:sub(xy, -1), x, y, c)
+			return
+		end --]] -- todo: scrolling
+
 		y = cursor.y
 		cursor.y = cursor.y + 6
 	end
@@ -1119,6 +1181,15 @@ function api.all(a)
 		i = i + 1
 		if i <= n then return a[i] end
 	end
+end
+
+function api.getversion(a)
+	if a == "string" then return config.version.string
+	elseif a == "minor" then return config.version.minor
+	elseif a == "major" then return config.version.major
+	elseif a == "name" then return config.version.name
+	elseif a == "type" then return RELEASETYPE end
+	return config.version.minor
 end
 
 return api

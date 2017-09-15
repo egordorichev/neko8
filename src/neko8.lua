@@ -27,16 +27,16 @@ function neko.init()
 
 	-- Be careful!!! Pls keep in comment
 	-- Only use to remove wrong neko.n8 in the system saved folder
-	--cmd = require "commands"
-	--cmd.rm({"neko.n8"})
-	
+	-- cmd = require "commands"
+	-- cmd.rm({"neko.n8"})
+
 	editors = require "editors"
 	editors.init()
 
 	neko.core = carts.load("neko")
 	carts.run(neko.core)
 	neko.cart = nil
-	-- neko.loadedCart = carts.create()
+	neko.loadedCart = carts.create()
 	-- todo: sfx doesn't play, if we create new cart
 	carts.import(neko.loadedCart)
 end
@@ -49,8 +49,6 @@ function neko.showMessage(s)
 end
 
 function neko.update(dt)
-	audio.update(dt)
-
 	for p = 0, 1 do
 		for i = 0, #api.keyMap[p] do
 			for _, key in pairs(

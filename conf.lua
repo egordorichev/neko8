@@ -106,7 +106,7 @@ config = {
 	editors = neko8,
 
 	audio = {
-		bufferSize = 1024,
+		bufferSize = 2048,
 		sampleRate = 22050
 	}
 }

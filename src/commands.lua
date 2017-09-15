@@ -3,7 +3,118 @@
 -- commands
 -----------------------------------------
 
+function resolveFile(a, dir)
+	dir = dir .. a
+	dir = dir:gsub("\\","/")
+
+	if #dir:sub(-1, -1) == "/" then
+		dir = "/"
+	end
+
+	local p = dir:match("(.+)")
+
+  if p then
+		p = "/" .. p .. "/";
+			local dirs = {}
+		p = p:gsub("/","//"):sub(2, -1)
+
+		for path in string.gmatch(p, "/(.-)/") do
+		  if path == "." then
+
+		  elseif path == ".." then
+				if #dirs > 0 then
+				  table.remove(dirs, #dirs)
+				end
+			  elseif dir ~= "" then
+				table.insert(dirs, path)
+		  end
+		end
+
+		dir = table.concat(dirs, "/")
+
+		if dir:sub(1, 1) ~= "/" then
+			dir = "/" .. dir
+		end
+
+		local flag = string.find(dir, "//")
+		while flag do
+		  dir = string.gsub(dir, "//", "/")
+		  flag = string.find(dir, "//")
+		end
+	end
+
+	if dir:sub(-1, -1) == "/" then
+		dir = dir:sub(1, -2)
+	end
+
+	return dir
+end
+
+function resolve(a, dir)
+	if a == "/" then
+		dir = "/"
+	else
+		if dir:sub(-1, -1) ~= "/" then
+			dir = dir .. "/"
+		end
+
+		dir = dir .. a
+		dir = dir:gsub("\\","/")
+
+		if #dir:sub(-1, -1) == "/" then
+			dir = "/"
+		end
+
+		local p = dir:match("(.+)")
+
+	  if p then
+			p = "/" .. p .. "/";
+				local dirs = {}
+			p = p:gsub("/","//"):sub(2, -1)
+
+			for path in string.gmatch(p, "/(.-)/") do
+			  if path == "." then
+
+			  elseif path == ".." then
+					if #dirs > 0 then
+					  table.remove(dirs, #dirs)
+					end
+				  elseif dir ~= "" then
+					table.insert(dirs, path)
+			  end
+			end
+
+			dir = table.concat(dirs, "/")
+
+			if dir:sub(1, 1) ~= "/" then
+				dir = "/" .. dir
+			end
+
+			if dir:sub(-1, -1) ~= "/" then
+				dir = dir .. "/"
+		  end
+
+			local flag = string.find(dir, "//")
+			while flag do
+			  dir = string.gsub(dir, "//", "/")
+			  flag = string.find(dir, "//")
+			end
+		end
+	end
+
+	return dir
+end
+
 local commands = {}
+
+function commands.version(a)
+	api.print("neko8 " .. config.version.string .. 
+		(RELEASETYPE == "D" and " dev" or 
+		(RELEASETYPE:match("RC") and " Release Candidate " .. 
+		RELEASETYPE:match("[0-9]") or " Release"))
+		)
+	return
+end
 
 function commands.minify(a)
 	if neko.loadedCart == nil then
@@ -36,22 +147,32 @@ end
 
 function commands.help(a)
 	if #a == 0 then
-		api.print("neko8 "
-			.. config.version.string)
-		api.print("")
+		--commands.version() -- FIXME: It doesn't appear because
+		--							it goes up the screen
 		api.color(6)
-		api.print("by @egordorichev")
-		api.print("made with love")
+		api.print("made by @egordorichev with love")
 		api.color(7)
 		api.print("https://github.com/egordorichev/neko8")
 		api.print("")
-		api.print("ls   - list files  rm	 - delete file")
-		api.print("cd   - change dir  mkdir  - create dir")
-		api.print("new  - new cart	run	- run cart")
-		api.print("load - load cart   save   - save cart")
-		api.print("reboot, shutdown, cls, edit")
+		api.print("Command   Description")
+		api.print("-------   -----------")
+		api.print("ls        list files")
+		api.print("new       new cart")
+		api.print("cd        change dir")
+		api.print("mkdir     create dir")
+		api.print("rm        delete file")
+		api.print("load      load cart")
+		api.print("run       run cart")
+		api.print("reboot    reboots neko8")
+		api.print("shutdown  shutdowns neko8")
+		api.print("save      save cart")
+		api.print("edit      opens editor")
+		api.print("cls       clear screen")
+		api.print("folder    open working folder on host os")
+		api.print("pwd       display working directory")
+		api.print("version   prints neko8 version")
 	else
-		-- todo
+		-- TODO
 		api.print("subject " .. a[1] .. " is not found")
 	end
 end
@@ -70,20 +191,24 @@ function commands.folder()
 	love.system.openURL("file://" .. cdir)
 end
 
+function commands.pwd()
+	api.print(neko.currentDirectory, nil, nil, 12)
+end
+
 function commands.ls(a)
 	local dir = neko.currentDirectory
 	if #a == 1 then
-		dir = dir .. a[1]
+		dir = resolve(a[1], dir)
 	elseif #a > 1 then
 		api.print("ls (dir)")
 		return
 	end
 
-	if not love.filesystem
-		.isDirectory(dir) then
+	if not love.filesystem.isDirectory(dir) then
 		api.print(
 			"no such directory", nil, nil, 14
 		)
+
 		return
 	end
 
@@ -121,9 +246,9 @@ function commands.ls(a)
 		api.print(f.name, nil, nil, f.color)
 	end
 
-	if #out == 0 then
-		api.print("total: 0", nil, nil, 12)
-	end
+	--if #out == 0 then
+		api.print("total: " .. tostring(#out), nil, nil, 12)
+	--end
 end
 
 function commands.run()
@@ -136,13 +261,12 @@ function commands.run()
 end
 
 function commands.new(a)
-    local lang = a[1] or "lua"
+	local lang = a[1] or "lua"
 	neko.loadedCart = carts.create(lang)
 	carts.import(neko.loadedCart)
 	api.color(7)
 	api.print(string.format("created new %s cart", lang))
-	editors.current.close()
-	editors.current = editors.code
+	editors.openEditor(1)
 end
 
 function commands.mkdir(a)
@@ -188,7 +312,7 @@ function commands.save(a)
 
 	if a then
 		if #a == 1 then
-			name = a[1]
+			name = resolveFile(a[1], neko.currentDirectory)
 		elseif #a > 1 then
 			api.print("save (name)")
 			return
@@ -225,58 +349,7 @@ function commands.cd(a)
 		return
 	end
 
-	local dir = neko.currentDirectory
-
-	if a[1] == "/" then
-		dir = "/"
-	else
-		if dir:sub(-1, -1) ~= "/" then
-			dir = dir .. "/"
-		end
-
-		dir = dir .. a[1]
-		dir = dir:gsub("\\","/")
-
-		if #dir:sub(-1, -1) == "/" then
-			dir = "/"
-		end
-
-		local p = dir:match("(.+)")
-
-	  if p then
-		p = "/" .. p .. "/";
-			local dirs = {}
-		p = p:gsub("/","//"):sub(2, -1)
-
-		for path in string.gmatch(p, "/(.-)/") do
-		  if path == "." then
-
-		  elseif path == ".." then
-			if #dirs > 0 then
-			  table.remove(dirs, #dirs)
-			end
-		  elseif dir ~= "" then
-			table.insert(dirs, path)
-		  end
-		end
-
-		dir = table.concat(dirs, "/")
-
-			if dir:sub(1, 1) ~= "/" then
-				dir = "/" .. dir
-			end
-
-			if dir:sub(-1, -1) ~= "/" then
-				dir = dir .. "/"
-			end
-	  end
-
-		local flag = string.find(dir, "//")
-		while flag do
-		  dir = string.gsub(dir, "//", "/")
-		  flag = string.find(dir, "//")
-		end
-	end	
+	local dir = resolve(a[1], neko.currentDirectory)
 
 	if not love.filesystem.isDirectory(dir) then
 		api.print(
@@ -296,10 +369,7 @@ function commands.rm(a)
 		return
 	end
 
-	local file = neko.currentDirectory
-		.. a[1]
-
-	-- todo: fix /test//../ and stuff
+	local file = resolveFile(a[1], neko.currentDirectory)
 
 	if not love.filesystem.exists(file) then
 		api.print(

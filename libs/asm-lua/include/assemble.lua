@@ -20,14 +20,14 @@ comp['until'] = {pattern = 'until _R.f.%s', arg = {'cond'}}
 
 local section = 'text'
 local parseop = require(_ASM.root .. 'include/parseop')
-local expr_to_lua = function(expr, verbose, std)
+local expr_to_lua = function(expr, verbose)
     local type = expr.type
 
     if type == 'section' then
         section = expr.name
         return '-- .' .. expr.name
     elseif type == 'op' then -- TODO
-        return parseop(expr, verbose, std)
+        return parseop(expr, verbose)
     elseif type == 'def' then
         return mklabel(expr.name, expr.val)
     elseif type == 'extern' then
@@ -44,14 +44,14 @@ local expr_to_lua = function(expr, verbose, std)
     end
 end
 
-local assemble = function(ast, verbose, std)
+local assemble = function(ast, verbose)
     local dst = ''
 
     local err = false
 
     for _, v in ipairs(ast) do
         local lua
-        local status, result = pcall(expr_to_lua, v, verbose, std)
+        local status, result = pcall(expr_to_lua, v, verbose)
         if status then
             lua = result
             if verbose and verbose >= 2 then

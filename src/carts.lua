@@ -18,13 +18,11 @@ function carts.load(name)
 	local found = false
 
 	for i = 1, #extensions do
-		if love.filesystem.isFile(
-			neko.currentDirectory
-			.. pureName .. extensions[i]
-		) then
+		local n = resolveFile(neko.currentDirectory, pureName .. extensions[i])
+
+		if love.filesystem.isFile(n) then
 			found = true
-			name = neko.currentDirectory
-				.. pureName .. extensions[i]
+			name = n
 			break
 		end
 	end
@@ -46,6 +44,10 @@ function carts.load(name)
 	if not data then
 		log.error("failed to open cart")
 		return cart
+	end
+
+	if OS == "Windows" and RELEASETYPE == "D" then
+		data = data:gsub("\r\n", "\n") -- FIXES CRLF file endings
 	end
 
 	-- local loadData = neko.core
@@ -122,16 +124,18 @@ function carts.export()
 		editors.code.export()
 
 	neko.loadedCart.sprites =
-		editors.sprites.export()
+		editors.sprites.data
 
 	neko.loadedCart.sfx =
-		editors.sfx.export()
+		editors.sfx.data
 
 	neko.loadedCart.music =
-		editors.music.export()
+		editors.music.data
 end
 
 function carts.create(lang)
+	audio.currentMusic = nil
+
 	local cart = {}
 	cart.sandbox = createSandbox()
   cart.lang = lang or "lua"
@@ -153,7 +157,7 @@ function _draw()
 end
 ]]
   elseif cart.lang == "asm" then
-    cart.code = [[
+	cart.code = [[
 section .data
 
 section .text
@@ -253,13 +257,13 @@ function carts.loadCode(data, cart)
 	for _, v in ipairs(codeTypes) do
 		_, codeStart = data:find("\n__" .. v .. "__\n")
 		if codeStart then
-      codeType = v
-    	break
-    end
+	  codeType = v
+		break
+	end
 	end
 
 	if not codeStart then
-    runtimeError("Could't find a valid code section in cart")
+	runtimeError("Could't find a valid code section in cart")
 		return
   end
 
@@ -379,6 +383,7 @@ function carts.loadSprites(cdata, cart)
 end
 
 function carts.loadMap(data, cart)
+
 	local map = {}
 	local _, mapStart = data:find("\n__map__\n")
 	local mapEnd = data:find("\n__sfx__\n")
@@ -432,6 +437,7 @@ function carts.loadMap(data, cart)
 end
 
 function carts.loadSFX(data, cart)
+
 	local sfx = {}
 
 	for i = 0, 63 do
@@ -500,6 +506,7 @@ function carts.loadSFX(data, cart)
 end
 
 function carts.loadMusic(data, cart)
+
 	local music = {}
 
 	for i = 0, 63 do
@@ -554,6 +561,7 @@ function carts.loadMusic(data, cart)
 end
 
 function carts.patchLua(code)
+
 	code = code:gsub("!=","~=")
 	code = code:gsub(
 		"if%s*(%b())%s*([^\n]*)\n",
@@ -613,22 +621,52 @@ function carts.run(cart)
 	if cart.lang == "lua" then
 		code = cart.code
 	elseif cart.lang == "asm" then
+		local std = {}
+		local asm_std = require "asm-lua.include.std"
+        -- createSandbox is used because it's guaranteed to have every symbol
+        -- in _G, 'cause it IS _G
+		for k, _ in pairs(createSandbox()) do
+			local _k = "_" .. k
+			std[_k] = string.format("local %s=%s", _k, k)
+		end
+		std.memset = asm_std.memset
+		std.memcpy = asm_std.memcpy
+		std.memcmp = asm_std.memcmp
+
+		local ports = {}
+		local mmap = {
+			{min = 0x14001, max = 0x14400, set = "function(_, v) _printh(v) end"},
+			{min = 0x14401, max = 0x14800, set = "function(p, v)" ..
+                                                     "p=p-0x14401\n" ..
+													 "local x=p%32\n" ..
+													 "local y=_flr(p/32)\n" ..
+													 "_print(v,x*4,y*6)" ..
+												 "end"},
+			{min = 0x16001, max = 0x1c000, set = "function(p, v)\n" ..
+                                                     "p=p-0x16001\n" ..
+													 "local x=p%192\n" ..
+													 "local y=_flr(p/192)\n" ..
+													 "pset(x,y+1,v)" ..
+												 "end"},
+		}
+
 		code = try(function()
-			return asm.compile(cart.code, DEBUG or false, true)
-		end, runtimeError,
+			return asm.compile(cart.code, DEBUG or false, std, ports, mmap)
+		end,
+		runtimeError,
 		function(result)
 			return result
 		end)
 
 		if not code then
-      return false
-    end
+			return false
+		end
 
 		api.print(
 			"successfully compiled " .. cart.pureName
 		)
-  else
-    runtimeError("unrecognized language tag")
+	else
+		runtimeError("unrecognized language tag")
 	end
 
 	local ok, f, e = pcall(
@@ -684,24 +722,26 @@ function carts.save(name)
 
 	carts.export()
 
-	local data = "neko8 cart\n"
+	local data = {}
 
-	data = data .. string.format("__%s__\n", neko.loadedCart.lang)
-	data = data .. neko.loadedCart.code
-	data = data .. "__gfx__\n"
-	data = data .. editors.sprites.exportGFX()
-	data = data .. "__gff__\n"
-	data = data .. editors.sprites.exportGFF()
-	data = data .. "__map__\n"
-	data = data .. editors.map.export()
-	data = data .. "__sfx__\n"
-	data = data .. editors.sfx.export()
-	data = data .. "__music__\n"
-	data = data .. editors.music.export()
-	data = data .. "__end__"
+	table.insert(data, "neko8 cart\n")
+
+	table.insert(data, string.format("__%s__\n", neko.loadedCart.lang))
+	table.insert(data, neko.loadedCart.code)
+	table.insert(data, "__gfx__\n")
+	table.insert(data, editors.sprites.exportGFX())
+	table.insert(data, "__gff__\n")
+	table.insert(data, editors.sprites.exportGFF())
+	table.insert(data, "__map__\n")
+	table.insert(data, editors.map.export())
+	table.insert(data, "__sfx__\n")
+	table.insert(data, editors.sfx.export())
+	table.insert(data, "__music__\n")
+	table.insert(data, editors.music.export())
+	table.insert(data, "__end__")
 
 	love.filesystem.write(
-		name .. ".n8", data, #data
+		name .. ".n8", table.concat(data)
 	)
 
 	-- fixme: wrong names

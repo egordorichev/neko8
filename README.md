@@ -12,6 +12,7 @@ Currently it features:
 * Map editor prototype
 * Terminal
 * Build-in API docs
+* Support for both lua and asm programming (planning add BASIC support)
 * Some easter eggs ;)
 
 Our developers can be found on [discord](https://discord.gg/DPBN8Xn).
