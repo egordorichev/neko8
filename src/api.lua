@@ -61,7 +61,6 @@ function createSandbox(lang)
 		-- this is required by the asm.lua callx operator
 		unpck = table.unpack,
 
-		ver = api.getversion,
 		camera = api.camera,
 		clip = api.clip,
 		fget = api.fget,
@@ -1181,15 +1180,6 @@ function api.all(a)
 		i = i + 1
 		if i <= n then return a[i] end
 	end
-end
-
-function api.getversion(a)
-	if a == "string" then return config.version.string
-	elseif a == "minor" then return config.version.minor
-	elseif a == "major" then return config.version.major
-	elseif a == "name" then return config.version.name
-	elseif a == "type" then return RELEASETYPE end
-	return config.version.minor
 end
 
 return api

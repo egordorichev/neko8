@@ -51,13 +51,19 @@ local neko8 = {
 	}
 }
 
+local version = {
+	major = 0,
+	minor = 0.4,
+	name = "web",
+	release = "patch 1"
+}
+
+version.string = version.major .. "." ..
+	version.minor .. " " .. version.name ..
+	" " .. version.release
+
 config = {
-	version = {
-		major = 0,
-		minor = 0.4, -- don't forget to change ;P
-		name = "web",
-		string = "v0.0.4 web"
-	},
+	version = version,
 
 	window = {
 		width = 576,

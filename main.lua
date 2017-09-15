@@ -8,7 +8,6 @@ love.filesystem.setRequirePath(requirePath ..
 	'libs/?.lua;libs/?/init.lua'
 )
 
-RELEASETYPE = "D" -- "D" == DEBUG - "RCX" == Release Candidate X - "R" == Release
 OS = love.system.getOS()
 mobile = OS == "Android" or OS == "iOS"
 
@@ -57,19 +56,11 @@ function love.load(arg)
 	end
 
 	log.info(
-		"neko 8 " .. config.version.string ..
-		(RELEASETYPE == "D" and " dev" or
-		(RELEASETYPE:match("RC") and " Release Candidate " ..
-		RELEASETYPE:match("[0-9]") or " Release"))
+		"neko 8 " .. config.version.string
 	)
 
-	log.info(RELEASETYPE:match("[0-9]"))
-
 	love.window.setTitle(
-		"neko8 " .. config.version.string ..
-		(RELEASETYPE == "D" and " dev" or
-		(RELEASETYPE:match("RC") and " Release Candidate " ..
-		RELEASETYPE:match("[0-9]") or " Release"))
+		"neko8 " .. config.version.string
 	)
 
 	love.window.setDisplaySleepEnabled(false)
@@ -87,6 +78,7 @@ mbt = 0
 up = true
 x = 0
 c = 0
+
 function love.update(dt)
 	if not neko.focus then -- screensaver
 		-- disabled by @egordorichev

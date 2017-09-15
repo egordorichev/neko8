@@ -22,7 +22,7 @@ function carts.load(name)
 
 		if love.filesystem.isFile(n)
 			and isVisible(n, "/") then
-				
+
 			found = true
 			name = n
 			break
@@ -48,7 +48,7 @@ function carts.load(name)
 		return cart
 	end
 
-	if OS == "Windows" and RELEASETYPE == "D" then
+	if OS == "Windows" and version.release == "debug" then
 		data = data:gsub("\r\n", "\n") -- FIXES CRLF file endings
 	end
 

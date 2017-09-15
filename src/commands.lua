@@ -108,11 +108,10 @@ end
 local commands = {}
 
 function commands.version(a)
-	api.print("neko8 " .. config.version.string ..
-		(RELEASETYPE == "D" and " dev" or
-		(RELEASETYPE:match("RC") and " Release Candidate " ..
-		RELEASETYPE:match("[0-9]") or " Release"))
-		)
+	api.print(
+		"neko8 " .. config.version.string
+	)
+
 	return
 end
 
