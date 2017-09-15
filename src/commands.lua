@@ -108,9 +108,9 @@ end
 local commands = {}
 
 function commands.version(a)
-	api.print("neko8 " .. config.version.string .. 
-		(RELEASETYPE == "D" and " dev" or 
-		(RELEASETYPE:match("RC") and " Release Candidate " .. 
+	api.print("neko8 " .. config.version.string ..
+		(RELEASETYPE == "D" and " dev" or
+		(RELEASETYPE:match("RC") and " Release Candidate " ..
 		RELEASETYPE:match("[0-9]") or " Release"))
 		)
 	return
@@ -195,6 +195,13 @@ function commands.pwd()
 	api.print(neko.currentDirectory, nil, nil, 12)
 end
 
+function isVisible(f, dir)
+	local d1, d2 = love.filesystem.getRealDirectory(dir .. "/" .. f) .. f,
+		love.filesystem.getSaveDirectory() .. f
+
+	return d1 == d2
+end
+
 function commands.ls(a)
 	local dir = neko.currentDirectory
 	if #a == 1 then
@@ -204,7 +211,9 @@ function commands.ls(a)
 		return
 	end
 
-	if not love.filesystem.isDirectory(dir) then
+	if not love.filesystem.isDirectory(dir)
+		or not isVisible(dir, "/") then
+
 		api.print(
 			"no such directory", nil, nil, 14
 		)
@@ -223,8 +232,10 @@ function commands.ls(a)
 	local out = {}
 
 	for i, f in ipairs(files) do
-		if love.filesystem.isDirectory(f)
-			and f:sub(1, 1) ~= "." then
+		local name = dir .. f
+
+		if love.filesystem.isDirectory(f) and
+			isVisible(f, dir) and f:sub(1, 1) ~= "." then
 			api.add(out, {
 				name = f:lower(),
 				color = 12
@@ -233,7 +244,8 @@ function commands.ls(a)
 	end
 
 	for i, f in ipairs(files) do
-		if not love.filesystem.isDirectory(f) then
+		if not love.filesystem.isDirectory(f)
+			and isVisible(f, dir) then
 			api.add(out, {
 				name = f:lower(),
 				color = f:sub(-3) == ".n8"
@@ -246,9 +258,9 @@ function commands.ls(a)
 		api.print(f.name, nil, nil, f.color)
 	end
 
-	--if #out == 0 then
+	if #out == 0 then
 		api.print("total: " .. tostring(#out), nil, nil, 12)
-	--end
+	end
 end
 
 function commands.run()
@@ -296,7 +308,7 @@ function commands.load(a)
 			api.print(
 				"loaded " .. c.pureName
 			)
-			
+
 			neko.loadedCart = c
 			editors.openEditor(1)
 		end

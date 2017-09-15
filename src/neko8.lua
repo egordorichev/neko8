@@ -25,10 +25,34 @@ function neko.init()
 	initPalette()
 	initApi()
 
-	-- Be careful!!! Pls keep in comment
-	-- Only use to remove wrong neko.n8 in the system saved folder
-	-- cmd = require "commands"
-	-- cmd.rm({"neko.n8"})
+	local files = love.filesystem.getDirectoryItems("/")
+	local count = 0
+
+	for i, f in ipairs(files) do
+		if isVisible(f, "/") then
+			count = count + 1
+		end
+	end
+
+	if count == 0 then
+		log.info("installing core and demos")
+
+		love.filesystem.write(
+			"neko.n8",
+			love.filesystem.read("neko.n8")
+		)
+
+		love.filesystem.createDirectory("/demos")
+		local demos = love.filesystem.getDirectoryItems("/demos")
+
+		for i, f in ipairs(demos) do
+			local n = "demos/" .. f
+
+			love.filesystem.write(
+				n, love.filesystem.read(n)
+			)
+		end
+	end
 
 	editors = require "editors"
 	editors.init()
