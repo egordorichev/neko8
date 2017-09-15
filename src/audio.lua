@@ -9,24 +9,30 @@ local function lerp(a, b, t)
 end
 
 noteMap = {
-	[0] = 'C-',
-	'C#',
-	'D-',
-	'D#',
-	'E-',
-	'F-',
-	'F#',
-	'G-',
-	'G#',
-	'A-',
-	'A#',
-	'B-',
+	[0] = "c ",
+	"c#",
+	"d ",
+	"d#",
+	"e ",
+	"f ",
+	"f#",
+	"g ",
+	"g#",
+	"a ",
+	"a#",
+	"b ",
 }
 
 function noteToString(note)
-	local octave = flr(note / 12)
-	local note = flr(note % 12)
-	return string.format("%s%d", noteMap[note], octave)
+	local octave = api.flr(note / 12)
+	local note = api.flr(note % 12)
+	return string.format("%s", noteMap[note], octave)
+end
+
+function noteToOctave(note)
+	local octave = api.flr(note / 12)
+	local note = api.flr(note % 12)
+	return string.format("%d", octave)
 end
 
 local function oldosc(osc)
@@ -87,7 +93,7 @@ function audio.init()
 		return (api.abs((x%2) - 1) - 0.5 + (api.abs(((x * 127 / 128)%2) - 1) - 0.5) / 2) - 1 / 4
 	end
 	-- saw from 0 to 1, used for arppregiator
-	audio.osc['saw_lfo'] = function(x)
+	audio.osc["saw_lfo"] = function(x)
 		return x % 1
 	end
 
@@ -183,7 +189,7 @@ function audio.update(time)
 					if ch.fx == 2 then
 						ch.lfo = oldosc(audio.osc[0])
 					elseif ch.fx >= 6 then
-						ch.lfo = oldosc(audio.osc['saw_lfo'])
+						ch.lfo = oldosc(audio.osc["saw_lfo"])
 					end
 					if ch.vol > 0 then
 						ch.freq = noteToHZ(ch.note)
