@@ -41,10 +41,11 @@ function sfx.close()
 end
 
 function sfx._draw()
-	if sfx.forceDraw then
-		sfx.redraw()
-		sfx.forceDraw = false
-	end
+	-- if sfx.forceDraw then
+	-- TMP!
+	sfx.redraw()
+	sfx.forceDraw = false
+	-- end
 
 	editors.drawUI()
 end
@@ -61,6 +62,14 @@ function sfx.redraw()
 		local x = 2 + api.flr(i / 8) * 26
 		local y = 9 + i % 8 * 6
 		local isEmpty = s[3] == 0
+
+		if audio.sfx[1].sfx ~= nil then
+			if api.flr(audio.sfx[1].offset) == i then
+				api.brectfill(
+					x - 1, y - 1, 24, 6, 10
+				)
+			end
+		end
 
 		if sfx.cursor.y == i then
 			api.brectfill(
@@ -127,8 +136,27 @@ function sfx._keydown(k)
 				sfx.cursor.x = 4
 			end
 			sfx.forceDraw = true
+		elseif k == "space" then
+			api.sfx(sfx.sfx, 1)
 		elseif sfx.cursor.x == 0 and (string.match("zxcvbnnmsdghj", k)) then
 			sfx.typeNote(keyToNoteMap[k])
+			sfx._keydown("down")
+		elseif (string.match("01234567", k)) then
+			local num = tonumber(k)
+
+			if sfx.cursor.x == 1 then
+				if num < 5 then
+					local n = sfx.data[sfx.sfx][sfx.cursor.y][1]
+					sfx.data[sfx.sfx][sfx.cursor.y][1] = n % 12 + num * 12
+				end
+
+				sfx._keydown("down")
+			elseif sfx.cursor.x > 0 then
+				sfx.data[sfx.sfx][sfx.cursor.y][sfx.cursor.x] = num
+				sfx._keydown("down")
+			end
+
+			sfx.forceDraw = true
 		end
 	end
 end
