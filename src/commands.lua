@@ -292,9 +292,9 @@ function commands.load(a)
 			api.print(
 				"loaded " .. c.pureName
 			)
+			
 			neko.loadedCart = c
-			editors.current.close()
-			editors.current = editors.code
+			editors.openEditor(1)
 		end
 	end
 end
