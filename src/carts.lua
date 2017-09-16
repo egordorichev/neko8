@@ -49,7 +49,7 @@ function carts.load(name)
 	end
 
 	if OS == "Windows" then -- FIXES CRLF file endings
-		data = data:gsub("\r\n", "\n") 
+		data = data:gsub("\r\n", "\n")
 		data = data:gsub("\r", "\n")
 	end
 

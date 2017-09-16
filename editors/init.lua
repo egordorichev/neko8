@@ -49,7 +49,6 @@ function editors.openEditor(i)
 		editors.ui.components[e.name].active = false
 	end
 
-
 	editors.current.close()
 	editors.current = editors.modes[i]
 	editors.ui.components[editors.current.name].active = true

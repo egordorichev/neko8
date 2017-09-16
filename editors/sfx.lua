@@ -1,3 +1,6 @@
+local UiManager = require "ui.manager"
+local UiLabelButton = require "ui.label_button"
+
 local sfx = {}
 local keyToNoteMap = {
 	[ "z" ] = "c ",
@@ -30,6 +33,19 @@ function sfx.init()
 		x = 0,
 		y = 0
 	}
+
+	sfx.ui = UiManager()
+	sfx.ui:add(
+		UiLabelButton(
+			string.format("%02d", sfx.sfx), 17,
+			8, 9, 7, config.editors.sfx.fg
+		):onClick(function(self, b, rb)
+			local v = rb and -1 or 1
+			sfx.sfx = api.mid(0, 63, sfx.sfx + v)
+			b.label = string.format("%02d", sfx.sfx)
+			sfx.forceDraw = true
+		end), "sfx"
+	)
 end
 
 function sfx.open()
@@ -52,6 +68,7 @@ function sfx._draw()
 	end
 
 	lof = of
+	sfx.ui:draw()
 	editors.drawUI()
 end
 
@@ -63,10 +80,7 @@ function sfx.redraw()
 	end
 
 	local c = config.editors.sfx.fg
-
 	api.print("SFX", 1, 9, c)
-	api.brectfill(17, 8, 9, 7, 0)
-	api.print(string.format("%02d", sfx.sfx), 18, 9, c)
 
 	for i = 0, 31 do
 		local s = sfx.data[sfx.sfx][i]

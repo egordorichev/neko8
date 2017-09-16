@@ -1163,10 +1163,10 @@ function api.nver()
 	return config.version.string
 end
 
-function api.mstat(b)
+function api.mstat(...)
 	return api.flr((love.mouse.getX() - canvas.x)
 		/ canvas.scaleX), api.flr((love.mouse.getY() - canvas.y)
-		/ canvas.scaleY), love.mouse.isDown(b or 1),
+		/ canvas.scaleY), love.mouse.isDown(...),
 	mbt > 1
 end
 

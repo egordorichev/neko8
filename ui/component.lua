@@ -20,7 +20,7 @@ function UiComponent:updateAndDraw()
 end
 
 function UiComponent:update()
-	local mx, my, mb, mr = api.mstat(1)
+	local mx, my, mb, mr = api.mstat(1, 2)
 
 	if mx > self.x and mx < self.x + self.w and
 		my > self.y and my < self.y + self.h then
@@ -28,7 +28,7 @@ function UiComponent:update()
 		if mb == true then
 			if not mr and self.state ~= "clicked" then
 				self.state = "clicked"
-				self:click(self, mx, my)
+				self:click(self, love.mouse.isDown(2), mx, my)
 			end
 		elseif self.state ~= "hovered" then
 			self.state = "hovered"
