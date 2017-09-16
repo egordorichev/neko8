@@ -43,7 +43,9 @@ function love.errhand(msg)
 
 	local err = {}
 
-	table.insert(err, "Ooops, we have a bad news...\nPlease, send this error to @egordorichev.\nIt is in your clipboard now.\n")
+	table.insert(err, "Ooops, we have a bad news...\n" ..
+					  "Please, send this error to @egordorichev.\n" ..
+					  "It is in your clipboard now.\n")
 	table.insert(err, msg)
 
 	for l in string.gmatch(trace, "(.-)\n") do
@@ -97,3 +99,5 @@ function love.errhand(msg)
 		end
 	end
 end
+
+-- vim: noet

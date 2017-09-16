@@ -19,6 +19,7 @@ function _init()
 	mkdir=mkdir,
 	rm=rm,
 	shutdown=shutdown,
+	install_demos=install_demos,
 	reboot=reboot,
 	load=load,
 	run=run,

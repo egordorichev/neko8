@@ -61,7 +61,6 @@ function createSandbox(lang)
 		-- this is required by the asm.lua callx operator
 		unpck = table.unpack,
 
-		ver = api.getversion,
 		camera = api.camera,
 		clip = api.clip,
 		fget = api.fget,
@@ -144,6 +143,7 @@ function createSandbox(lang)
 		minify = commands.minify,
 		version = commands.version,
 		pwd = commands.pwd,
+		install_demos = commands.installDemos,
 
 		pairs = pairs,
 		ipairs = ipairs,
@@ -195,7 +195,8 @@ end
 function api.music(n, fadeLen, channelMask)
 	if n == -1 then
 			for i = 0, 3 do
-				if audio.currentMusic and neko.loadedCart.music[audio.currentMusic.music][i] < 64 then
+				if audio.currentMusic
+					and neko.loadedCart.music[audio.currentMusic.music][i] < 64 then
 					audio.sfx[i].sfx = nil
 					audio.sfx[i].offset = 0
 					audio.sfx[i].lastStep = -1
@@ -331,8 +332,8 @@ end
 
 
 local function flip(byte, b)
-  b = 2 ^ b
-  return bit.bxor(byte, b)
+	b = 2 ^ b
+	return bit.bxor(byte, b)
 end
 
 function api.fset(n, v, f)
@@ -341,7 +342,7 @@ end
 
 function api.mget(x, y)
 	if x == nil or y == nil
-	 	or x < 0 or x > 127 or y < 0
+		or x < 0 or x > 127 or y < 0
 		or y > 127 then
 		return 0
 	end
@@ -353,7 +354,7 @@ end
 
 function api.mset(x, y, v)
 	if x == nil or y == nil
-	 	or x < 0 or x > 127 or y < 0
+		or x < 0 or x > 127 or y < 0
 		or y > 127 then
 		return
 	end
@@ -732,8 +733,8 @@ function api.scroll(pixels)
 
 	api.cls()
 	love.graphics.setShader(colors.spriteShader)
-  love.graphics.draw(i, 0, -pixels)
-  love.graphics.setShader(colors.drawShader)
+	love.graphics.draw(i, 0, -pixels)
+	love.graphics.setShader(colors.drawShader)
 end
 
 function api.spr(n, x, y, w, h, fx, fy)
@@ -860,8 +861,7 @@ end
 function api.sget(x, y)
 	x = api.flr(x)
 	y = api.flr(y)
-	local r, g, b, a =
-		neko.loadedCart.sprites.data:getPixel(x, y)
+	local r, g, b, a = neko.loadedCart.sprites.data:getPixel(x, y)
 	return api.flr(r / 16)
 end
 
@@ -878,7 +878,7 @@ local paletteModified = false
 
 function api.pal(c0,c1,p)
 	if type(c0) ~= "number" then
-		if paletteModified == false then
+		if not paletteModified then
 			return
 		end
 
@@ -949,9 +949,9 @@ function api.palt(c, t)
 		end
 	else
 		c = api.flr(c) % 16
-		if t == false then
+		if not t then
 			colors.transparent[c + 1] = 1
-		elseif t == true then
+		else
 			colors.transparent[c + 1] = 0
 		end
 	end
@@ -1163,10 +1163,10 @@ function api.nver()
 	return config.version.string
 end
 
-function api.mstat(b)
+function api.mstat(...)
 	return api.flr((love.mouse.getX() - canvas.x)
 		/ canvas.scaleX), api.flr((love.mouse.getY() - canvas.y)
-		/ canvas.scaleY), love.mouse.isDown(b or 1),
+		/ canvas.scaleY), love.mouse.isDown(...),
 	mbt > 1
 end
 
@@ -1183,13 +1183,6 @@ function api.all(a)
 	end
 end
 
-function api.getversion(a)
-	if a == "string" then return config.version.string
-	elseif a == "minor" then return config.version.minor
-	elseif a == "major" then return config.version.major
-	elseif a == "name" then return config.version.name
-	elseif a == "type" then return RELEASETYPE end
-	return config.version.minor
-end
-
 return api
+
+-- vim: noet

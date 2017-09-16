@@ -4,11 +4,10 @@
 
 local requirePath = love.filesystem.getRequirePath()
 love.filesystem.setRequirePath(requirePath ..
-	';src/?.lua;src/?/init.lua;' ..
-	'libs/?.lua;libs/?/init.lua'
+	';src/?.lua;src/?/init.lua' ..
+	';libs/?.lua;libs/?/init.lua'
 )
 
-RELEASETYPE = "D" -- "D" == DEBUG - "RCX" == Release Candidate X - "R" == Release
 OS = love.system.getOS()
 mobile = OS == "Android" or OS == "iOS"
 
@@ -56,21 +55,9 @@ function love.load(arg)
 		end
 	end
 
-	log.info(
-		"neko 8 " .. config.version.string ..
-		(RELEASETYPE == "D" and " dev" or 
-		(RELEASETYPE:match("RC") and " Release Candidate " .. 
-		RELEASETYPE:match("[0-9]") or " Release"))
-	)
+	log.info(string.format("neko 8 ", config.version.string))
 
-	log.info(RELEASETYPE:match("[0-9]"))
-
-	love.window.setTitle(
-		"neko8 " .. config.version.string ..
-		(RELEASETYPE == "D" and " dev" or 
-		(RELEASETYPE:match("RC") and " Release Candidate " .. 
-		RELEASETYPE:match("[0-9]") or " Release"))
-	)
+	love.window.setTitle(string.format("neko 8 ", config.version.string))
 
 	love.window.setDisplaySleepEnabled(false)
 	neko.init()
@@ -84,9 +71,20 @@ end
 
 -- XXX Why is this in the global scope? Why isn't this part of some table?
 mbt = 0
+up = true
+x = 0
+c = 0
 
 function love.update(dt)
-	if not neko.focus then
+	if not neko.focus then -- screensaver
+		-- disabled by @egordorichev
+		-- till suitable solution
+		-- for no cls() calls
+		--[[c = c > 15 and 0 or (x % 2 == 0 and c + 1 or c)
+		x = up and (x < 110 and x + 1 or (function(x) up = false return x - 1 end)(x))
+			or (x > 0 and x - 1 or (function(x) up = true return x + 1 end)(x))
+		api.print("Hey!, neko8 is there!", x, nil, c)
+		--]]
 		return
 	end
 
@@ -219,10 +217,8 @@ function love.keypressed(
 				handled = false
 			end
 		elseif key == "f7" then
-			local s =
-				love.graphics.newScreenshot(false)
-			local file = "neko8-"
-				.. os.time() .. ".png"
+			local s = love.graphics.newScreenshot(false)
+			local file = string.format("neko8-%s.png", os.time())
 
 			s:encode("png", file)
 			api.smes("saved screenshot")
@@ -236,7 +232,7 @@ function love.keypressed(
 			gif = nil
 			api.smes("saved gif")
 			love.filesystem.write(
-				"neko8-" .. os.time() .. ".gif",
+				string.format("neko8-%s.gif", os.time()),
 				love.filesystem.read("neko8.gif")
 			)
 			love.filesystem.remove("neko8.gif")
@@ -289,7 +285,7 @@ function runtimeError(error)
 
 	local pos = error:find("\"]:")
 	if pos then
-		error = "line " .. error:sub(pos + 3)
+		error = string.format("line %s", error:sub(pos + 3))
 	end
 	neko.core.sandbox.redraw_prompt(true)
 	api.print("")
@@ -309,7 +305,7 @@ function syntaxError(error)
 	neko.cart = nil
 	local pos = error:find("\"]:")
 	if pos then
-		error = "line " .. error:sub(pos + 3)
+		error = string.format("line %s", error:sub(pos + 3))
 	end
 	neko.core.sandbox.redraw_prompt(true)
 	api.print("")
@@ -319,8 +315,7 @@ function syntaxError(error)
 end
 
 function replaceChar(pos, str, r)
-	return str:sub(1, pos - 1)
-		.. r .. str:sub(pos + 1)
+	return str:sub(1, pos - 1) .. r .. str:sub(pos + 1)
 end
 
 local function toUTF8(st)
@@ -530,15 +525,12 @@ function resizeCanvas(width, height)
 	canvas.scaleX = size
 	canvas.scaleY = size
 
-	canvas.x =
-		(width - size * config.canvas.width) / 2
+	canvas.x = (width - size * config.canvas.width) / 2
 
 	if mobile then
 		canvas.y = 0
 	else
-		canvas.y =
-			(height - size * config.canvas.height)
-			/ 2
+		canvas.y = (height - size * config.canvas.height) / 2
 	end
 end
 
@@ -596,8 +588,7 @@ function initPalette()
 
 	for i = 1, 16 do
 		colors.draw[i] = i
-		colors.transparent[i] =
-			i == 1 and 0 or 1
+		colors.transparent[i] = i == 1 and 0 or 1
 		colors.display[i] = colors.palette[i]
 	end
 
@@ -678,7 +669,7 @@ vec4 effect(vec4 color, Image texture,
 	int index = int(floor(Texel(texture, texture_coords).r*16.0));
 	float alpha = transparent[index];
 	vec3 clr = vec3(palette[index]/16.0);
-  return vec4(clr/16.0,alpha);
+	return vec4(clr/16.0,alpha);
 }]])
 
 	colors.onCanvasShader:send(
@@ -691,3 +682,5 @@ vec4 effect(vec4 color, Image texture,
 		shaderUnpack(colors.transparent)
 	)
 end
+
+-- vim: noet

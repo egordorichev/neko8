@@ -25,10 +25,14 @@ function neko.init()
 	initPalette()
 	initApi()
 
-	-- Be careful!!! Pls keep in comment
-	-- Only use to remove wrong neko.n8 in the system saved folder
-	-- cmd = require "commands"
-	-- cmd.rm({"neko.n8"})
+	if not isVisible("neko.n8", "/") then
+		log.info("installing core")
+
+		love.filesystem.write(
+			"neko.n8",
+			love.filesystem.read("neko.n8")
+		)
+	end
 
 	editors = require "editors"
 	editors.init()
@@ -79,3 +83,5 @@ function neko.draw()
 end
 
 return neko
+
+-- vim: noet

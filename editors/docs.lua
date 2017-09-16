@@ -12,40 +12,69 @@ content.neko8 = {
 }
 
 content.sys = {
-	{name = "pcall(f [, arg1, ··· ])", desc = "Origin function pcall in lua", exam ="pcall(print, \"hello\")"},
-	{name = "loadstring(str)", desc = "Origin function loadstring in lua", exam = "loadstring(\"print(123456)\")"},
-	{name = "setmetatable(t1,t2)", desc = "Origin function setmetatable in lua", exam ="setmetatable(table1, table2)"},
-	{name = "unpck(t)", desc = "Origin function table.unpack in lua", exam ="unpack({1,2,3,4})"},
-	{name = "memcpy(dest_addr, source_addr, len)", desc = "Copy memory", exam ="--todo"},
-	{name = "require(str)", desc= "Origin function require in lua", exam ="require(\"socket\")"},
-	{name = "tostring()", desc = "Origin function tostring in lua", exam ="tostring(12345)"},
-	{name = "ver()", desc = "Return main version", exam ="ver()"},
-	{name = "smes(s)", desc="Show message at the bottom of screen", exam ="smes(\"Hello!\")"},
-	{name = "nver()", desc="Return neko cart version", exam ="nver()"},
-	{name = "mstat(b)", desc="Return status of mouse", exam ="mstat(1)"},
+	{name = "pcall(f [, arg1, ··· ])", 
+   desc = "Origin function pcall in lua", 
+   exam = "pcall(print, \"hello\")"},
+	{name = "loadstring(str)", 
+   desc = "Origin function loadstring in lua", 
+   exam = "loadstring(\"print(123456)\")"},
+	{name = "setmetatable(t1,t2)", 
+   desc = "Origin function setmetatable in lua", 
+   exam ="setmetatable(table1, table2)"},
+	{name = "unpck(t)", 
+   desc = "Origin function table.unpack in lua", 
+   exam ="unpack({1,2,3,4})"},
+	{name = "memcpy(dest_addr, source_addr, len)", 
+   desc = "Copy memory", 
+   exam ="--todo"},
+	{name = "require(str)", 
+   desc= "Origin function require in lua", 
+   exam ="require(\"socket\")"},
+	{name = "tostring()", 
+   desc = "Origin function tostring in lua", 
+   exam ="tostring(12345)"},
+	{name = "ver()", 
+   desc = "Return main version", 
+   exam ="ver()"},
+	{name = "smes(s)", 
+   desc="Show message at the bottom of screen", 
+   exam ="smes(\"Hello!\")"},
+	{name = "nver()", 
+   desc="Return neko cart version", 
+   exam ="nver()"},
+	{name = "mstat(b)", 
+   desc="Return status of mouse", 
+   exam ="mstat(1)"},
 }
 
 content.graph = {
 	{name = "printh(...)", desc = "Origin function in lua"},
 	{name = "csize()", desc = "Return canvas width,height"},
-	{name = "rect(x0, y0, x1, y1, c)", desc = "Draw rect from x0,y0 to x1,y1 with color:c"},
-	{name = "rectfill(x0, y0, x1, y1, c)", desc = "Draw filled rect with x0,y0,x1,y1,c"},
-	{name = "brect(x, y, w, h, c)", desc = "Draw rect pos:x,y width,height:w,h and color:c"},
+	{name = "rect(x0, y0, x1, y1, c)",
+	 desc = "Draw rect from x0,y0 to x1,y1 with color:c"},
+	{name = "rectfill(x0, y0, x1, y1, c)",
+	 desc = "Draw filled rect with x0,y0,x1,y1,c"},
+	{name = "brect(x, y, w, h, c)",
+	 desc = "Draw rect pos:x,y width,height:w,h and color:c"},
 	{name = "brectfill(x, y, w, h, c)", desc = "Draw filled rect with x,y,w,h,c"},
 	{name = "color(c)", desc = "Set current color to c"},
 	{name = "cls()", desc = "Clear the screen"},
-	{name = "circ(ox, oy, r, c)", desc = "Draw circle pos:x,y with radius:r and color:c"},
+	{name = "circ(ox, oy, r, c)",
+	 desc = "Draw circle pos:x,y with radius:r and color:c"},
 	{name = "circfill(cx, cy, r, c)", desc = "Draw filled circle with color:c"},
 	{name = "pset(x, y, c)", desc = "Set pixel:x,y with color:c"},
 	{name = "pget(x, y, c)", desc = "Get color of pixel:x,y"},
-	{name = "line(x1, y1, x2, y2, c)", desc = "Draw line from x1,y1 to x2,y2 with color:c"},
+	{name = "line(x1, y1, x2, y2, c)",
+	 desc = "Draw line from x1,y1 to x2,y2 with color:c"},
 	{name = "print(s, x, y, c)", desc = "Print String s at x,y with color:c"},
 	{name = "flip()", desc = "Flip screen back buffer"},
 	{name = "cursor(x, y)", desc = "Draw cursor at x,y"},
 	{name = "cget()", desc = "Return position x,y of current cursor"},
 	{name = "scroll(pixels)", desc = "Scroll screen with pixels pixels"},
-	{name = "spr(n, x, y, w, h, fx, fy)", desc = "Draw sprite at x,y with sprites No.:n"},
-	{name = "sspr(sx,sy,sw,sh,dx,dy,dw,dh,fx,fy)", desc = "Draw texture from spritesheet"},
+	{name = "spr(n, x, y, w, h, fx, fy)", 
+   desc = "Draw sprite at x,y with sprites No.:n"},
+	{name = "sspr(sx,sy,sw,sh,dx,dy,dw,dh,fx,fy)", 
+   desc = "Draw texture from spritesheet"},
 	{name = "sget(x, y)", desc = "Get spritesheet pixel color"},
 	{name = "sset(x, y, c)", desc = "Set spritesheet pixel color"},
 	{name = "pal(c0,c1,p)", desc = "Switch color c0 to c1"},
@@ -56,7 +85,8 @@ content.graph = {
 	{name = "camera([x, y])", desc = "Set camera position"},
 	{name = "clip([x, y, w, h])", desc = "Set screen clipping region"},
 	{name = "tri(x0, y0, x1, y1, x2, y2)", desc = "Draw triangle"},
-	{name = "trifill(x0, y0, x1, y1, x2, y2, c)", desc = "Draw triangle with color:c"},
+	{name = "trifill(x0, y0, x1, y1, x2, y2, c)",
+	 desc = "Draw triangle with color:c"},
 	{name = "poly(...)", desc = "Draw polygon"},
 	{name = "polyfill(...)", desc = "draw polygon with filled color"},
 }
@@ -65,7 +95,9 @@ content.graph = {
 content.input = {
 	{name = "btn(b, p)", desc = "Get button b state for player p"},
 	{name = "key(k)", desc = "Detect if key:k is pressed"},
-	{name = "btnp(b, p)", desc = "Only true when the button was not pressed the last frame; repeats every 4 frames after button held for 12 frames"},
+	{name = "btnp(b, p)",
+	 desc = "Only true when the button was not pressed the last frame;" ..
+			"repeats every 4 frames after button held for 12 frames"},
 }
 
 content.math = {
@@ -95,7 +127,7 @@ content.cmd = {
 	{name = "folder", desc = "Open neko carts folder"},
 	{name = "ls a", desc = "List files at current directory"},
 	{name = "run", desc = "Run a loaded cartridge"},
-	{name = "new ", desc = "Create a new cartridge"},
+	{name = "new [a]", desc = "Create a new cartridge with language a"},
 	{name = "mkdir a", desc = "Creat a directory with name a"},
 	{name = "load a", desc = "Load cartridge a"},
 	{name = "save a", desc = "Save a cartridge with name a"},
@@ -120,7 +152,8 @@ content.table = {
 	}
 
 content.audio = {
-	{name="sfx(n, channel, offset)",desc="Play sfx, n:-1 stop in ch, n:-2 release loop"},
+	{name="sfx(n, channel, offset)",
+	 desc="Play sfx, n:-1 stop in ch, n:-2 release loop"},
 	{name="music(n, fadeLen, channelMask)",desc="Play music; n:-1 stop"},
 }
 
@@ -316,3 +349,5 @@ function docs.export()
 end
 
 return docs
+
+-- vim: noet

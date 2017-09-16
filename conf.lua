@@ -51,13 +51,23 @@ local neko8 = {
 	}
 }
 
+local version = {
+	major = 0,
+	minor = 0.4,
+	name = "web",
+	release = "dev"
+}
+
+version.string = string.format(
+	"%d.%.1f %s %s",
+	version.major,
+	version.minor,
+	version.name,
+	version.release
+)
+
 config = {
-	version = {
-		major = 0,
-		minor = 0.4, -- don't forget to change ;P
-		name = "web",
-		string = "v0.0.4 web"
-	},
+	version = version,
 
 	window = {
 		width = 576,
@@ -71,10 +81,10 @@ config = {
 
 	font = {
 		file = "font.ttf",
-		letters = "abcdefghijklmnopqrstuvwxyz"
-		.. "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-		.. "1234567890!?[](){}.,;:<>+=%#^*~/\\|$"
-		.. "@&`\"'-_ "
+		letters = "abcdefghijklmnopqrstuvwxyz" ..
+			"ABCDEFGHIJKLMNOPQRSTUVWXYZ" ..
+			"1234567890!?[](){}.,;:<>+=%#^*~/\\|$" ..
+			"@&`\"'-_ "
 	},
 
 	messages = {
@@ -115,8 +125,7 @@ function love.conf(t)
 	t.window.width = config.window.width
 	t.window.height = config.window.height
 	t.window.resizable = true
-	t.window.title =
-		"neko8 " .. config.version.string
+	t.window.title = string.format("neko8 %s", config.version.string)
 	t.console = true
 	t.window.minwidth = config.canvas.width
 	t.window.minheight = config.canvas.height
@@ -125,3 +134,5 @@ function love.conf(t)
 
 	return t
 end
+
+-- vim: noet

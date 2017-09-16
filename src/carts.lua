@@ -20,7 +20,9 @@ function carts.load(name)
 	for i = 1, #extensions do
 		local n = resolveFile(neko.currentDirectory, pureName .. extensions[i])
 
-		if love.filesystem.isFile(n) then
+		if love.filesystem.isFile(n)
+			and isVisible(n, "/") then
+
 			found = true
 			name = n
 			break
@@ -38,16 +40,16 @@ function carts.load(name)
 	cart.name = name
 	cart.pureName = pureName
 
-	local data, size =
-		love.filesystem.read(name)
+	local data, size = love.filesystem.read(name)
 
 	if not data then
 		log.error("failed to open cart")
 		return cart
 	end
 
-	if OS == "Windows" and RELEASETYPE == "D" then
-		data = data:gsub("\r\n", "\n") -- FIXES CRLF file endings
+	if OS == "Windows" then -- FIXES CRLF file endings
+		data = data:gsub("\r\n", "\n")
+		data = data:gsub("\r", "\n")
 	end
 
 	-- local loadData = neko.core
@@ -120,17 +122,10 @@ function carts.import(cart)
 end
 
 function carts.export()
-	neko.loadedCart.code =
-		editors.code.export()
-
-	neko.loadedCart.sprites =
-		editors.sprites.data
-
-	neko.loadedCart.sfx =
-		editors.sfx.data
-
-	neko.loadedCart.music =
-		editors.music.data
+	neko.loadedCart.code = editors.code.export()
+	neko.loadedCart.sprites = editors.sprites.data
+	neko.loadedCart.sfx = editors.sfx.data
+	neko.loadedCart.music = editors.music.data
 end
 
 function carts.create(lang)
@@ -138,9 +133,9 @@ function carts.create(lang)
 
 	local cart = {}
 	cart.sandbox = createSandbox()
-  cart.lang = lang or "lua"
-  if cart.lang == "lua" then
-	   cart.code = [[
+	cart.lang = lang or "lua"
+	if cart.lang == "lua" then
+		cart.code = [[
 -- cart name
 -- by @author
 
@@ -156,8 +151,8 @@ function _draw()
  cls()
 end
 ]]
-  elseif cart.lang == "asm" then
-	cart.code = [[
+	elseif cart.lang == "asm" then
+		cart.code = [[
 section .data
 
 section .text
@@ -182,13 +177,11 @@ mov [_init], [init]
 mov [_update], [update]
 mov [_draw], [draw]
 ]]
-  end
+	end
 
 	cart.sprites = {}
-	cart.sprites.data =
-		love.image.newImageData(128, 256)
-	cart.sprites.sheet =
-		love.graphics.newImage(cart.sprites.data)
+	cart.sprites.data = love.image.newImageData(128, 256)
+	cart.sprites.sheet = love.graphics.newImage(cart.sprites.data)
 	cart.sprites.quads = {}
 
 	local sprite = 0
@@ -198,7 +191,7 @@ mov [_draw], [draw]
 			cart.sprites.quads[sprite] =
 				love.graphics.newQuad(
 					8 * x, 8 * y, 8, 8, 128, 256
-			)
+				)
 
 			sprite = sprite + 1
 		end
@@ -255,17 +248,17 @@ function carts.loadCode(data, cart)
 	local codeStart
 
 	for _, v in ipairs(codeTypes) do
-		_, codeStart = data:find("\n__" .. v .. "__\n")
+		_, codeStart = data:find(string.format("\n__%s__\n", v))
 		if codeStart then
-	  codeType = v
+			codeType = v
 		break
 	end
 	end
 
 	if not codeStart then
-	runtimeError("Could't find a valid code section in cart")
+		runtimeError("Could't find a valid code section in cart")
 		return
-  end
+	end
 
 	local codeEnd = data:find("\n__gfx__\n")
 
@@ -279,8 +272,7 @@ end
 function carts.loadSprites(cdata, cart)
 	local sprites = {}
 
-	sprites.data =
-		love.image.newImageData(128, 256)
+	sprites.data = love.image.newImageData(128, 256)
 
 	sprites.quads = {}
 	sprites.flags = {}
@@ -331,19 +323,18 @@ function carts.loadSprites(cdata, cart)
 			sprites.quads[sprite] =
 				love.graphics.newQuad(
 					8 * x, 8 * y, 8, 8, 128, 256
-			)
+				)
 
 			sprite = sprite + 1
 		end
 	end
 
 	if sprite ~= 512 then
-		log.error("invalid sprite count: " .. sprite)
+		log.error(string.format("invalid sprite count: %d", sprite))
 		return nil
 	end
 
-	sprites.sheet =
-		love.graphics.newImage(sprites.data)
+	sprites.sheet = love.graphics.newImage(sprites.data)
 
 	local _, flagsStart = cdata:find("\n__gff__\n")
 	local flagsEnd = cdata:find("\n__map__\n")
@@ -375,7 +366,7 @@ function carts.loadSprites(cdata, cart)
 	end
 
 	if sprite ~= 512 then
-		log.error("invalid flag count: " .. sprite)
+		log.error(string.format("invalid flag count: %d", sprite))
 		return nil
 	end
 
@@ -431,7 +422,7 @@ function carts.loadMap(data, cart)
 		nextLine = data:find("\n", lineEnd) + 1
 	end
 
-	assert(tiles == 128 * 128, "invalid map size: " .. tiles)
+	assert(tiles == 128 * 128, string.format("invalid map size: %d", tiles))
 
 	return map
 end
@@ -578,12 +569,18 @@ function carts.patchLua(code)
 					local c,t = b:match(
 						"(.-)(%s-%-%-.*)"
 					)
-					return "if " .. a:sub(2, -2)
-						.." then " .. c
-						.. " end" .. t .. "\n"
+					return string.format(
+							"if %s then %s end %s\n",
+							a:sub(2, -2),
+							c,
+							t
+						)
 				else
-					return "if " .. a:sub(2, -2)
-					.. " then " .. b .. " end\n"
+					return string.format(
+							"if %s then %s end\n",
+							a:sub(2, -2),
+							b
+						)
 				end
 			end
 		end)
@@ -610,12 +607,10 @@ function carts.run(cart)
 	end
 
 	if cart ~= neko.core then
-		carts.export()
+		carts.save(cart.pureName)
 	end
 
-	log.info(
-		"running cart " .. name
-	)
+	log.info(string.format("running cart %s", name))
 
 	local code
 	if cart.lang == "lua" then
@@ -623,8 +618,8 @@ function carts.run(cart)
 	elseif cart.lang == "asm" then
 		local std = {}
 		local asm_std = require "asm-lua.include.std"
-        -- createSandbox is used because it's guaranteed to have every symbol
-        -- in _G, 'cause it IS _G
+		-- createSandbox is used because it's guaranteed to have every symbol
+		-- in _G, 'cause it IS _G
 		for k, _ in pairs(createSandbox()) do
 			local _k = "_" .. k
 			std[_k] = string.format("local %s=%s", _k, k)
@@ -637,16 +632,16 @@ function carts.run(cart)
 		local mmap = {
 			{min = 0x14001, max = 0x14400, set = "function(_, v) _printh(v) end"},
 			{min = 0x14401, max = 0x14800, set = "function(p, v)" ..
-                                                     "p=p-0x14401\n" ..
-													 "local x=p%32\n" ..
-													 "local y=_flr(p/32)\n" ..
-													 "_print(v,x*4,y*6)" ..
+													"p=p-0x14401\n" ..
+													"local x=p%32\n" ..
+													"local y=_flr(p/32)\n" ..
+													"_print(v,x*4,y*6)" ..
 												 "end"},
 			{min = 0x16001, max = 0x1c000, set = "function(p, v)\n" ..
-                                                     "p=p-0x16001\n" ..
-													 "local x=p%192\n" ..
-													 "local y=_flr(p/192)\n" ..
-													 "pset(x,y+1,v)" ..
+													"p=p-0x16001\n" ..
+													"local x=p%192\n" ..
+													"local y=_flr(p/192)\n" ..
+													"pset(x,y+1,v)" ..
 												 "end"},
 		}
 
@@ -662,9 +657,7 @@ function carts.run(cart)
 			return false
 		end
 
-		api.print(
-			"successfully compiled " .. cart.pureName
-		)
+		api.print(string.format("successfully compiled %s", cart.pureName or "cart"))
 	else
 		runtimeError("unrecognized language tag")
 	end
@@ -718,7 +711,7 @@ function carts.save(name)
 	end
 
 	name = name or neko.loadedCart.name
-	log.info("saving " .. name)
+	log.info(string.format("saving %s", name))
 
 	carts.export()
 
@@ -741,7 +734,8 @@ function carts.save(name)
 	table.insert(data, "__end__")
 
 	love.filesystem.write(
-		name .. ".n8", table.concat(data)
+		string.format("%s.n8", name),
+		table.concat(data)
 	)
 
 	-- fixme: wrong names
@@ -751,3 +745,5 @@ function carts.save(name)
 end
 
 return carts
+
+-- vim: noet

@@ -118,7 +118,7 @@ function map.drawInfo()
 			local y = api.mid(0, 127, api.flr((my - 8) / 8))
 
 			api.print(
-				"x:" .. x .. " y:" .. y,
+				string.format("x: %d y: %d", x, y),
 				1, config.canvas.height - 6,
 				config.editors.sprites.fg
 			)
@@ -191,3 +191,5 @@ function map._keydown(k)
 end
 
 return map
+
+-- vim: noet
