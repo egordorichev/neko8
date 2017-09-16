@@ -28,7 +28,7 @@ function UiComponent:update()
 		if mb == true then
 			if not mr and self.state ~= "clicked" then
 				self.state = "clicked"
-				self:click(self, love.mouse.isDown(2), mx, my)
+				self:click(love.mouse.isDown(2), mx, my)
 			end
 		elseif self.state ~= "hovered" then
 			self.state = "hovered"
@@ -44,6 +44,11 @@ end
 
 function UiComponent:onClick(f)
 	self.click = f
+	return self
+end
+
+function UiComponent:onRender(f)
+	self.draw = f
 	return self
 end
 

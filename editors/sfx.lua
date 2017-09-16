@@ -1,5 +1,6 @@
 local UiManager = require "ui.manager"
 local UiLabelButton = require "ui.label_button"
+local UiComponent = require "ui.component"
 
 local sfx = {}
 local keyToNoteMap = {
@@ -41,11 +42,52 @@ function sfx.init()
 			8, 9, 7, config.editors.sfx.fg
 		):onClick(function(self, b, rb)
 			local v = rb and -1 or 1
+
+			if api.key("lshift") or api.key("rshift") then
+				v = v * 4
+			end
+
 			sfx.sfx = api.mid(0, 63, sfx.sfx + v)
 			b.label = string.format("%02d", sfx.sfx)
 			sfx.forceDraw = true
+
+			-- todo: update other ui
 		end), "sfx"
 	)
+
+	sfx.ui:add(
+		UiLabelButton(
+			"16", 42,
+			8, 9, 7, config.editors.sfx.fg
+		):onClick(function(b, rb)
+			local v = rb and -1 or 1
+
+			if api.key("lshift") or api.key("rshift") then
+				v = v * 4
+			end
+
+			neko.loadedCart.sfx[sfx.sfx].speed = api.mid(1, 63, neko.loadedCart.sfx[sfx.sfx].speed + v)
+			b.label = string.format("%02d", neko.loadedCart.sfx[sfx.sfx].speed)
+			sfx.forceDraw = true
+		end), "speed"
+	)
+
+	-- piano
+
+	for i = 0, 11 do
+		local x, y = i * 14 + 1, 58
+
+
+		sfx.ui:add(
+			UiComponent(
+				x, 66, 13, h
+			):onRender(function(self)
+				api.brectfill(self.x, self.y, self.w, self.h, 7)
+			end):onClick(function(self)
+				sfx.typeNote(i + sfx.octave * 12)
+			end), "white_button_" .. i
+		)
+	end
 end
 
 function sfx.open()
@@ -81,6 +123,7 @@ function sfx.redraw()
 
 	local c = config.editors.sfx.fg
 	api.print("SFX", 1, 9, c)
+	api.print("SPD", 27, 9, c)
 
 	for i = 0, 31 do
 		local s = sfx.data[sfx.sfx][i]
@@ -195,7 +238,11 @@ function sfx._keydown(k)
 end
 
 function sfx.typeNote(n)
-	sfx.data[sfx.sfx][sfx.cursor.y][1] = stringToNote(n, sfx.octave)
+	if type(n) == "string" then
+		n = stringToNote(n, sfx.octave)
+	end
+
+	sfx.data[sfx.sfx][sfx.cursor.y][1] = n
 
 	if sfx.data[sfx.sfx][sfx.cursor.y][3] == 0 then
 		sfx.data[sfx.sfx][sfx.cursor.y][2] = sfx.instrument
