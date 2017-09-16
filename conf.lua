@@ -1,4 +1,7 @@
 local neko8 = {
+	-- as in the $VISUAL envvar
+	visual = "code", -- can be "vi"
+
 	code = {
 		bg = 2,
 		fg = 6,
@@ -14,6 +17,37 @@ local neko8 = {
 			selection = 7
 			-- todo: tokens
 		}
+	},
+
+	vi = {
+		bg = 2,
+		fg = 6,
+		cursor = 8,
+
+		colors = {
+			select = 1,
+			text = 6,
+			keyword = 8,
+			number = 12,
+			comment = 13,
+			str = 12,
+			selection = 7
+			-- todo: tokens
+		},
+
+		-- this is only temporary, until a dialect of vimscript is ported to
+		-- viNeko
+		-- example of remapping hjkl to neio, for colemak users
+		virc = function(vi)
+			--local insert = vi.modes.normal["i"]
+			--vi.commands.nmap("n", "h")
+			--vi.commands.nmap("e", "j")
+			--vi.commands.nmap("i", "k")
+			--vi.commands.nmap("o", "l")
+
+			---- temporary hack, until nnoremap doesn't exist
+			--vi.modes.normal["k"] = insert
+		end,
 	},
 
 	sprites = {

@@ -196,7 +196,9 @@ function love.keypressed(
 				api.camera(0, 0)
 				api.clip()
 			elseif editors.opened then
-				editors.close()
+				if editors.requestClose() then
+					editors.close()
+				end
 			else
 				editors.open()
 			end

@@ -75,7 +75,7 @@ function neko.update(dt)
 		end
 	end
 
-	triggerCallback("_update")
+	triggerCallback("_update", dt)
 end
 
 function neko.draw()

@@ -4,12 +4,23 @@ local editors = {}
 
 function editors.init()
 	editors.opened = false
-	editors.code = require "editors.code"
 	editors.sprites = require "editors.sprites"
 	editors.map = require "editors.map"
 	editors.sfx = require "editors.sfx"
 	editors.music = require "editors.music"
 	editors.docs = require "editors.docs"
+
+	local code_editors = {
+		code = true,
+		vi = true,
+	}
+
+	if code_editors[config.editors.visual] then
+		editors.code = require("editors." .. config.editors.visual)
+	else
+		runtimeError(string.format("editor \"%s\" is not a code editor", config.editors.visual))
+		return
+	end
 
 	editors.modes = {
 		editors.code,
@@ -57,7 +68,7 @@ end
 
 function editors.open()
 	if editors.opened then
-	return
+		return
 	end
 
 	editors.opened = true
@@ -72,6 +83,18 @@ function editors.close()
 	editors.opened = false
 	editors.current.close()
 	api.cls()
+end
+
+function editors.requestClose()
+	if not editors.opened then
+		return false
+	end
+
+	if editors.current.requestClose then
+		return editors.current.requestClose() 
+	else
+		return true
+	end
 end
 
 function editors.toggle()
