@@ -40,13 +40,18 @@ function sfx.close()
 
 end
 
-function sfx._draw()
-	-- if sfx.forceDraw then
-	-- TMP!
-	sfx.redraw()
-	sfx.forceDraw = false
-	-- end
+local lof = -1
 
+function sfx._draw()
+	local of = audio.sfx[1].sfx == nil
+		and -1 or api.flr(audio.sfx[1].offset)
+
+	if sfx.forceDraw or of ~= lof then
+		sfx.redraw()
+		sfx.forceDraw = false
+	end
+
+	lof = of
 	editors.drawUI()
 end
 
@@ -66,7 +71,7 @@ function sfx.redraw()
 		if audio.sfx[1].sfx ~= nil then
 			if api.flr(audio.sfx[1].offset) == i then
 				api.brectfill(
-					x - 1, y - 1, 24, 6, 10
+					x - 1, y - 1, 25, 7, 9
 				)
 			end
 		end
@@ -74,7 +79,7 @@ function sfx.redraw()
 		if sfx.cursor.y == i then
 			api.brectfill(
 				x - 1 + sfx.cursor.x * 4 + (sfx.cursor.x > 0 and 4 or 0),
-				y - 1, sfx.cursor.x > 0 and 5 or 9, 7, 8
+				y - 1, sfx.cursor.x > 0 and 5 or 9, 7, 5
 			)
 		end
 
@@ -127,13 +132,21 @@ function sfx._keydown(k)
 		elseif k == "left" then
 			sfx.cursor.x = sfx.cursor.x - 1
 			if sfx.cursor.x < 0 then
-				sfx.cursor.x = 0
+				sfx.cursor.x = 4
+				sfx.cursor.y = sfx.cursor.y - 8
+				if sfx.cursor.y < 0 then
+					sfx.cursor.y = sfx.cursor.y + 32
+				end
 			end
 			sfx.forceDraw = true
 		elseif k == "right" then
 			sfx.cursor.x = sfx.cursor.x + 1
 			if sfx.cursor.x > 4 then
-				sfx.cursor.x = 4
+				sfx.cursor.x = 0
+				sfx.cursor.y = sfx.cursor.y + 8
+				if sfx.cursor.y > 31 then
+					sfx.cursor.y = sfx.cursor.y - 32
+				end
 			end
 			sfx.forceDraw = true
 		elseif k == "space" then
