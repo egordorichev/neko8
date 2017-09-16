@@ -13,3 +13,5 @@ function keyboard.draw()
 end
 
 return keyboard
+
+-- vim: noet

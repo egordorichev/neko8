@@ -13,21 +13,21 @@ function resolveFile(a, dir)
 
 	local p = dir:match("(.+)")
 
-  if p then
+	if p then
 		p = "/" .. p .. "/";
 			local dirs = {}
 		p = p:gsub("/","//"):sub(2, -1)
 
 		for path in string.gmatch(p, "/(.-)/") do
-		  if path == "." then
+			if path == "." then
 
-		  elseif path == ".." then
+			elseif path == ".." then
 				if #dirs > 0 then
-				  table.remove(dirs, #dirs)
+					table.remove(dirs, #dirs)
 				end
-			  elseif dir ~= "" then
+			elseif dir ~= "" then
 				table.insert(dirs, path)
-		  end
+			end
 		end
 
 		dir = table.concat(dirs, "/")
@@ -38,8 +38,8 @@ function resolveFile(a, dir)
 
 		local flag = string.find(dir, "//")
 		while flag do
-		  dir = string.gsub(dir, "//", "/")
-		  flag = string.find(dir, "//")
+			dir = string.gsub(dir, "//", "/")
+			flag = string.find(dir, "//")
 		end
 	end
 
@@ -67,21 +67,21 @@ function resolve(a, dir)
 
 		local p = dir:match("(.+)")
 
-	  if p then
+		if p then
 			p = "/" .. p .. "/";
 				local dirs = {}
 			p = p:gsub("/","//"):sub(2, -1)
 
 			for path in string.gmatch(p, "/(.-)/") do
-			  if path == "." then
+				if path == "." then
 
-			  elseif path == ".." then
+				elseif path == ".." then
 					if #dirs > 0 then
-					  table.remove(dirs, #dirs)
+						table.remove(dirs, #dirs)
 					end
-				  elseif dir ~= "" then
+				elseif dir ~= "" then
 					table.insert(dirs, path)
-			  end
+				end
 			end
 
 			dir = table.concat(dirs, "/")
@@ -92,12 +92,12 @@ function resolve(a, dir)
 
 			if dir:sub(-1, -1) ~= "/" then
 				dir = dir .. "/"
-		  end
+			end
 
 			local flag = string.find(dir, "//")
 			while flag do
-			  dir = string.gsub(dir, "//", "/")
-			  flag = string.find(dir, "//")
+				dir = string.gsub(dir, "//", "/")
+				flag = string.find(dir, "//")
 			end
 		end
 	end
@@ -173,7 +173,7 @@ function commands.help(a)
 		api.print("version       prints neko8 version")
 	else
 		-- TODO
-		api.print("subject " .. a[1] .. " is not found")
+		api.print(string.format("subject %s is not found", a[1]))
 	end
 end
 
@@ -201,7 +201,7 @@ function commands.folder()
 	local cdir =
 		love.filesystem.getSaveDirectory()
 		.. neko.currentDirectory
-	love.system.openURL("file://" .. cdir)
+	love.system.openURL(string.format("file://%s", cdir))
 end
 
 function commands.pwd()
@@ -209,8 +209,8 @@ function commands.pwd()
 end
 
 function isVisible(f, dir)
-	local d1, d2 = love.filesystem.getRealDirectory(dir .. "/" .. f) .. f,
-		love.filesystem.getSaveDirectory() .. f
+	local d1 = love.filesystem.getRealDirectory(string.format("%s/%s", dir, f)) .. f
+	local d2 = love.filesystem.getSaveDirectory() .. f
 
 	return d1 == d2
 end
@@ -234,11 +234,10 @@ function commands.ls(a)
 		return
 	end
 
-	local files =
-		love.filesystem.getDirectoryItems(dir)
+	local files = love.filesystem.getDirectoryItems(dir)
 
 	api.print(
-		"directory: " .. dir, nil, nil, 12
+		string.format("directory: %s", dir), nil, nil, 12
 	)
 
 	api.color(7)
@@ -272,7 +271,7 @@ function commands.ls(a)
 	end
 
 	if #out == 0 then
-		api.print("total: " .. tostring(#out), nil, nil, 12)
+		api.print(string.format("total: %d", #out), nil, nil, 12)
 	end
 end
 
@@ -314,13 +313,9 @@ function commands.load(a)
 
 		if not c then
 			api.color(8)
-			api.print(
-				"failed to load " .. a[1]
-			)
+			api.print(string.format("failed to load %s", a[1]))
 		else
-			api.print(
-				"loaded " .. c.pureName
-			)
+			api.print(string.format("loaded %s", c.pureName))
 
 			neko.loadedCart = c
 			editors.openEditor(1)
@@ -354,9 +349,7 @@ function commands.save(a)
 			"** failed to save cart **"
 		)
 	else
-		api.smes(
-			"saved " .. neko.loadedCart.pureName
-		)
+		api.smes(string.format("saved %s", neko.loadedCart.pureName))
 	end
 end
 
@@ -412,3 +405,5 @@ function commands.rm(a)
 end
 
 return commands
+
+-- vim: noet

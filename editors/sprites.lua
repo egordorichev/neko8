@@ -267,7 +267,8 @@ function sprites.drawInfo()
 	if mx >= 0 and mx <= 7 and
 		my >= 0 and my <= 7 then
 		api.print(
-			"x:" .. x .. " y:" .. y, 1,
+			string.format("x: %d y: %d", x, y),
+			1,
 			config.canvas.height - 6,
 			config.editors.sprites.fg
 		)
@@ -285,7 +286,7 @@ function sprites._update()
 	end
 
 	if mb then
-		if lmb == false and mx > 64 and mx < 192
+		if not lmb and mx > 64 and mx < 192
 			and my > 8 and my < 72 then
 
 			my = my - 8
@@ -300,20 +301,21 @@ function sprites._update()
 
 			local s = sprites.sprite
 			local x = api.mid(api.flr(mx / (8 * sprites.scale)), 0, 7) + s % 16 * 8
-			local y = api.mid(api.flr((my - 8) / (8 * sprites.scale)), 0, 7) + api.flr(s / 16) * 8
+			local y = api.mid(api.flr((my - 8) / (8 * sprites.scale)), 0, 7)
+					+ api.flr(s / 16) * 8
 
-			sprites.tool.use(x, y, lmb == false)
+			sprites.tool.use(x, y, not lmb)
 
 			sprites.data.sheet:refresh()
 			sprites.forceDraw = true
-		elseif lmb == false and my > 72 and my < 120 and
+		elseif not lmb and my > 72 and my < 120 and
 			mx > 15 and mx < 47 + 16 then
 			mx = api.flr((mx - 16) / 12)
 			my = api.flr((my - 72) / 12)
 
 			sprites.color = api.mid(0, 15, mx + my * 4)
 			sprites.forceDraw = true
-		elseif lmb == false then
+		elseif not lmb then
 			if mx >= 10 and mx <= 18 then
 				for i = 0, 7 do
 					if my >= 68 + i * 6 and my <= 76 + i * 6 then
@@ -391,11 +393,9 @@ end
 
 function sprites._keydown(k, r)
 	if api.key("rctrl") or api.key("lctrl") then
-    if k == "s" then
-      commands.save()
-    end
-	else
-
+		if k == "s" then
+			commands.save()
+		end
 	end
 end
 
@@ -412,7 +412,7 @@ function sprites._copy()
 		end
 	end
 
-	return "[gfx]" .. data .. "[/gfx]"
+	return string.format("[gfx]%s[/gfx]", data)
 end
 
 function sprites._cut()
@@ -456,3 +456,5 @@ function sprites._text(text)
 end
 
 return sprites
+
+-- vim: noet

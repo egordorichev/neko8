@@ -27,4 +27,16 @@ Download and extract the source. In the root folder run:
 love .
 ```
 
-You will need **love2d 0.10.2** to run **neko8**. Love2d version is really important!
+You will need **löve2d 0.10.2** to run **neko8**. Löve2d version is really important!
+
+### Contributing
+
+If you'd like to contribute to **neko8**, feel free to fork and make pull
+requests! However, we ask you to follow the formatting guidelines for this
+project. 
+
+ - Use non-expanded, i.e. the regular, tabs.
+ - Keep a maximum line length of 80 characters.
+ - Double quotes are preferred over single quotes.
+ - Don't use concatenation where `string.format` would be more beneficial.
+ - If unsure how to format something, check how it's formatted in existing code.

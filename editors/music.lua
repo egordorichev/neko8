@@ -74,3 +74,5 @@ function music.export()
 end
 
 return music
+
+-- vim: noet
