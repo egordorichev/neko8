@@ -28,24 +28,31 @@ content.sys = {
 content.graph = {
 	{name = "printh(...)", desc = "Origin function in lua"},
 	{name = "csize()", desc = "Return canvas width,height"},
-	{name = "rect(x0, y0, x1, y1, c)", desc = "Draw rect from x0,y0 to x1,y1 with color:c"},
-	{name = "rectfill(x0, y0, x1, y1, c)", desc = "Draw filled rect with x0,y0,x1,y1,c"},
-	{name = "brect(x, y, w, h, c)", desc = "Draw rect pos:x,y width,height:w,h and color:c"},
+	{name = "rect(x0, y0, x1, y1, c)",
+	 desc = "Draw rect from x0,y0 to x1,y1 with color:c"},
+	{name = "rectfill(x0, y0, x1, y1, c)",
+	 desc = "Draw filled rect with x0,y0,x1,y1,c"},
+	{name = "brect(x, y, w, h, c)",
+	 desc = "Draw rect pos:x,y width,height:w,h and color:c"},
 	{name = "brectfill(x, y, w, h, c)", desc = "Draw filled rect with x,y,w,h,c"},
 	{name = "color(c)", desc = "Set current color to c"},
 	{name = "cls()", desc = "Clear the screen"},
-	{name = "circ(ox, oy, r, c)", desc = "Draw circle pos:x,y with radius:r and color:c"},
+	{name = "circ(ox, oy, r, c)",
+	 desc = "Draw circle pos:x,y with radius:r and color:c"},
 	{name = "circfill(cx, cy, r, c)", desc = "Draw filled circle with color:c"},
 	{name = "pset(x, y, c)", desc = "Set pixel:x,y with color:c"},
 	{name = "pget(x, y, c)", desc = "Get color of pixel:x,y"},
-	{name = "line(x1, y1, x2, y2, c)", desc = "Draw line from x1,y1 to x2,y2 with color:c"},
+	{name = "line(x1, y1, x2, y2, c)",
+	 desc = "Draw line from x1,y1 to x2,y2 with color:c"},
 	{name = "print(s, x, y, c)", desc = "Print String s at x,y with color:c"},
 	{name = "flip()", desc = "Flip screen back buffer"},
 	{name = "cursor(x, y)", desc = "Draw cursor at x,y"},
 	{name = "cget()", desc = "Return position x,y of current cursor"},
 	{name = "scroll(pixels)", desc = "Scroll screen with pixels pixels"},
-	{name = "spr(n, x, y, w, h, fx, fy)", desc = "Draw sprite at x,y with sprites No.:n"},
-	{name = "sspr(sx, sy, sw, sh, dx, dy, dw, dh, fx,fy)", desc = "Draw texture from spritesheet"},
+	{name = "spr(n, x, y, w, h, fx, fy)",
+	 desc = "Draw sprite at x,y with sprites No.:n"},
+	{name = "sspr(sx, sy, sw, sh, dx, dy, dw, dh, fx,fy)",
+	 desc = "Draw texture from spritesheet"},
 	{name = "sget(x, y)", desc = "Get spritesheet pixel color"},
 	{name = "sset(x, y, c)", desc = "Set spritesheet pixel color"},
 	{name = "pal(c0,c1,p)", desc = "Switch color c0 to c1"},
@@ -56,7 +63,8 @@ content.graph = {
 	{name = "camera([x, y])", desc = "Set camera position"},
 	{name = "clip([x, y, w, h])", desc = "Set screen clipping region"},
 	{name = "tri(x0, y0, x1, y1, x2, y2)", desc = "Draw triangle"},
-	{name = "trifill(x0, y0, x1, y1, x2, y2, c)", desc = "Draw triangle with color:c"},
+	{name = "trifill(x0, y0, x1, y1, x2, y2, c)",
+	 desc = "Draw triangle with color:c"},
 	{name = "poly(...)", desc = "Draw polygon"},
 	{name = "polyfill(...)", desc = "draw polygon with filled color"},
 }
@@ -65,7 +73,9 @@ content.graph = {
 content.input = {
 	{name = "btn(b, p)", desc = "Get button b state for player p"},
 	{name = "key(k)", desc = "Detect if key:k is pressed"},
-	{name = "btnp(b, p)", desc = "Only true when the button was not pressed the last frame; repeats every 4 frames after button held for 12 frames"},
+	{name = "btnp(b, p)",
+	 desc = "Only true when the button was not pressed the last frame;" ..
+			"repeats every 4 frames after button held for 12 frames"},
 }
 
 content.math = {
@@ -120,7 +130,8 @@ content.table = {
 	}
 
 content.audio = {
-	{name="sfx(n, channel, offset)",desc="Play sfx, n:-1 stop in ch, n:-2 release loop"},
+	{name="sfx(n, channel, offset)",
+	 desc="Play sfx, n:-1 stop in ch, n:-2 release loop"},
 	{name="music(n, fadeLen, channelMask)",desc="Play music; n:-1 stop"},
 }
 
@@ -138,12 +149,12 @@ content.keys = {
 }
 
 function docs.init()
-    docs.forceDraw = false
-    docs.icon = 13
-    docs.tab = "neko8"
-    docs.page = 0
-    docs.name = "build-in help"
-    docs.bg = config.editors.docs.bg
+	docs.forceDraw = false
+	docs.icon = 13
+	docs.tab = "neko8"
+	docs.page = 0
+	docs.name = "build-in help"
+	docs.bg = config.editors.docs.bg
 end
 
 function docs.open()
@@ -186,33 +197,36 @@ function docs.drawTab()
 end
 
 function docs.selectPage(t)
-
 	-- page buttons
-    local function multiPages(j)
-        local posX, posY = config.canvas.width-(j+1)*8, 8
+	local function multiPages(j)
+		local posX, posY = config.canvas.width-(j+1)*8, 8
 				for i = 0, j  or 0  do
-            api.spr(
-                i == docs.page and 7 or 6,
-                posX + i * 8, posY
-            )
+			api.spr(
+				i == docs.page and 7 or 6,
+				posX + i * 8, posY
+			)
 
-            api.print(
-                i, posX+2 + i * 8, posY+2, i == docs.page and 12 or 5
-            )
-        end
-    end
+			api.print(
+				i, posX+2 + i * 8, posY+2, i == docs.page and 12 or 5
+			)
+		end
+	end
 
-    local l = #t
+	local l = #t
 
-    -- special info page for neko8
+	-- special info page for neko8
 	if docs.tab == "neko8" then
 		api.print("NEKO-8 Specs:", 2, 10, 9)
 	end
 
-    for k,v in pairs(t) do
-        local nameY,descY = 12*(k-1)+8, 12*(k-1)+14
-		-- 1st name match "words words " in docs.keys, 2nd name match "words" in other docs
-		local name, para = string.match(v.name,"[%a*%s]*") or string.match(v.name, "%a*") or "empty", string.match(v.name, "[%(].*[%)]") or ":"
+	for k,v in pairs(t) do
+		local nameY,descY = 12*(k-1)+8, 12*(k-1)+14
+		-- 1st name match "words words " in docs.keys,
+		-- 2nd name match "words" in other docs
+		local name, para = string.match(v.name,"[%a*%s]*")
+			or string.match(v.name, "%a*")
+			or "empty", string.match(v.name, "[%(].*[%)]")
+			or ":"
 		local paraX = 1 + string.len(name) * 8/2
 
 		-- special info page for neko8
@@ -223,7 +237,9 @@ function docs.selectPage(t)
 		else
 			if l <= 9 then
 				if v.name == "btnp(b, p)" then
-					local p1,p2,p3 = string.sub(v.desc, 1,15*3),string.sub(v.desc,15*3,30*3), string.sub(v.desc,30*3,-1)
+					local p1 = string.sub(v.desc, 1,15*3)
+					local p2 = string.sub(v.desc,15*3,30*3)
+					local p3 = string.sub(v.desc,30*3,-1)
 					api.print(name, 1, nameY, 7)
 					api.print(para, 1 + paraX , nameY, 8)
 					api.print(p1, 6, descY, 6)
@@ -256,7 +272,7 @@ function docs.selectPage(t)
 				end
 			end
 		end
-    end
+	end
 end
 
 function docs._update()
@@ -270,7 +286,7 @@ function docs._update()
 	end
 
 	if mb then
-		if lmb == false then
+		if not lmb then
 			-- select tab
 			local j = #content
 			if my >= 128-20 and my <= 128-8 then
@@ -312,3 +328,5 @@ function docs.export()
 end
 
 return docs
+
+-- vim: noet

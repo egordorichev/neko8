@@ -83,3 +83,5 @@ function neko.draw()
 end
 
 return neko
+
+-- vim: noet

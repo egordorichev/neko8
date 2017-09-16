@@ -29,18 +29,18 @@ function noteToString(note)
 	return string.format("%s", noteMap[note], octave)
 end
 
-function stringToNote(string, octave)
+function stringToNote(str, octave)
 	local note = -1
 
 	for i = 0, #noteMap do
-		if noteMap[i] == string then
+		if noteMap[i] == str then
 			note = i
 			break
 		end
 	end
 
 	if note == -1 then
-		print(":" .. string .. ":")
+		print(string.format(":%s:", str))
 		return 0
 	end
 
@@ -88,7 +88,8 @@ function audio.init()
 	-- tri/2
 	audio.osc[5] = function(x)
 		x = x * 4
-		return (api.abs((x % 2) - 1) - 0.5 + (api.abs(((x * 0.5) % 2) - 1) - 0.5) / 2 - 0.1) * 0.7
+		return (api.abs((x % 2) - 1) - 0.5
+			+ (api.abs(((x * 0.5) % 2) - 1) - 0.5) / 2 - 0.1) * 0.7
 	end
 	-- noise
 	audio.osc[6] = function()
@@ -102,13 +103,20 @@ function audio.init()
 			lsample = sample
 			sample = (lsample + scale * (math.random() * 2 - 1)) / (1 + scale)
 			lastx = x
-			return math.min(math.max((lsample + sample) * 4 / 3 * (1.75 - scale), - 1), 1) * 0.7
+			return math.min(
+					math.max(
+						(lsample + sample) * 4 / 3 * (1.75 - scale),
+						-1
+					),
+					1
+				) * 0.7
 		end
 	end
 	-- detuned tri
 	audio.osc[7] = function(x)
 		x = x * 2
-		return (api.abs((x%2) - 1) - 0.5 + (api.abs(((x * 127 / 128)%2) - 1) - 0.5) / 2) - 1 / 4
+		return (api.abs((x%2) - 1) - 0.5 +
+				(api.abs(((x * 127 / 128)%2) - 1) - 0.5) / 2) - 1 / 4
 	end
 	-- saw from 0 to 1, used for arppregiator
 	audio.osc["saw_lfo"] = function(x)
@@ -141,7 +149,7 @@ function audio.update(time)
 	for i = 0, samples - 1 do
 		if audio.currentMusic then
 			audio.currentMusic.offset =
-			audio.currentMusic.offset + 7350 / (61 * audio.currentMusic.speed * sr)
+				audio.currentMusic.offset + 7350 / (61 * audio.currentMusic.speed * sr)
 			if audio.currentMusic.offset >= 32 then
 				local nextTrack = audio.currentMusic.music
 				if neko.loadedCart.music[nextTrack].loop == 2 then
@@ -163,7 +171,9 @@ function audio.update(time)
 			end
 		end
 
-		local music = audio.currentMusic and neko.loadedCart.music[audio.currentMusic.music] or nil
+		local music = audio.currentMusic
+			and neko.loadedCart.music[audio.currentMusic.music]
+			or nil
 
 		for channel = 0, 3 do
 			local ch = audio.sfx[channel]
@@ -273,3 +283,5 @@ function audio.update(time)
 end
 
 return audio
+
+-- vim: noet

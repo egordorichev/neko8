@@ -6,9 +6,9 @@ local tw = 40
 local th = 20
 
 function code.init()
-  code.lines = {}
+	code.lines = {}
 	code.t = 0
-  code.lines[1] = ""
+	code.lines[1] = ""
 	code.icon = 8
 	code.name = "code editor"
 	code.bg = config.editors.code.bg
@@ -27,19 +27,19 @@ function code.init()
 		active = false
 	}
 
-  code.cursor = {
-    x = 0,
-    y = 0
-  }
+	code.cursor = {
+		x = 0,
+		y = 0
+	}
 
-  code.view = {
-    x = 0,
-    y = 0
-  }
+	code.view = {
+		x = 0,
+		y = 0
+	}
 end
 
 function code.open()
-  code.forceDraw = true
+	code.forceDraw = true
 end
 
 function code._draw()
@@ -53,16 +53,16 @@ function code._draw()
 end
 
 local function cursorBlink()
-  return code.t < 16 or code.t % 30 < 16
+	return code.t < 16 or code.t % 30 < 16
 end
 
 function code._update()
-  local lb = cursorBlink()
-  code.t = code.t + 1
+	local lb = cursorBlink()
+	code.t = code.t + 1
 
-  if cursorBlink() ~= lb then
-    code.redraw()
-  end
+	if cursorBlink() ~= lb then
+		code.redraw()
+	end
 
 	lmb = mb
 	mx, my, mb = api.mstat(1)
@@ -111,37 +111,37 @@ function code._update()
 end
 
 local function highlight(lines)
-  return colorize(
-    lines,
-    config.editors.code.colors
-  )
+	return colorize(
+		lines,
+		config.editors.code.colors
+	)
 end
 
 local function colorPrint(tbl)
-  for i = 1, #tbl, 2 do
+	for i = 1, #tbl, 2 do
 		local cx, cy = api.cget()
 
 		api.color(tbl[i])
-    api.print(tbl[i + 1], true, false)
-  end
+		api.print(tbl[i + 1], true, false)
+	end
 
-  api.print("")
-  api.cursor(1 - code.view.x * 4)
+	api.print("")
+	api.cursor(1 - code.view.x * 4)
 end
 
 function code.redraw()
-  api.cls(config.editors.code.bg)
+	api.cls(config.editors.code.bg)
 
-  local buffer = lume.clone(
-    lume.slice(
-      code.lines, code.view.y + 1,
-      code.view.y + th - 1
-    )
-  )
+	local buffer = lume.clone(
+		lume.slice(
+			code.lines, code.view.y + 1,
+			code.view.y + th - 1
+		)
+	)
 
-  buffer = highlight(buffer)
+	buffer = highlight(buffer)
 
-  api.cursor(1 - code.view.x * 4, 9)
+	api.cursor(1 - code.view.x * 4, 9)
 
 	local c = config.editors.code.colors.select
 
@@ -193,45 +193,47 @@ function code.redraw()
 		end
 	end
 
-  for l in api.all(buffer) do
-    colorPrint(l)
-  end
+	for l in api.all(buffer) do
+		colorPrint(l)
+	end
 
-  local cx = code.cursor.x
-    - code.view.x
+	local cx = code.cursor.x
+			- code.view.x
 
-  local cy = code.cursor.y
-    - code.view.y
+	local cy = code.cursor.y
+			- code.view.y
 
-  if cursorBlink() then
-    api.rectfill(
-      cx * 4,
-      cy * 6 + 8,
-      cx * 4 + 4,
-      cy * 6 + 14,
-      config.editors.code.cursor
-    )
-  end
+	if cursorBlink() then
+		api.rectfill(
+			cx * 4,
+			cy * 6 + 8,
+			cx * 4 + 4,
+			cy * 6 + 14,
+			config.editors.code.cursor
+		)
+	end
 
-  api.line(
-    0, config.canvas.height - 7,
-    config.canvas.width,
-    config.canvas.height - 7,
-    config.editors.code.bg
-  )
+	api.line(
+		0, config.canvas.height - 7,
+		config.canvas.width,
+		config.canvas.height - 7,
+		config.editors.code.bg
+	)
 
-  api.line(
-    0, 8, config.canvas.width,
-    8, config.editors.code.bg
-  )
+	api.line(
+		0, 8, config.canvas.width,
+		8, config.editors.code.bg
+	)
 end
 
 function code.drawInfo()
 	api.print(
-		"line " .. code.cursor.y .. "/"
-		.. #code.lines .. ", char "
-		.. code.cursor.x .. "/"
-		.. #code.lines[code.cursor.y + 1],
+		string.format(
+			"line %d/%d, char %d/%d",
+			code.cursor.y, #code.lines,
+			code.cursor.x,
+			#code.lines[code.cursor.y + 1]
+		),
 		1, config.canvas.height - 6,
 		config.editors.ui.fg
 	)
@@ -242,9 +244,9 @@ function code.close()
 end
 
 function code._keydown(k)
-  if api.key("rctrl") or api.key("lctrl") then
-    if k == "s" then
-      commands.save()
+	if api.key("rctrl") or api.key("lctrl") then
+		if k == "s" then
+			commands.save()
 		elseif k == "a" then
 			code.select.active = true
 			code.select.start = { x = 0, y = 0 }
@@ -254,11 +256,11 @@ function code._keydown(k)
 			}
 
 			code.forceDraw = true
-    end
-  else
+		end
+	else
 		local shift = api.key("lshift") or api.key("rshift")
 
-    if k == "left" then
+		if k == "left" then
 			local lastX = code.cursor.x
 			local lastY = code.cursor.y
 
@@ -280,7 +282,7 @@ function code._keydown(k)
 			else
 				code.select.active = false
 			end
-    elseif k == "right" then
+		elseif k == "right" then
 			local lastX = code.cursor.x
 			local lastY = code.cursor.y
 
@@ -302,7 +304,7 @@ function code._keydown(k)
 			else
 				code.select.active = false
 			end
-    elseif k == "up" then
+		elseif k == "up" then
 			local lastX = code.cursor.x
 			local lastY = code.cursor.y
 
@@ -324,7 +326,7 @@ function code._keydown(k)
 			else
 				code.select.active = false
 			end
-    elseif k == "down" then
+		elseif k == "down" then
 			local lastX = code.cursor.x
 			local lastY = code.cursor.y
 
@@ -346,102 +348,94 @@ function code._keydown(k)
 			else
 				code.select.active = false
 			end
-    elseif k == "return" or k == "kpenter" then
+		elseif k == "return" or k == "kpenter" then
 			if code.select.active then
 				code.replaceSelected("")
 			end
 
-      local cx, cy = code.cursor.x,
-        code.cursor.y
-      local newLine = code.lines[cy + 1]
-        :sub(cx + 1, -1)
+			local cx, cy = code.cursor.x, code.cursor.y
+			local newLine = code.lines[cy + 1]:sub(cx + 1, -1)
 
-      code.lines[cy + 1] =
-        code.lines[cy + 1]:sub(0, cx)
+			code.lines[cy + 1] = code.lines[cy + 1]:sub(0, cx)
 
-      local snum = string.find(code.lines[cy + 1] .. "a", "%S")
-      snum = snum and snum - 1 or 0
-      newLine = string.rep(" ", snum) .. newLine
+			local snum = string.find(code.lines[cy + 1] .. "a", "%S")
+			snum = snum and snum - 1 or 0
+			newLine = string.rep(" ", snum) .. newLine
 
-      code.cursor.x, code.cursor.y =
-        snum, cy + 1
+			code.cursor.x, code.cursor.y = snum, cy + 1
 
-      cx = code.cursor.x
-      cy = code.cursor.y
+			cx = code.cursor.x
+			cy = code.cursor.y
 
-      if cy + 1 > #code.lines then
-        api.add(code.lines, newLine)
-      else
-        code.lines = lume.concat(
-          lume.slice(
-            code.lines, 0, cy
-          ), { newLine },
-          lume.slice(
-            code.lines, cy + 1, -1
-          )
-        )
-      end
-      code.t = 0
-      code.checkCursor()
-    elseif k == "home" then
-      code.cursor.x = 0
+			if cy + 1 > #code.lines then
+				api.add(code.lines, newLine)
+			else
+				code.lines = lume.concat(
+					lume.slice(
+						code.lines, 0, cy
+					), { newLine },
+					lume.slice(
+						code.lines, cy + 1, -1
+					)
+				)
+			end
 			code.t = 0
-      code.checkCursor()
-    elseif k == "end" then
-      code.cursor.x =
-        #code.lines[code.cursor.y + 1]
+			code.checkCursor()
+		elseif k == "home" then
+			code.cursor.x = 0
 			code.t = 0
-	    code.checkCursor()
+			code.checkCursor()
+		elseif k == "end" then
+			code.cursor.x = #code.lines[code.cursor.y + 1]
+			code.t = 0
+			code.checkCursor()
 		elseif k == "pagedown" then
 			code.cursor.y = code.cursor.y + th
-      code.checkCursor()
+			code.checkCursor()
 			code.cursor.x = #code.lines[code.cursor.y + 1]
 			code.t = 0
 		elseif k == "pageup" then
 			code.cursor.y = code.cursor.y - th
 			code.cursor.x = 0
 			code.t = 0
-      code.checkCursor()
-    elseif k == "backspace" then
+			code.checkCursor()
+		elseif k == "backspace" then
 			if code.select.active then
 				code.replaceSelected("")
 				return
 			end
-      if #code.lines[code.cursor.y + 1] > 0
-        and code.cursor.x > 0 then
-        code.lines[code.cursor.y + 1] =
-          code.lines[code.cursor.y + 1]
-          :sub(1, code.cursor.x - 1)
-          .. code.lines[code.cursor.y + 1]
-          :sub(
-            code.cursor.x + 1,
-            #code.lines[code.cursor.y + 1]
-          )
+			if #code.lines[code.cursor.y + 1] > 0
+				and code.cursor.x > 0 then
+				code.lines[code.cursor.y + 1] =
+					code.lines[code.cursor.y + 1]
+					:sub(1, code.cursor.x - 1)
+					.. code.lines[code.cursor.y + 1]
+					:sub(
+						code.cursor.x + 1,
+						#code.lines[code.cursor.y + 1]
+					)
 
-        code.cursor.x = code.cursor.x - 1
-      elseif code.cursor.y > 0 then
-        local l1 =
-          code.lines[code.cursor.y]
-        local l2 =
-          code.lines[code.cursor.y + 1]
+				code.cursor.x = code.cursor.x - 1
+			elseif code.cursor.y > 0 then
+				local l1 = code.lines[code.cursor.y]
+				local l2 = code.lines[code.cursor.y + 1]
 
-        table.remove(code.lines, code.cursor.y + 1)
+				table.remove(code.lines, code.cursor.y + 1)
 
-        if code.lines[code.cursor.y]
-          and l1 and l2 then
+				if code.lines[code.cursor.y]
+					and l1 and l2 then
 
-          code.lines[code.cursor.y] =
-            l1 .. l2
-          code.cursor.x = #l1
-          code.cursor.y = code.cursor.y - 1
-        end
-      end
-      code.t = 0
-      code.checkCursor()
+					code.lines[code.cursor.y] = l1 .. l2
+					code.cursor.x = #l1
+					code.cursor.y = code.cursor.y - 1
+				end
+			end
+			code.t = 0
+			code.checkCursor()
 		elseif k == "tab" then
 			code._text(" ")
 			code.t = 0
-    elseif k == "delete" then
+		elseif k == "delete" then
 			code.t = 0
 
 			if code.select.active then
@@ -449,33 +443,29 @@ function code._keydown(k)
 				return
 			end
 
-      if #code.lines[code.cursor.y + 1] > 0
-        and code.cursor.x <
-        #code.lines[code.cursor.y + 1] then
-        code.lines[code.cursor.y + 1] =
-          code.lines[code.cursor.y + 1]
-          :sub(1, code.cursor.x)
-          .. code.lines[code.cursor.y + 1]
-          :sub(
-            code.cursor.x + 2,
-            #code.lines[code.cursor.y + 1]
-          )
-      elseif code.cursor.y + 1 < #code.lines then
-        local l1 =
-          code.lines[code.cursor.y + 1]
-        local l2 =
-          code.lines[code.cursor.y + 2]
+			if #code.lines[code.cursor.y + 1] > 0
+				and code.cursor.x < #code.lines[code.cursor.y + 1] then
+				code.lines[code.cursor.y + 1] =
+					code.lines[code.cursor.y + 1]
+					:sub(1, code.cursor.x)
+					.. code.lines[code.cursor.y + 1]
+					:sub(
+						code.cursor.x + 2,
+						#code.lines[code.cursor.y + 1]
+					)
+			elseif code.cursor.y + 1 < #code.lines then
+				local l1 = code.lines[code.cursor.y + 1]
+				local l2 = code.lines[code.cursor.y + 2]
 
-        table.remove(code.lines, code.cursor.y + 1)
+				table.remove(code.lines, code.cursor.y + 1)
 
-        if l1 and l2 then
-          code.lines[code.cursor.y + 1] =
-            l1 .. l2
-        end
-      end
-    end
-  end
-  code.redraw()
+				if l1 and l2 then
+					code.lines[code.cursor.y + 1] = l1 .. l2
+				end
+			end
+		end
+	end
+	code.redraw()
 end
 
 function code.replaceSelected(text)
@@ -673,97 +663,96 @@ function code._wheel(a)
 end
 
 function code.checkCursorY()
-  code.cursor.y =
-    api.mid(
-      0, code.cursor.y,
-      api.max(1, #code.lines - 1)
-    )
+	code.cursor.y =
+		api.mid(
+			0, code.cursor.y,
+			api.max(1, #code.lines - 1)
+		)
 
-  if code.cursor.y > th + code.view.y - 3 then
-    code.view.y = code.cursor.y - (th - 3)
-    return true
-  elseif code.cursor.y < code.view.y then
-    code.view.y = code.cursor.y
-    return true
-  end
+	if code.cursor.y > th + code.view.y - 3 then
+		code.view.y = code.cursor.y - (th - 3)
+		return true
+	elseif code.cursor.y < code.view.y then
+		code.view.y = code.cursor.y
+		return true
+	end
 
-  return false
+	return false
 end
 
 function code.checkCursorX(j)
-  local f = false
+	local f = false
 
-  if code.cursor.x < 0 then
-    code.cursor.x = 0
-    if code.cursor.y > 0 then
-      code.cursor.y =
-        code.cursor.y - 1
-      f = code.checkCursorY()
-      code.cursor.x =
-        #code.lines[code.cursor.y + 1]
-    end
-  elseif code.cursor.x >
-    #code.lines[code.cursor.y + 1] then
+	if code.cursor.x < 0 then
+		code.cursor.x = 0
+		if code.cursor.y > 0 then
+			code.cursor.y = code.cursor.y - 1
+			f = code.checkCursorY()
+			code.cursor.x = #code.lines[code.cursor.y + 1]
+		end
+	elseif code.cursor.x >
+		#code.lines[code.cursor.y + 1] then
 
-    if code.cursor.y + 1 < #code.lines
-      and not j then
-      code.cursor.y =
-        code.cursor.y + 1
-      f = code.checkCursorY()
-      code.cursor.x = 0
-    else
-      code.cursor.x = #code.lines[code.cursor.y + 1]
-    end
-  end
+		if code.cursor.y + 1 < #code.lines
+			and not j then
+			code.cursor.y = code.cursor.y + 1
+			f = code.checkCursorY()
+			code.cursor.x = 0
+		else
+			code.cursor.x = #code.lines[code.cursor.y + 1]
+		end
+	end
 
 	if code.cursor.x > code.view.x + tw - 5 then
-    code.view.x = code.cursor.x - tw + 5
+		code.view.x = code.cursor.x - tw + 5
 		f = true
-  elseif code.cursor.x < code.view.x + 5 then
-    code.view.x = api.max(0, code.cursor.x - 5)
+	elseif code.cursor.x < code.view.x + 5 then
+		code.view.x = api.max(0, code.cursor.x - 5)
 		f = true
-  end
+	end
 
-  return f
+	return f
 end
 
 function code.checkCursor(j)
-  code.checkCursorY()
-  code.checkCursorX(j)
+	code.checkCursorY()
+	code.checkCursorX(j)
 end
 
 local function lines(s)
-  if s:sub(-1) ~= "\n" then
-    s = s .. "\n"
-  end
+	if s:sub(-1) ~= "\n" then
+		s = s .. "\n"
+	end
 
-  return s:gmatch("(.-)\n")
+	return s:gmatch("(.-)\n")
 end
 
 function code.import(c)
-  code.lines = {}
+	code.lines = {}
 
-  c = c:gsub("\t", " ")
-  -- todo: doesn't work?
+	c = c:gsub("\t", " ")
+	-- todo: doesn't work?
 
-  for l in lines(c) do
-    api.add(code.lines, l)
-  end
+	for l in lines(c) do
+		api.add(code.lines, l)
+	end
 
-  if not code.lines[1] then
-    code.lines[1] = ""
-  end
+	if not code.lines[1] then
+		code.lines[1] = ""
+	end
 end
 
 function code.export()
-  local data = {}
+	local data = {}
 
-  for l in api.all(code.lines) do
-    table.insert(data, l)
+	for l in api.all(code.lines) do
+		table.insert(data, l)
 		table.insert(data, "\n")
-  end
+	end
 
-  return table.concat(data)
+	return table.concat(data)
 end
 
 return code
+
+-- vim: noet
