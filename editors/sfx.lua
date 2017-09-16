@@ -59,13 +59,19 @@ function sfx.redraw()
 	api.cls(sfx.bg)
 
 	for i = 0, 3 do
-		api.brectfill(1 + i * 26, 8, 25, 49, 0)
+		api.brectfill(1 + i * 26, 16, 25, 49, 0)
 	end
+
+	local c = config.editors.sfx.fg
+
+	api.print("SFX", 1, 9, c)
+	api.brectfill(17, 8, 9, 7, 0)
+	api.print(string.format("%02d", sfx.sfx), 18, 9, c)
 
 	for i = 0, 31 do
 		local s = sfx.data[sfx.sfx][i]
 		local x = 2 + api.flr(i / 8) * 26
-		local y = 9 + i % 8 * 6
+		local y = 17 + i % 8 * 6
 		local isEmpty = s[3] == 0
 
 		if audio.sfx[1].sfx ~= nil then
@@ -79,7 +85,7 @@ function sfx.redraw()
 		if sfx.cursor.y == i then
 			api.brectfill(
 				x - 1 + sfx.cursor.x * 4 + (sfx.cursor.x > 0 and 4 or 0),
-				y - 1, sfx.cursor.x > 0 and 5 or 9, 7, 5
+				y - 1, sfx.cursor.x > 0 and 5 or 9, 7, 8
 			)
 		end
 
