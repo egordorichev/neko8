@@ -59,7 +59,7 @@ local version = {
 }
 
 version.string = string.format(
-	"%d.%d %s %s",
+	"%d.%.1f %s %s",
 	version.major,
 	version.minor,
 	version.name,
