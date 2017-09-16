@@ -57,6 +57,7 @@ function createSandbox(lang)
 		setmetatable = setmetatable,
 		require = require,
 		tostring = tostring,
+		tonumber = tonumber,
 
 		-- this is required by the asm.lua callx operator
 		unpck = table.unpack,
