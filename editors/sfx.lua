@@ -138,6 +138,9 @@ function sfx.init()
 					end
 
 					api.brectfill(self.x, self.y, self.w, self.h, c)
+					if c == 0 or c == 5 then
+						api.brect(self.x - 1, self.y - 1, self.w + 1, self.h + 1, config.editors.sfx.bg)
+					end
 				end):onClick(function(self)
 					sfx.typeNote(i + sfx.octave * 12)
 					sfx._keydown("down")

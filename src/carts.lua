@@ -710,7 +710,7 @@ function carts.save(name)
 		return false
 	end
 
-	name = name or neko.loadedCart.name
+	name = resolveFile(name or neko.loadedCart.name, neko.currentDirectory)
 	log.info(string.format("saving %s", name))
 
 	carts.export()

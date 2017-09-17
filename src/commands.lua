@@ -332,7 +332,7 @@ function commands.save(a)
 
 	if a then
 		if #a == 1 then
-			name = resolveFile(a[1], neko.currentDirectory)
+			name = a[1]
 		elseif #a > 1 then
 			api.print("save (name)")
 			return
