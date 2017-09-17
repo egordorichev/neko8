@@ -663,19 +663,26 @@ vec4 effect(vec4 color, Image texture,
 
 	colors.onCanvasShader =
 		love.graphics.newShader([[
-extern vec4 palette[16];
+extern float palette[16];
+extern vec4 disp[16];
 extern float transparent[16];
 vec4 effect(vec4 color, Image texture,
 			vec2 texture_coords, vec2 screen_coords) {
 	int index = int(floor(Texel(texture, texture_coords).r*16.0));
 	float alpha = transparent[index];
-	vec3 clr = vec3(palette[index]/16.0);
+	// return vec4(vec3(palette[index]/16.0),alpha);
+	vec3 clr = vec3(disp[ int( palette[int(floor(Texel(texture, texture_coords).r))] ) ]/16.0);
 	return vec4(clr/16.0,alpha);
 }]])
 
 	colors.onCanvasShader:send(
-		"palette",
+		"disp",
 		shaderUnpack(colors.display)
+	)
+
+	colors.onCanvasShader:send(
+		"palette",
+		shaderUnpack(colors.draw)
 	)
 
 	colors.onCanvasShader:send(

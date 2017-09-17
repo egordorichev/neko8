@@ -694,6 +694,24 @@ function api.flip()
 		local mx, my = api.mstat()
 		neko.cart, neko.core = neko.core, neko.cart
 
+		for i = 0, 15 do
+			api.pal(i, 1)
+		end
+
+		for x = -1, 1 do
+			for y = x == 0 and -1 or 0, x == 0 and 1 or 0 do
+				api.onCanvasSpr(
+					neko.cursor.current,
+					(mx + x) * canvas.scaleX
+					+ canvas.x,
+					(my + y) * canvas.scaleY
+					+ canvas.y
+				)
+			end
+		end
+
+		api.pal()
+
 		api.onCanvasSpr(
 			neko.cursor.current,
 			mx * canvas.scaleX
@@ -790,7 +808,6 @@ function api.onCanvasSpr(n, x, y, w, h, fx, fy)
 
 	n = api.flr(n)
 	love.graphics.setShader(colors.onCanvasShader)
-
 
 	w = w or 1
 	h = h or 1
@@ -896,6 +913,16 @@ function api.pal(c0,c1,p)
 			"palette", shaderUnpack(colors.draw)
 		)
 
+			colors.onCanvasShader:send(
+				"disp",
+				shaderUnpack(colors.display)
+			)
+
+			colors.onCanvasShader:send(
+				"palette",
+				shaderUnpack(colors.draw)
+			)
+
 		colors.textShader:send(
 			"palette", shaderUnpack(colors.draw)
 		)
@@ -934,6 +961,16 @@ function api.pal(c0,c1,p)
 		colors.spriteShader:send(
 			"palette", shaderUnpack(colors.draw)
 		)
+
+			colors.onCanvasShader:send(
+				"disp",
+				shaderUnpack(colors.display)
+			)
+
+			colors.onCanvasShader:send(
+				"palette",
+				shaderUnpack(colors.draw)
+			)
 
 		colors.textShader:send(
 			"palette", shaderUnpack(colors.draw)

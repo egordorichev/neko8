@@ -20,8 +20,6 @@ function carts.load(name)
 	for i = 1, #extensions do
 		local n = resolveFile(pureName .. extensions[i], neko.currentDirectory)
 
-		print(n)
-
 		if love.filesystem.isFile(n)
 			and isVisible(n, "/") then
 

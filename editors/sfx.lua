@@ -1,5 +1,6 @@
 local UiManager = require "ui.manager"
 local UiLabelButton = require "ui.label_button"
+local UiButton = require "ui.button"
 local UiComponent = require "ui.component"
 
 local sfx = {}
@@ -29,7 +30,6 @@ function sfx.init()
 	sfx.instrument = 0
 	sfx.fx = 0
 	sfx.octave = 2
-	sfx.mode = 1
 
 	sfx.cursor = {
 		x = 0,
@@ -38,7 +38,21 @@ function sfx.init()
 
 	sfx.ui = UiManager()
 
+	sfx.ui:add(UiButton(
+		26, 70, 0, 8, 8, 6,
+		config.editors.sfx.bg
+	):onClick(function()
+		sfx.setMode(1)
+	end), "mode1")
 
+	sfx.ui:add(UiButton(
+		25, 77, 0, 8, 8, 6,
+		config.editors.sfx.bg
+	):onClick(function()
+		sfx.setMode(2)
+	end), "mode2")
+
+	sfx.setMode(1)
 
 	sfx.ui1 = UiManager()
 
@@ -131,6 +145,16 @@ function sfx.init()
 			)
 		end
 	end
+end
+
+function sfx.setMode(mode)
+	sfx.ui.components["mode1"].active = false
+	sfx.ui.components["mode2"].active = false
+
+	sfx.mode = mode
+	sfx.forceDraw = true
+
+	sfx.ui.components["mode" .. mode].active = true
 end
 
 function sfx.open()
