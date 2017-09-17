@@ -64,8 +64,12 @@ function vi.init()
 		y = 0
 	}
 
-	if config.editors.vi.virc then
-		config.editors.vi.virc(vi)
+	local virc = love.filesystem.read(".virc")
+	if virc then
+		for line in string.gmatch(virc, "[^\n]+") do
+			vi.command = line
+			vi.modes.command["return"]()
+		end
 	end
 end
 
@@ -109,6 +113,10 @@ end
 
 function vi.commands.w(filename)
 	commands.save(filename)
+end
+
+function vi.commands.echo(...)
+	print(...)
 end
 
 function vi.open()
@@ -627,16 +635,15 @@ vi.modes.command = {
 	["down"] = function() -- TODO
 	end,
 	["return"] = function() -- TODO
+		vi.command = string.gsub(vi.command, "%-%-.*", "")
 		local command = string.match(vi.command, "%s*(%a+)")
 		local args = string.match(vi.command, "%s*%a+%s+(.*)%s*")
 
-		print(command)
 		local arguments = {}
 		if args and #args > 0 then
-			for arg in string.gmatch(args, "([^,]*)") do
-				arguments[#arguments + 1] = arg
+			for arg in string.gmatch(args, "[^,]+") do
+				arguments[#arguments + 1] = string.gsub(arg, "%s*(.*)%s*", "%1")
 			end
-			print(unpack(arguments))
 		end
 
 		if vi.commands[command] then
