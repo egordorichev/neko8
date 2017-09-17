@@ -14,12 +14,13 @@ function vi.init()
 	vi.shift = false
 	vi.ctrl = false
 	vi.count = nil
-	vi.allowWrite = false
 	vi.needMotion = false
 	vi.operator = nil
 	vi.motion = nil
 	vi.escape = 0.0
 	vi.escapeTimeout = 1.5
+	vi.currentRegister = nil
+	vi.registers = {['"'] = ""}
 
 	vi.lines = {}
 	vi.t = 0
@@ -60,6 +61,26 @@ function vi.init()
 	if config.editors.vi.virc then
 		config.editors.vi.virc(vi)
 	end
+end
+
+function vi.register()
+	local register = vi.currentRegister or '"'
+	vi.currentRegister = nil
+	return register
+end
+
+function vi.reg(register, value)
+	register = register or vi.register()
+	if value then
+		vi.registers[register] = tostring(value)
+		return vi.registers[register]
+	else
+		return vi.registers[register] or ""
+	end
+end
+
+function vi.line()
+	return vi.lines[vi.cursor.y + 1]
 end
 
 function vi.getcount()
@@ -280,7 +301,7 @@ function vi.drawInfo()
 		)
 	else
 		local cx = vi.cursor.x
-		if #vi.lines[vi.cursor.y + 1] > 0 then
+		if #vi.line() > 0 then
 			cx = cx + 1
 		end
 
@@ -289,7 +310,7 @@ function vi.drawInfo()
 				"%s line %d/%d, char %d/%d",
 				vi.mode,
 				vi.cursor.y + 1, #vi.lines,
-				cx, #vi.lines[vi.cursor.y + 1]
+				cx, #vi.line()
 			),
 			1, config.canvas.height - 6,
 			config.editors.ui.fg
@@ -314,57 +335,104 @@ vi.modes.normal = {
 		local lastY = vi.cursor.y
 
 		vi.moveCursorX(-vi.getcount())
-		vi.t = 0
 	end,
 	["l"] = function()
 		local lastX = vi.cursor.x
 		local lastY = vi.cursor.y
 
 		vi.moveCursorX(vi.getcount())
-		vi.t = 0
 	end,
 	["k"] = function()
 		local lastX = vi.cursor.x
 		local lastY = vi.cursor.y
 
 		vi.moveCursorY(-vi.getcount())
-		vi.t = 0
 	end,
 	["j"] = function()
 		local lastX = vi.cursor.x
 		local lastY = vi.cursor.y
 
 		vi.moveCursorY(vi.getcount())
-		vi.t = 0
 	end,
 	["i"] = function()
 		vi.mode = "insert"
-		vi.allowWrite = false
+	end,
+	["I"] = function()
+		vi.mode = "insert"
+		vi.modes.normal["^"]()
 	end,
 	["a"] = function()
 		vi.mode = "insert"
 		vi.moveCursorX(1)
-		vi.allowWrite = false
+	end,
+	["A"] = function()
+		vi.mode = "insert"
+		vi.setCursorX(#vi.line())
+	end,
+	["$"] = function()
+		vi.setCursorX(65535)
+	end,
+	["^"] = function()
+		local x = string.find(vi.line(), '[^%s]')
+		vi.setCursorX(x - 1)
+	end,
+	["0"] = function()
+		vi.setCursorX(0)
+	end,
+	["G"] = function()
+		vi.setCursorY(#vi.lines - 1)
+	end,
+	["p"] = function()
+		local register = vi.reg()
+		for i = 1, vi.getcount() do
+			vi.lines[vi.cursor.y + 1] =
+				vi.line():sub(1, vi.cursor.x + 1)
+				.. register
+				.. vi.line():sub(
+					vi.cursor.x + 2,
+					#vi.line()
+				)
+			vi.moveCursorX(1)
+		end
+	end,
+	["P"] = function()
+		local register = vi.reg()
+		for i = 1, vi.getcount() do
+			vi.lines[vi.cursor.y + 1] =
+				vi.line():sub(1, vi.cursor.x)
+				.. register
+				.. vi.line():sub(
+					vi.cursor.x + 1,
+					#vi.line()
+				)
+		end
 	end,
 	["x"] = function()
-		vi.t = 0
-
 		if vi.select.active then
 			vi.replaceSelected("")
 			return
 		end
 
-		if #vi.lines[vi.cursor.y + 1] > 0
-			and vi.cursor.x < #vi.lines[vi.cursor.y + 1] then
+		if #vi.line() > 0
+			and vi.cursor.x < #vi.line() then
+			local count = vi.getcount()
+			local cut = vi.line():sub(vi.cursor.x + 1, vi.cursor.x + count)
 			vi.lines[vi.cursor.y + 1] =
-				vi.lines[vi.cursor.y + 1]
+				vi.line()
 				:sub(1, vi.cursor.x)
-				.. vi.lines[vi.cursor.y + 1]
+				.. vi.line()
 				:sub(
-					vi.cursor.x + 1 + vi.getcount(),
-					#vi.lines[vi.cursor.y + 1]
+					vi.cursor.x + 1 + count,
+					#vi.line()
 				)
+			vi.setCursor()
+
+			vi.reg(nil, cut)
 		end
+	end,
+	["s"] = function()
+		vi.modes.normal["x"]()
+		vi.modes.normal["i"]()
 	end,
 }
 
@@ -377,29 +445,25 @@ vi.modes.insert = {
 		local lastX = vi.cursor.x
 		local lastY = vi.cursor.y
 
-		vi.moveCursorX(-vi.getcount())
-		vi.t = 0
+		vi.moveCursorX(-1)
 	end,
 	["right"] = function()
 		local lastX = vi.cursor.x
 		local lastY = vi.cursor.y
 
-		vi.moveCursorX(vi.getcount())
-		vi.t = 0
+		vi.moveCursorX(1)
 	end,
 	["up"] = function()
 		local lastX = vi.cursor.x
 		local lastY = vi.cursor.y
 
-		vi.moveCursorY(-vi.getcount())
-		vi.t = 0
+		vi.moveCursorY(-1)
 	end,
 	["down"] = function()
 		local lastX = vi.cursor.x
 		local lastY = vi.cursor.y
 
-		vi.moveCursorY(vi.getcount())
-		vi.t = 0
+		vi.moveCursorY(1)
 	end,
 	["return"] = function()
 		if vi.select.active then
@@ -433,47 +497,42 @@ vi.modes.insert = {
 				)
 			)
 		end
-		vi.t = 0
 	end,
 	["home"] = function()
 		vi.setCursorX(0)
-		vi.t = 0
 	end,
 	["end"] = function()
-		vi.setCursorX(#vi.lines[vi.cursor.y + 1])
-		vi.t = 0
+		vi.setCursorX(#vi.line())
 	end,
 	["pagedown"] = function()
 		vi.moveCursorY(th)
-		vi.setCursorX(#vi.lines[vi.cursor.y + 1])
-		vi.t = 0
+		vi.setCursorX(#vi.line())
 	end,
 	["pageup"] = function()
 		vi.moveCursorY(-th)
 		vi.setCursorX(0)
-		vi.t = 0
 	end,
 	["backspace"] = function()
 		if vi.select.active then
 			vi.replaceSelected("")
 			return
 		end
-		if #vi.lines[vi.cursor.y + 1] > 0
+		if #vi.line() > 0
 			and vi.cursor.x > 0 then
 			vi.lines[vi.cursor.y + 1] =
-				vi.lines[vi.cursor.y + 1]
+				vi.line()
 				:sub(1, vi.cursor.x - 1)
-				.. vi.lines[vi.cursor.y + 1]
+				.. vi.line()
 				:sub(
 					vi.cursor.x + 1,
-					#vi.lines[vi.cursor.y + 1]
+					#vi.line()
 				)
 
 			vi.cursor.x = vi.cursor.x - 1
 			vi.moveCursorX(-1)
 		elseif vi.cursor.y > 0 then
 			local l1 = vi.lines[vi.cursor.y]
-			local l2 = vi.lines[vi.cursor.y + 1]
+			local l2 = vi.line()
 
 			table.remove(vi.lines, vi.cursor.y + 1)
 
@@ -487,32 +546,28 @@ vi.modes.insert = {
 				vi.moveCursorY(-1)
 			end
 		end
-		vi.t = 0
 	end,
 	["tab"] = function()
 		vi._text(" ")
-		vi.t = 0
 	end,
 	["delete"] = function()
-		vi.t = 0
-
 		if vi.select.active then
 			vi.replaceSelected("")
 			return
 		end
 
-		if #vi.lines[vi.cursor.y + 1] > 0
-			and vi.cursor.x < #vi.lines[vi.cursor.y + 1] then
+		if #vi.line() > 0
+			and vi.cursor.x < #vi.line() then
 			vi.lines[vi.cursor.y + 1] =
-				vi.lines[vi.cursor.y + 1]
+				vi.line()
 				:sub(1, vi.cursor.x)
-				.. vi.lines[vi.cursor.y + 1]
+				.. vi.line()
 				:sub(
 					vi.cursor.x + 2,
-					#vi.lines[vi.cursor.y + 1]
+					#vi.line()
 				)
 		elseif vi.cursor.y + 1 < #vi.lines then
-			local l1 = vi.lines[vi.cursor.y + 1]
+			local l1 = vi.line()
 			local l2 = vi.lines[vi.cursor.y + 2]
 
 			table.remove(vi.lines, vi.cursor.y + 1)
@@ -599,31 +654,15 @@ vi.isspecial = {
 	["undo"] = true,
 }
 
-vi.kmaps.normal = {
-	["h"] = vi.modes.normal["h"],
-	["l"] = vi.modes.normal["l"],
-	["k"] = vi.modes.normal["k"],
-	["j"] = vi.modes.normal["j"],
-	["i"] = vi.modes.normal["i"],
-	["a"] = vi.modes.normal["a"],
-	["x"] = vi.modes.normal["x"],
-}
+vi.kmaps.normal = {}
+for k, v in pairs(vi.modes.normal) do
+	vi.kmaps.normal[k] = v
+end
 
-vi.kmaps.insert = {
-	["escape"] = vi.modes.insert["escape"],
-	["left"] = vi.modes.insert["left"],
-	["right"] = vi.modes.insert["right"],
-	["up"] = vi.modes.insert["up"],
-	["down"] = vi.modes.insert["down"],
-	["return"] = vi.modes.insert["return"],
-	["home"] = vi.modes.insert["home"],
-	["end"] = vi.modes.insert["end"],
-	["pagedown"] = vi.modes.insert["pagedown"],
-	["pageup"] = vi.modes.insert["pageup"],
-	["backspace"] = vi.modes.insert["backspace"],
-	["tab"] = vi.modes.insert["tab"],
-	["delete"] = vi.modes.insert["delete"],
-}
+vi.kmaps.insert = {}
+for k, v in pairs(vi.modes.insert) do
+	vi.kmaps.insert[k] = v
+end
 
 function vi._keyup(k)
 	if k == "lshift" or k == "rshift" then
@@ -657,6 +696,7 @@ function vi._keydown(k)
 		kmap[k]()
 	end
 
+	vi.t = 0
 	vi.redraw()
 end
 
@@ -800,10 +840,8 @@ function vi._text(text)
 			end
 		end
 
+		vi.t = 0
 		vi.redraw()
-		return
-	elseif not vi.allowWrite then
-		vi.allowWrite = true
 		return
 	end
 
@@ -821,9 +859,9 @@ function vi._text(text)
 				vi.replaceSelected(part)
 			else
 				vi.lines[vi.cursor.y + 1] =
-				vi.lines[vi.cursor.y + 1]:sub(
+				vi.line():sub(
 				1, vi.cursor.x) .. part
-				.. vi.lines[vi.cursor.y + 1]:sub(
+				.. vi.line():sub(
 					vi.cursor.x + 1, #vi.lines[
 						vi.cursor.y + 1
 					]
@@ -842,15 +880,15 @@ function vi._text(text)
 		end
 
 		vi.moveCursorY(-1)
-		vi.setCursorX(#vi.lines[vi.cursor.y + 1])
+		vi.setCursorX(#vi.line())
 	else
 		if vi.select.active then
 			vi.replaceSelected(text)
 		else
 			vi.lines[vi.cursor.y + 1] =
-			vi.lines[vi.cursor.y + 1]:sub(
+			vi.line():sub(
 			1, vi.cursor.x) .. text
-			.. vi.lines[vi.cursor.y + 1]:sub(
+			.. vi.line():sub(
 				vi.cursor.x + 1, #vi.lines[
 					vi.cursor.y + 1
 				]
@@ -876,6 +914,7 @@ function vi._wheel(a)
 end
 
 function vi.updateCursorY()
+	vi.cursorReal.y = api.max(0, vi.cursorReal.y)
 	vi.cursor.y =
 		api.mid(
 			0, vi.cursorReal.y,
@@ -894,10 +933,15 @@ function vi.updateCursorY()
 end
 
 function vi.updateCursorX()
+	vi.cursorReal.x = api.max(0, vi.cursorReal.x)
+	local max = #vi.line() - 1
+	if vi.mode == "insert" then
+		max = #vi.line()
+	end
 	vi.cursor.x =
 		api.mid(
 			0, vi.cursorReal.x,
-			#vi.lines[vi.cursor.y + 1] - 1
+			max
 		)
 
 	if vi.cursor.x > vi.view.x + tw - 5 then
@@ -912,11 +956,19 @@ function vi.updateCursorX()
 end
 
 function vi.moveCursorX(x)
-	vi.setCursorX(vi.cursorReal.x + x)
+	if x < 0 and vi.cursorReal.x > #vi.line() then
+		vi.setCursorX(#vi.line() + x - 1)
+	else
+		vi.setCursorX(vi.cursorReal.x + x)
+	end
 end
 
 function vi.moveCursorY(y)
-	vi.setCursorY(vi.cursorReal.y + y)
+	if y < 0 and vi.cursorReal.y > #vi.lines then
+		vi.setCursorY(#vi.lines + y - 1)
+	else
+		vi.setCursorY(vi.cursorReal.y + y)
+	end
 end
 
 function vi.setCursorX(x, nocheck)
