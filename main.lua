@@ -76,13 +76,14 @@ ss={up=true,x=0,c=0,isRunning=false}
 
 function love.update(dt)
 	if not neko.focus then -- screensaver
-		ss.isRunning=true
+		--[[ss.isRunning=true
 		ss.c = ss.c > 15 and 0 or (ss.x % 2 == 0 and ss.c + 1 or ss.c)
 		ss.x = ss.up and (ss.x < 110 and ss.x + 1 or
 			(function(x) ss.up = false return x - 1 end)(ss.x)) or
 			(ss.x > 0 and ss.x - 1 or
 			(function(x) ss.up = true return x + 1 end)(ss.x))
 		api.print("Hey!, neko8 is there!", ss.x, nil, ss.c)
+		--]]
 		return
 	end
 

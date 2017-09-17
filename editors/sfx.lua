@@ -74,19 +74,56 @@ function sfx.init()
 
 	-- piano
 
-	for i = 0, 11 do
-		local x, y = i * 14 + 1, 58
+	local pos = {
+		[0] = {
+			1, 13, 58, 7,
+		}, {
+			10, 9, 32, 0
+		}, {
+			15, 13, 58, 7,
+		}, {
+			24, 9, 32, 0
+		}, {
+			29, 13, 58, 7,
+		}, {
+			43, 13, 58, 7,
+		}, {
+			52, 9, 32, 0
+		}, {
+			57, 13, 58, 7,
+		}, {
+			66, 9, 32, 0
+		}, {
+			71, 13, 58, 7,
+		}, {
+			80, 9, 32, 0
+		}, {
+			85, 13, 58, 7,
+		}
+	}
 
+	for i = 0, 12 do
+		local p = pos[i]
+		if p then
+			local x, w, h, c = unpack(p)
 
-		sfx.ui:add(
-			UiComponent(
-				x, 66, 13, h
-			):onRender(function(self)
-				api.brectfill(self.x, self.y, self.w, self.h, 7)
-			end):onClick(function(self)
-				sfx.typeNote(i + sfx.octave * 12)
-			end), "white_button_" .. i
-		)
+			sfx.ui:add(
+				UiComponent(
+					x, 66, w, h
+				):onRender(function(self)
+					local c = c
+
+					if self.state == "clicked" then
+						if c == 0 then c = 5 else c = 6 end
+					end
+
+					api.brectfill(self.x, self.y, self.w, self.h, c)
+				end):onClick(function(self)
+					sfx.typeNote(i + sfx.octave * 12)
+					sfx._keydown("down")
+				end):setZIndex(c == 0 and 2 or 1), "piano" .. i
+			)
+		end
 	end
 end
 
