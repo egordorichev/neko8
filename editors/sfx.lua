@@ -251,8 +251,16 @@ function sfx._keydown(k)
 			sfx.forceDraw = true
 		elseif k == "space" then
 			api.sfx(sfx.sfx, 1)
+		elseif k == "backspace" then
+			sfx.data[sfx.sfx][sfx.cursor.y][3] = 0
+			sfx.forceDraw = true
 		elseif sfx.cursor.x == 0 and (string.match("zxcvbnnmsdghj", k)) then
 			sfx.typeNote(keyToNoteMap[k])
+
+			if audio.sfx[1].sfx == nil then
+				-- todo: play it
+			end
+
 			sfx._keydown("down")
 		elseif (string.match("01234567", k)) then
 			local num = tonumber(k)
