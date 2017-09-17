@@ -21,6 +21,7 @@ function vi.init()
 	vi.escapeTimeout = 1.5
 	vi.currentRegister = nil
 	vi.registers = {['"'] = ""}
+	vi.command = ""
 
 	vi.lines = {}
 	vi.t = 0
@@ -53,7 +54,12 @@ function vi.init()
 		y = 0
 	}
 
-	vi.view = {
+	vi.cursorEx = {
+		x = 0,
+		y = 0
+	}
+
+	vi.view = { -- haha vi-ew get it. **vi** - ew: view
 		x = 0,
 		y = 0
 	}
@@ -95,6 +101,14 @@ end
 
 function vi.commands.imap(key, func)
 	vi.kmaps.insert[key] = vi.modes.insert[func]
+end
+
+function vi.commands.cmap(key, func)
+	vi.kmaps.command[key] = vi.modes.command[func]
+end
+
+function vi.commands.w(filename)
+	commands.save(filename)
 end
 
 function vi.open()
@@ -290,13 +304,21 @@ function vi.redraw()
 		0, 8, config.canvas.width,
 		8, config.editors.vi.bg
 	)
+
+	if vi.mode == "command" then
+		api.rectfill(
+			0, config.canvas.height - 12,
+			config.canvas.width, config.canvas.height - 6,
+			config.editors.ui.bg
+		)
+	end
 end
 
 function vi.drawInfo()
 	if vi.tryClose then
 		api.print(
 			"press escape again to quit",
-			1, config.canvas.height - 6,
+			1, config.canvas.height - 6 * (20 - th + 1),
 			config.editors.ui.fg
 		)
 	else
@@ -312,9 +334,17 @@ function vi.drawInfo()
 				vi.cursor.y + 1, #vi.lines,
 				cx, #vi.line()
 			),
-			1, config.canvas.height - 6,
+			1, config.canvas.height - 6 * (20 - th + 1),
 			config.editors.ui.fg
 		)
+
+		if vi.mode == "command" then
+			api.print(
+				string.format(":%s", vi.command),
+				1, config.canvas.height - 6,
+				config.editors.ui.fg
+			)
+		end
 	end
 end
 
@@ -331,28 +361,21 @@ end
 
 vi.modes.normal = {
 	["h"] = function()
-		local lastX = vi.cursor.x
-		local lastY = vi.cursor.y
-
 		vi.moveCursorX(-vi.getcount())
 	end,
 	["l"] = function()
-		local lastX = vi.cursor.x
-		local lastY = vi.cursor.y
-
 		vi.moveCursorX(vi.getcount())
 	end,
 	["k"] = function()
-		local lastX = vi.cursor.x
-		local lastY = vi.cursor.y
-
 		vi.moveCursorY(-vi.getcount())
 	end,
 	["j"] = function()
-		local lastX = vi.cursor.x
-		local lastY = vi.cursor.y
-
 		vi.moveCursorY(vi.getcount())
+	end,
+	[":"] = function()
+		vi.mode = "command"
+		th = 19
+		vi.forceDraw = true
 	end,
 	["i"] = function()
 		vi.mode = "insert"
@@ -479,7 +502,6 @@ vi.modes.insert = {
 		snum = snum and snum - 1 or 0
 		newLine = string.rep(" ", snum) .. newLine
 
-		vi.cursor.x, vi.cursor.y = snum, cy + 1
 		vi.setCursor(snum, cy + 1)
 
 		cx = vi.cursor.x
@@ -528,7 +550,6 @@ vi.modes.insert = {
 					#vi.line()
 				)
 
-			vi.cursor.x = vi.cursor.x - 1
 			vi.moveCursorX(-1)
 		elseif vi.cursor.y > 0 then
 			local l1 = vi.lines[vi.cursor.y]
@@ -540,8 +561,6 @@ vi.modes.insert = {
 				and l1 and l2 then
 
 				vi.lines[vi.cursor.y] = l1 .. l2
-				vi.cursor.x = #l1
-				vi.cursor.y = vi.cursor.y - 1
 				vi.setCursorX(#l1)
 				vi.moveCursorY(-1)
 			end
@@ -575,6 +594,84 @@ vi.modes.insert = {
 			if l1 and l2 then
 				vi.lines[vi.cursor.y + 1] = l1 .. l2
 			end
+		end
+	end,
+}
+
+vi.modes.command = {
+	["escape"] = function()
+		vi.mode = "normal"
+		vi.command = ""
+		th = 20
+		vi.forceDraw = true
+	end,
+	["left"] = function()
+		vi.moveCursorEx(-1)
+	end,
+	["right"] = function()
+		vi.moveCursorEx(1)
+	end,
+	["up"] = function() -- TODO
+	end,
+	["down"] = function() -- TODO
+	end,
+	["return"] = function() -- TODO
+		local command = string.match(vi.command, "%s*(%a+)")
+		local args = string.match(vi.command, "%s*%a+%s+(.*)%s*")
+
+		print(command)
+		local arguments = {}
+		if args and #args > 0 then
+			for arg in string.gmatch(args, "([^,]*)") do
+				arguments[#arguments + 1] = arg
+			end
+			print(unpack(arguments))
+		end
+
+		if vi.commands[command] then
+			vi.commands[command](unpack(arguments))
+		end
+
+		vi.modes.command["escape"]()
+	end,
+	["home"] = function()
+		vi.setCursorEx(0)
+	end,
+	["end"] = function()
+		vi.setCursorEx(#vi.command)
+	end,
+	["backspace"] = function()
+		if #vi.command > 0
+			and vi.cursorEx.x > 0 then
+			vi.command =
+				vi.command
+				:sub(1, vi.cursor.x - 1)
+				.. vi.command
+				:sub(
+					vi.cursor.x + 1,
+					#vi.command
+				)
+
+			vi.moveCursorEx(-1)
+		else
+			vi.modes.command["escape"]()
+		end
+	end,
+	["tab"] = function() -- TODO: tab completion?
+	end,
+	["delete"] = function()
+		if #vi.command > 0
+			and vi.cursorEx.x < #vi.command then
+			vi.command =
+				vi.command
+				:sub(1, vi.cursor.x)
+				.. vi.command
+				:sub(
+					vi.cursor.x + 2,
+					#vi.command
+				)
+		else
+			vi.modes.command["escape"]()
 		end
 	end,
 }
@@ -664,6 +761,11 @@ for k, v in pairs(vi.modes.insert) do
 	vi.kmaps.insert[k] = v
 end
 
+vi.kmaps.command = {}
+for k, v in pairs(vi.modes.command) do
+	vi.kmaps.command[k] = v
+end
+
 function vi._keyup(k)
 	if k == "lshift" or k == "rshift" then
 		vi.shift = false
@@ -726,7 +828,6 @@ function vi.replaceSelected(text)
 			newLine ..
 			line:sub(max.x + 1, #line)
 
-		vi.cursor.x = #newLine
 		vi.setCursorX(#newline)
 	else
 		local min = vi.select.start.y
@@ -754,8 +855,6 @@ function vi.replaceSelected(text)
 
 		table.insert(vi.lines, min.y + 1, newLine)
 
-		vi.cursor.x = #newLine
-		vi.cursor.y = min.y
 		vi.setCursor(#newline, min.y)
 	end
 
@@ -840,27 +939,57 @@ function vi._text(text)
 			end
 		end
 
-		vi.t = 0
-		vi.redraw()
-		return
-	end
+	elseif vi.mode == "command" then
+		vi.command = 
+			vi.command:sub(1, vi.cursorEx.x)
+			.. text
+			vi.command:sub(vi.cursorEx.x + 1, #vi.command)
+		vi.moveCursorEx(1)
+	elseif vi.mode == "insert" then
 
-	-- todo: rewrite
-	text = text:gsub("\t", " ")
-	local parts = {}
+		-- todo: rewrite
+		text = text:gsub("\t", " ")
+		local parts = {}
 
-	for p in text:gmatch("([^\r\n]*)\r?\n") do
-		table.insert(parts, p)
-	end
+		for p in text:gmatch("([^\r\n]*)\r?\n") do
+			table.insert(parts, p)
+		end
 
-	if #parts > 0 then
-		for i, part in ipairs(parts) do
+		if #parts > 0 then
+			for i, part in ipairs(parts) do
+				if vi.select.active then
+					vi.replaceSelected(part)
+				else
+					vi.lines[vi.cursor.y + 1] =
+					vi.line():sub(
+					1, vi.cursor.x) .. part
+					.. vi.line():sub(
+						vi.cursor.x + 1, #vi.lines[
+							vi.cursor.y + 1
+						]
+					)
+
+					vi.moveCursorX(#text)
+				end
+
+				if #parts > 1 then
+					if i < #parts then
+						table.insert(vi.lines, vi.cursor.y + 1, "")
+					end
+				end
+
+				vi.select.active = false
+			end
+
+			vi.moveCursorY(-1)
+			vi.setCursorX(#vi.line())
+		else
 			if vi.select.active then
-				vi.replaceSelected(part)
+				vi.replaceSelected(text)
 			else
 				vi.lines[vi.cursor.y + 1] =
 				vi.line():sub(
-				1, vi.cursor.x) .. part
+				1, vi.cursor.x) .. text
 				.. vi.line():sub(
 					vi.cursor.x + 1, #vi.lines[
 						vi.cursor.y + 1
@@ -869,35 +998,9 @@ function vi._text(text)
 
 				vi.moveCursorX(#text)
 			end
-
-			if #parts > 1 then
-				if i < #parts then
-					table.insert(vi.lines, vi.cursor.y + 1, "")
-				end
-			end
-
-			vi.select.active = false
 		end
 
-		vi.moveCursorY(-1)
-		vi.setCursorX(#vi.line())
-	else
-		if vi.select.active then
-			vi.replaceSelected(text)
-		else
-			vi.lines[vi.cursor.y + 1] =
-			vi.line():sub(
-			1, vi.cursor.x) .. text
-			.. vi.line():sub(
-				vi.cursor.x + 1, #vi.lines[
-					vi.cursor.y + 1
-				]
-			)
-
-			vi.moveCursorX(#text)
-		end
 	end
-
 	vi.t = 0
 	vi.redraw()
 end
@@ -993,6 +1096,29 @@ function vi.setCursor(x, y, nocheck)
 	if not nocheck then
 		vi.updateCursorY()
 		vi.updateCursorX()
+	end
+end
+
+function vi.updateCursorEx()
+	vi.cursorEx.x =
+		api.mid(
+			0, vi.cursorEx.x,
+			#vi.command
+		)
+end
+
+function vi.moveCursorEx(x)
+	if x < 0 and vi.cursorEx.x > #vi.command then
+		vi.setCursorEx(#vi.command + x - 1)
+	else
+		vi.setCursorEx(vi.cursorEx.x + x)
+	end
+end
+
+function vi.setCursorEx(x, nocheck)
+	vi.cursorEx.x = x
+	if not nocheck then
+		vi.updateCursorEx()
 	end
 end
 
