@@ -209,8 +209,11 @@ function commands.pwd()
 end
 
 function isVisible(f, dir)
-	local d1 = love.filesystem.getRealDirectory(string.format("%s/%s", dir, f)) .. f
-	local d2 = love.filesystem.getSaveDirectory() .. f
+	local d1 = love.filesystem.getRealDirectory(string.format("%s/%s", dir, f)) .. dir:sub(2,-1) .. f
+	local d2 = love.filesystem.getSaveDirectory() .. dir:sub(2,-1) .. f
+
+	print(d1)
+	print(d2)
 
 	return d1 == d2
 end
