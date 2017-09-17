@@ -277,20 +277,19 @@ function vi.redraw()
 		colorPrint(l)
 	end
 
-	local cx = vi.cursor.x
-			- vi.view.x
+	local cx = vi.cursor.x - vi.view.x
+	local cy = vi.cursor.y - vi.view.y
 
-	local cy = vi.cursor.y
-			- vi.view.y
-
-	if cursorBlink() then
-		api.rectfill(
-			cx * 4,
-			cy * 6 + 8,
-			cx * 4 + 4,
-			cy * 6 + 14,
-			config.editors.vi.cursor
-		)
+	if vi.mode ~= "command" then
+		if cursorBlink() then
+			api.rectfill(
+				cx * 4,
+				cy * 6 + 8,
+				cx * 4 + 4,
+				cy * 6 + 14,
+				config.editors.vi.cursor
+			)
+		end
 	end
 
 	api.line(
@@ -344,6 +343,18 @@ function vi.drawInfo()
 				1, config.canvas.height - 6,
 				config.editors.ui.fg
 			)
+
+			if cursorBlink() then
+				local cx = vi.cursorEx.x + 1
+				local cy = th
+				api.rectfill(
+					cx * 4,
+					cy * 6 + 8,
+					cx * 4 + 4,
+					cy * 6 + 14,
+					config.editors.vi.cursor
+				)
+			end
 		end
 	end
 end
@@ -643,14 +654,8 @@ vi.modes.command = {
 	["backspace"] = function()
 		if #vi.command > 0
 			and vi.cursorEx.x > 0 then
-			vi.command =
-				vi.command
-				:sub(1, vi.cursor.x - 1)
-				.. vi.command
-				:sub(
-					vi.cursor.x + 1,
-					#vi.command
-				)
+			vi.command = vi.command:sub(1, vi.cursorEx.x - 1)
+					.. vi.command:sub(vi.cursorEx.x + 1, #vi.command)
 
 			vi.moveCursorEx(-1)
 		else
@@ -662,14 +667,8 @@ vi.modes.command = {
 	["delete"] = function()
 		if #vi.command > 0
 			and vi.cursorEx.x < #vi.command then
-			vi.command =
-				vi.command
-				:sub(1, vi.cursor.x)
-				.. vi.command
-				:sub(
-					vi.cursor.x + 2,
-					#vi.command
-				)
+			vi.command = vi.command:sub(1, vi.cursorEx.x)
+					.. vi.command:sub(vi.cursorEx.x + 2, #vi.command)
 		else
 			vi.modes.command["escape"]()
 		end
@@ -943,7 +942,7 @@ function vi._text(text)
 		vi.command = 
 			vi.command:sub(1, vi.cursorEx.x)
 			.. text
-			vi.command:sub(vi.cursorEx.x + 1, #vi.command)
+			.. vi.command:sub(vi.cursorEx.x + 1, #vi.command)
 		vi.moveCursorEx(1)
 	elseif vi.mode == "insert" then
 
@@ -1108,18 +1107,12 @@ function vi.updateCursorEx()
 end
 
 function vi.moveCursorEx(x)
-	if x < 0 and vi.cursorEx.x > #vi.command then
-		vi.setCursorEx(#vi.command + x - 1)
-	else
-		vi.setCursorEx(vi.cursorEx.x + x)
-	end
+	vi.setCursorEx(vi.cursorEx.x + x)
 end
 
 function vi.setCursorEx(x, nocheck)
 	vi.cursorEx.x = x
-	if not nocheck then
-		vi.updateCursorEx()
-	end
+	vi.updateCursorEx()
 end
 
 local function lines(s)
