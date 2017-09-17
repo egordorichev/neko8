@@ -71,22 +71,22 @@ end
 
 -- XXX Why is this in the global scope? Why isn't this part of some table?
 mbt = 0
-up = true
-x = 0
-c = 0
+
+ss={up=true,x=0,c=0,isRunning=false}
 
 function love.update(dt)
 	if not neko.focus then -- screensaver
-		-- disabled by @egordorichev
-		-- till suitable solution
-		-- for no cls() calls
-		--[[c = c > 15 and 0 or (x % 2 == 0 and c + 1 or c)
-		x = up and (x < 110 and x + 1 or (function(x) up = false return x - 1 end)(x))
-			or (x > 0 and x - 1 or (function(x) up = true return x + 1 end)(x))
-		api.print("Hey!, neko8 is there!", x, nil, c)
-		--]]
+		ss.isRunning=true
+		ss.c = ss.c > 15 and 0 or (ss.x % 2 == 0 and ss.c + 1 or ss.c)
+		ss.x = ss.up and (ss.x < 110 and ss.x + 1 or
+			(function(x) ss.up = false return x - 1 end)(ss.x)) or
+			(ss.x > 0 and ss.x - 1 or
+			(function(x) ss.up = true return x + 1 end)(ss.x))
+		api.print("Hey!, neko8 is there!", ss.x, nil, ss.c)
 		return
 	end
+
+	if ss.isRunning then api.cls() ss.isRunning=false end -- Added cls() on return to focus
 
 	if DEBUG then
 		lurker.update()

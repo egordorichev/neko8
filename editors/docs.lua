@@ -4,25 +4,47 @@ docs.content = {}
 local content = docs.content
 
 content.neko8 = {
-	{name="Memory", desc="65k code space, 80k planned memory"},
-	{name="Sprites", desc="512 sprites"},
-	{name="Map", desc=" 128 * 128 tile map"},
-	{name="Music SFX", desc="4 channel, 64 definable chip blerps"},
-	{name="Display", desc=" 128 * 192, 16 colors"},
+	{name = "Memory", desc = "65k code space, 80k planned memory"},
+	{name = "Sprites", desc = "512 sprites"},
+	{name = "Map", desc = " 128 * 128 tile map"},
+	{name = "Music SFX", desc = "4 channel, 64 definable chip blerps"},
+	{name = "Display", desc = " 128 * 192, 16 colors"},
 }
 
 content.sys = {
-	{name = "pcall(f [, arg1, ··· ])", desc = "Origin function pcall in lua"},
-	{name = "loadstring(str)", desc = "Origin function loadstring in lua"},
-	{name = "setmetatable(t1,t2)", desc = "Origin function setmetatable in lua"},
-	{name = "unpck(t)", desc = "Origin function table.unpack in lua"},
-	{name = "memcpy(dest_addr, source_addr, len)", desc = "Copy memory"},
-	{name = "require(str)", desc= "Origin function require in lua"},
-	{name = "tostring()", desc = "Origin function tostring in lua"},
-	{name = "ver()", desc = "Return main version"},
-	{name = "smes(s)", desc="Show message at the bottom of screen"},
-	{name = "nver()", desc="Return neko cart version"},
-	{name = "mstat()", desc="Return status of mouse"},
+	{name = "pcall(f [, arg1, ··· ])", 
+   desc = "Origin function pcall in lua", 
+   exam = "pcall(print, \"hello\")"},
+	{name = "loadstring(str)", 
+   desc = "Origin function loadstring in lua", 
+   exam = "loadstring(\"print(123456)\")"},
+	{name = "setmetatable(t1,t2)", 
+   desc = "Origin function setmetatable in lua", 
+   exam ="setmetatable(table1, table2)"},
+	{name = "unpck(t)", 
+   desc = "Origin function table.unpack in lua", 
+   exam ="unpack({1,2,3,4})"},
+	{name = "memcpy(dest_addr, source_addr, len)", 
+   desc = "Copy memory", 
+   exam ="--todo"},
+	{name = "require(str)", 
+   desc= "Origin function require in lua", 
+   exam ="require(\"socket\")"},
+	{name = "tostring()", 
+   desc = "Origin function tostring in lua", 
+   exam ="tostring(12345)\n\n returns: \"12345\""},
+	{name = "tonumber()", 
+   desc = "Origin function tonumber in lua", 
+   exam ="tonumber(\"12345\")\n\n returns: 12345"},
+	{name = "smes(s)", 
+   desc="Show message at the bottom of screen", 
+   exam ="smes(\"Hello!\")"},
+	{name = "nver()", 
+   desc="Return neko8 version", 
+   exam ="nver()"},
+	{name = "mstat(b)", 
+   desc="Return status of mouse", 
+   exam ="mstat(1)"},
 }
 
 content.graph = {
@@ -49,15 +71,15 @@ content.graph = {
 	{name = "cursor(x, y)", desc = "Draw cursor at x,y"},
 	{name = "cget()", desc = "Return position x,y of current cursor"},
 	{name = "scroll(pixels)", desc = "Scroll screen with pixels pixels"},
-	{name = "spr(n, x, y, w, h, fx, fy)",
-	 desc = "Draw sprite at x,y with sprites No.:n"},
-	{name = "sspr(sx, sy, sw, sh, dx, dy, dw, dh, fx,fy)",
-	 desc = "Draw texture from spritesheet"},
+	{name = "spr(n, x, y, w, h, fx, fy)", 
+   desc = "Draw sprite at x,y with sprites No.:n"},
+	{name = "sspr(sx,sy,sw,sh,dx,dy,dw,dh,fx,fy)", 
+   desc = "Draw texture from spritesheet"},
 	{name = "sget(x, y)", desc = "Get spritesheet pixel color"},
 	{name = "sset(x, y, c)", desc = "Set spritesheet pixel color"},
 	{name = "pal(c0,c1,p)", desc = "Switch color c0 to c1"},
 	{name = "palt(c, t)", desc = "Set transparency for color to t (boolean)"},
-	{name = "map(cx, cy, sx, sy, cw, ch, bitmask)", desc = "Draw map"},
+	{name = "map(cx,cy,sx,sy,cw,ch, bitmask)", desc = "Draw map"},
 	{name = "mget(x, y)", desc = "get map value at x,y"},
 	{name = "mset(x, y, v)", desc = "set map value to v at x,y"},
 	{name = "camera([x, y])", desc = "Set camera position"},
@@ -101,7 +123,7 @@ content.math = {
 
 
 content.cmd = {
-	{name = "help name", desc = "Show summary of neko commands info"},
+	{name = "help a", desc = "Show summary of neko commands info"},
 	{name = "folder", desc = "Open neko carts folder"},
 	{name = "ls a", desc = "List files at current directory"},
 	{name = "run", desc = "Run a loaded cartridge"},
@@ -136,25 +158,32 @@ content.audio = {
 }
 
 content.keys = {
-	{name="toggle editor",desc="esc"},
-	{name="save cart",desc="ctrl + s "},
-	{name="run cart",desc="ctrl + r"},
-	{name="toggle fullscreen", desc="ctrl + return"},
-	{name="copy text", desc="ctrl + c"},
-	{name="paste text", desc="ctrl + v"},
-	{name="cut text", desc="ctrl + x"},
-	{name="new screenshot", desc="f1"},
-	{name="new gif record", desc="f8"},
-	{name="save gif record", desc="f9"},
+	{name="esc", desc = "toggle editor"},
+	{name="ctrl+s", desc="save cart"},
+	{name="ctrl+r", desc="run cart"},
+	{name="ctrl+ret", desc="toggle fullscreen"},
+	{name="ctrl+c", desc="copy text"},
+	{name="ctrl+v", desc="paste text"},
+	{name="ctrl+x", desc="cut text"},
+	{name="f1", desc="Open code editor"},
+	{name="f2", desc="Open sprite editor"},
+	{name="f3", desc="Open map editor"},
+	{name="f4", desc="Open sfx editor"},
+	{name="f5", desc="Open music editor"},
+	{name="f6", desc="Open build-in help "},
+	{name="f7", desc="New screenshot"},
+	{name="f8", desc="New gif record"},
+	{name="f9", desc="Save gif record"}, 
 }
 
 function docs.init()
-	docs.forceDraw = false
-	docs.icon = 13
-	docs.tab = "neko8"
-	docs.page = 0
-	docs.name = "build-in help"
-	docs.bg = config.editors.docs.bg
+    docs.forceDraw = false
+    docs.icon = 13
+    docs.page = 0
+    docs.cate = "keys"
+		docs.item = 1
+		docs.name = "build-in help"
+    docs.bg = config.editors.docs.bg
 end
 
 function docs.open()
@@ -178,101 +207,81 @@ function docs.redraw()
 
 	neko.cart, neko.core = neko.core, neko.cart
 
-	local k = docs.tab
-	docs.selectPage(content[k])
-	docs.drawTab()
-
+	docs.drawCategory()
+	docs.drawItem()
+	
 	neko.core, neko.cart = neko.cart, neko.core, neko.cart
 	editors.drawUI()
 end
 
-function docs.drawTab()
-	local posX = 2
+-- new UI
+function docs.drawCategory()
+	-- draw category at col 1
+	local posX,posY = 2,8
 	for k,v in pairs(content) do
-		local len = string.len(k)
-	 	-- draw tab
-		api.print(k, posX, 116, k == docs.tab and 12 or 13)
-		posX = posX + (len+1) * 8/2
+		local w,h = string.len(k), 8
+		-- draw left side category
+		api.rect(0,7,40/2+2,128-8,4)
+		api.print(k, posX, posY, k == docs.cate and 12 or 13)
+		posY = posY + 8
 	end
-end
-
-function docs.selectPage(t)
-	-- page buttons
-	local function multiPages(j)
-		local posX, posY = config.canvas.width-(j+1)*8, 8
-				for i = 0, j  or 0  do
-			api.spr(
-				i == docs.page and 7 or 6,
-				posX + i * 8, posY
-			)
-
-			api.print(
-				i, posX+2 + i * 8, posY+2, i == docs.page and 12 or 5
-			)
-		end
-	end
-
-	local l = #t
-
-	-- special info page for neko8
-	if docs.tab == "neko8" then
-		api.print("NEKO-8 Specs:", 2, 10, 9)
-	end
-
-	for k,v in pairs(t) do
-		local nameY,descY = 12*(k-1)+8, 12*(k-1)+14
-		-- 1st name match "words words " in docs.keys,
-		-- 2nd name match "words" in other docs
-		local name, para = string.match(v.name,"[%a*%s]*")
-			or string.match(v.name, "%a*")
-			or "empty", string.match(v.name, "[%(].*[%)]")
-			or ":"
-		local paraX = 1 + string.len(name) * 8/2
-
-		-- special info page for neko8
-		if docs.tab == "neko8" then
-			api.print(name, 4, nameY+10, 7)
-			api.print(para, 4 + paraX, nameY+10, 8)
-			api.print(v.desc, 9, descY+10, 6)
-		else
-			if l <= 9 then
-				if v.name == "btnp(b, p)" then
-					local p1 = string.sub(v.desc, 1,15*3)
-					local p2 = string.sub(v.desc,15*3,30*3)
-					local p3 = string.sub(v.desc,30*3,-1)
-					api.print(name, 1, nameY, 7)
-					api.print(para, 1 + paraX , nameY, 8)
-					api.print(p1, 6, descY, 6)
-					api.print(p2, 2, descY+6, 6)
-					api.print(p3, 2, descY+12, 6)
-				else
-					api.print(name, 1, nameY, 7)
-					api.print(para, 1 + paraX, nameY, 8)
-					api.print(v.desc, 6, descY, 6)
-				end
-			elseif l > 9 then
-				multiPages( api.ceil(l/9) - 1)
-
-				if docs.page == 0 and nameY <= 128-24 then
-					api.print(name, 1, nameY, 7)
-					api.print(para, 1 + paraX, nameY, 8)
-					api.print(v.desc, 6, descY, 6)
-				elseif docs.page == 1 and nameY >= 128-16 and nameY <= 128*2-24-16 then
-					api.print(name, 1, nameY-(128-20), 7)
-					api.print(para, 1 + paraX, nameY-(128-20), 8)
-					api.print(v.desc, 6, descY-(128-20), 6)
-				elseif docs.page == 2 and nameY > 128*2-24-16 and nameY <= 128*3-40-16 then
-					api.print(name, 1, nameY-(128*2-40), 7)
-					api.print(para, 1 + paraX, nameY-(128*2-40), 8)
-					api.print(v.desc, 6, descY-(128*2-40), 6)
-				elseif docs.page == 3 and nameY > 128*3-40-16 then
-					api.print(name, 1, nameY-(128*3-60), 7)
-					api.print(para, 1 + paraX, nameY-(128*3-60), 8)
-					api.print(v.desc, 6, descY-(128*3-60), 6)
-				end
+	-- draw functions in selected category at col 2
+	local i,j = 1,#content[docs.cate]
+	for k,v in pairs(content[docs.cate]) do
+		local nameY,descY = 8*(k-1)+8, 12*(k-1)+14
+		local posX,posY = 40/2+4-2, 7
+		api.brect(posX,posY,30+8+2,128-8-7,4)
+		local name, para = string.match(v.name,"[%w]*[%+]*[%a]*") or string.match(v.name,"%a*") or "empty", string.match(v.name, "[%(].*[%)]") or ":"
+		if j <= 13 then
+			api.print(name, posX+2, 8*i, k == docs.item and 12 or 13)
+			i = i+1
+		elseif j > 13 then
+			local n = api.ceil(j/13)-1
+			local x, y = 40/2+4+1 , config.canvas.height-8*2-1
+			-- draw page number at bottom of col 2
+			for i = 0, n  or 0  do
+				api.spr( i == docs.page and 7 or 6, x + i * 8, y)
+				api.print(i, x+2 + i * 8, y+2, i == docs.page and 12 or 7)
+			end
+			-- draw function name at col 2
+			if docs.page == 0 and nameY <= 128-8-16 then
+				--print("nameY, k:",nameY, k)
+				api.print(name, posX+2, 8*i, k == docs.item and 12 or 13)
+				i = i + 1
+			elseif docs.page == 1 and nameY > 128-8-16 and nameY <= 128*2-8-8-16-16 then
+				api.print(name, posX+2, 8*i, k == docs.item and 12 or 13)
+				i = i + 1
+			elseif docs.page == 2 and nameY > 128*2-8-8-16-16 and nameY <= 128*3-8-16 then
+				api.print(name, posX+2, 8*i, k == docs.item and 12 or 13)
+				i = i + 1
 			end
 		end
 	end
+end
+
+function docs.drawItem()
+	local x,y,w,h,c = 40/2+4+30+8+2-2, 7, 80+38+9+2, 128-8-7, 4
+	api.brect(x, y, w, h, c)
+	local item = content[docs.cate][docs.item] or content[docs.cate][1]
+	local name = string.match(item.name, "[%a]*[%+]*[%a]*") or string.match(item.name, "%w*") or "none"
+	local para = string.match(item.name, "[%(].*[%)]") or "none"
+	api.print("Name:", x+2, y+2, 1)
+	api.print(name, x+3, y+1+8, 12)
+	api.print("Paras:", x+2, y+1+8+8, 1)
+	api.print(para, x+3, y+1+8+8+8, 8)
+	api.print("Desc:", x+2, y+1+8+8+8+8,1)
+
+	-- deal with desc multi lines
+	local len = string.len(item.desc)
+	for i = 1, api.ceil(len/31) do
+		local line = string.sub(item.desc, 1+(i-1)*31, i*31)
+		api.print(line, x+3, y+41+(i-1)*8, 6)
+	end
+
+	local posY = y+41+(api.ceil(len/31)-1)*8 + 8
+	api.print("Example:", x+2, posY, 1)
+	local exam = item.exam or "--todo"
+	api.print(exam, x+3, posY +8, 6)
 end
 
 function docs._update()
@@ -286,35 +295,47 @@ function docs._update()
 	end
 
 	if mb then
-		if not lmb then
-			-- select tab
-			local j = #content
-			if my >= 128-20 and my <= 128-8 then
-				local posX = 2
+		if lmb == false then
+			--select category
+			if mx >= 2 and mx <= 40/2 then
+				local posY = 8
 				for k,v in pairs(content) do
-					local len = string.len(k)
-
-					if mx >= posX and mx <= posX + (len+1)*8/2 then
-						docs.tab = k
+				  if my >= posY and my <= posY + 8 then
+					  docs.cate = k
 						docs.page = 0
+						docs.item = 1
+					  docs.forceDraw = true
+						return
+				  end
+					posY = posY + 8
+			  end
+			end
+			-- select item page of category
+			local h = config.canvas.height
+			if my >= h-16 and my <= h-8 then
+				local j = api.ceil(#content[docs.cate]/13) - 1
+				local posX = 40/2+4+1 
+				for i = 0, j do
+					if mx >= posX + i*8 and mx <= posX + 8 +i*8 then
+						docs.page = i
+						docs.item = 1
 						docs.forceDraw = true
 						return
 					end
-					posX = posX + (len+1)*8/2
 				end
 			end
-			-- select page
-			if my >= 8 and my <= 16 then
-				local j = api.ceil(#content[docs.tab]/9) - 1
-				local posX = config.canvas.width - (j+1)*8 -2
-				for i = 0, j do
-					if mx >= posX + i * 8 and mx <= posX + 8 + i * 8 then
-						docs.page = i
+			-- selct item
+			if mx >= 40/2+4 and mx <= 40/2+4+30+8 then
+				local posY = 8
+				for k,v in pairs(content[docs.cate]) do
+					if my >= posY and my <= posY + 8 then
+						docs.item = k + docs.page*13
 						docs.forceDraw = true
 						return
 					end
+					posY = posY + 8
 				end
-			 end
+			end
 		end
 	end
 end
