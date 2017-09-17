@@ -34,20 +34,6 @@ local neko8 = {
 			selection = 7
 			-- todo: tokens
 		},
-
-		-- this is only temporary, until a dialect of vimscript is ported to
-		-- viNeko
-		-- example of remapping hjkl to neio, for colemak users
-		virc = function(vi)
-			--local insert = vi.modes.normal["i"]
-			--vi.commands.nmap("n", "h")
-			--vi.commands.nmap("e", "j")
-			--vi.commands.nmap("i", "k")
-			--vi.commands.nmap("o", "l")
-
-			---- temporary hack, until nnoremap doesn't exist
-			--vi.modes.normal["k"] = insert
-		end,
 	},
 
 	sprites = {
