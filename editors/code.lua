@@ -237,6 +237,23 @@ function code.drawInfo()
 		1, config.canvas.height - 6,
 		config.editors.ui.fg
 	)
+
+	local total = 0
+
+	for i = 1, #code.lines do
+		total = total + #code.lines[i]
+	end
+
+	local s = string.format(
+		"%d/65536 chars", total
+	)
+
+	api.print(
+		s,
+		config.canvas.width - (#s + 1) * 4 - 2,
+		config.canvas.height - 6,
+		config.editors.ui.fg
+	)
 end
 
 function code.close()
