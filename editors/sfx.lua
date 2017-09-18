@@ -60,7 +60,7 @@ function sfx.init()
 		UiLabelButton(
 			string.format("%02d", sfx.sfx), 17,
 			8, 9, 7, config.editors.sfx.fg
-		):onClick(function(self, b, rb)
+		):onClick(function(self, rb)
 			local v = rb and -1 or 1
 
 			if api.key("lshift") or api.key("rshift") then
@@ -68,7 +68,7 @@ function sfx.init()
 			end
 
 			sfx.sfx = api.mid(0, 63, sfx.sfx + v)
-			b.label = string.format("%02d", sfx.sfx)
+			self.label = string.format("%02d", sfx.sfx)
 			sfx.forceDraw = true
 
 			-- todo: update other ui
