@@ -64,7 +64,8 @@ function love.load(arg)
 end
 
 function love.touchpressed()
-	if editors.current == editors.modes[1] then
+	-- open virtual keyboard when in code/sfx editor on mobile
+	if editors.current == editors.modes[1] or editors.modes[4] then
 		love.keyboard.setTextInput(true)
 	end
 end

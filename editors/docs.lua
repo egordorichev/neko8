@@ -138,6 +138,7 @@ content.cmd = {
 	{name = "edit", desc = "Open editor"},
 	{name = "version", desc = "Show version in terminal"},
 	{name = "pwd", desc = "Show current working directory"},
+	{name = "install_demos", desc = "Install demos in current directory"},
 }
 
 content.table = {
@@ -153,7 +154,7 @@ content.table = {
 
 content.audio = {
 	{name="sfx(n, channel, offset)",
-	 desc="Play sfx, n:-1 stop in ch, n:-2 release loop"},
+	 desc="Play sfx, n:-1 stop in channel, n:-2 release loop"},
 	{name="music(n, fadeLen, channelMask)",desc="Play music; n:-1 stop"},
 }
 
@@ -177,13 +178,13 @@ content.keys = {
 }
 
 function docs.init()
-    docs.forceDraw = false
-    docs.icon = 13
-    docs.page = 0
-    docs.cate = "keys"
-		docs.item = 1
-		docs.name = "build-in help"
-    docs.bg = config.editors.docs.bg
+	docs.forceDraw = false
+	docs.icon = 13
+	docs.page = 0
+	docs.cate = "keys"
+	docs.item = 1
+	docs.name = "build-in help"
+	docs.bg = config.editors.docs.bg
 end
 
 function docs.open()
@@ -231,7 +232,11 @@ function docs.drawCategory()
 		local nameY,descY = 8*(k-1)+8, 12*(k-1)+14
 		local posX,posY = 40/2+4-2, 7
 		api.brect(posX,posY,30+8+2,128-8-7,4)
-		local name, para = string.match(v.name,"[%w]*[%+]*[%a]*") or string.match(v.name,"%a*") or "empty", string.match(v.name, "[%(].*[%)]") or ":"
+		local sm = string.match
+		local name = sm(v.name,"[%w]*[%+%d%s_]*[%a]*") or "none"
+		-- when name is too long:>=9 chars, display chars of 1~9, the rest will display as "."
+		name = (string.len(name) <= 9 and {name} or {string.sub(name,1,9) .. "." })[1]
+		local para = sm(v.name, "[%(].*[%)]") or ":"
 		if j <= 13 then
 			api.print(name, posX+2, 8*i, k == docs.item and 12 or 13)
 			i = i+1
@@ -248,10 +253,12 @@ function docs.drawCategory()
 				--print("nameY, k:",nameY, k)
 				api.print(name, posX+2, 8*i, k == docs.item and 12 or 13)
 				i = i + 1
-			elseif docs.page == 1 and nameY > 128-8-16 and nameY <= 128*2-8-8-16-16 then
+			elseif docs.page == 1 and nameY > 128-8-16 and 
+							nameY <= 128*2-8-8-16-16 then
 				api.print(name, posX+2, 8*i, k == docs.item and 12 or 13)
 				i = i + 1
-			elseif docs.page == 2 and nameY > 128*2-8-8-16-16 and nameY <= 128*3-8-16 then
+			elseif docs.page == 2 and nameY > 128*2-8-8-16-16 and 
+							nameY <= 128*3-8-16 then
 				api.print(name, posX+2, 8*i, k == docs.item and 12 or 13)
 				i = i + 1
 			end
@@ -263,8 +270,9 @@ function docs.drawItem()
 	local x,y,w,h,c = 40/2+4+30+8+2-2, 7, 80+38+9+2, 128-8-7, 4
 	api.brect(x, y, w, h, c)
 	local item = content[docs.cate][docs.item] or content[docs.cate][1]
-	local name = string.match(item.name, "[%a]*[%+]*[%a]*") or string.match(item.name, "%w*") or "none"
-	local para = string.match(item.name, "[%(].*[%)]") or "none"
+	local sm = string.match
+	local name = sm(item.name, "[%a]*[%+%s%d_]*[%a]*") or "none"
+	local para = sm(item.name, "[%(].*[%)]") or "none"
 	api.print("Name:", x+2, y+2, 1)
 	api.print(name, x+3, y+1+8, 12)
 	api.print("Paras:", x+2, y+1+8+8, 1)
