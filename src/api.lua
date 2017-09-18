@@ -331,12 +331,6 @@ function api.fget(n, f)
 	return neko.loadedCart.sprites.flags[n]
 end
 
-
-local function flip(byte, b)
-	b = 2 ^ b
-	return bit.bxor(byte, b)
-end
-
 function api.fset(n, v, f)
 	if v == nil then
 		v, f = f, nil
@@ -668,12 +662,16 @@ function api.flip()
 
 	love.graphics.setScissor()
 	love.graphics.origin()
-	love.graphics.setCanvas(canvas.message)
-	love.graphics.clear()
+	love.graphics.setCanvas(canvas.support)
+
+	love.graphics.setShader(colors.supportShader)
+	love.graphics.draw(
+		canvas.renderable, 0, 0
+	)
 
 	if neko.message then
 		api.rectfill(
-			0, 0,
+			0, config.canvas.height - 7,
 			config.canvas.width,
 			7,
 			config.messages.bg
@@ -681,33 +679,8 @@ function api.flip()
 
 		api.print(
 			neko.message.text,
-			1, 1,
+			1, config.canvas.height - 6,
 			config.messages.fg
-		)
-	end
-
-	colors.displayShader:send(
-		"palette",
-		shaderUnpack(colors.display)
-	)
-
-	love.graphics.setShader(colors.displayShader)
-
-	love.graphics.setCanvas()
-	love.graphics.clear()
-
-	love.graphics.draw(
-		canvas.renderable,
-		canvas.x, canvas.y, 0,
-		canvas.scaleX, canvas.scaleY
-	)
-
-	if neko.message then
-		love.graphics.draw(
-			canvas.message, canvas.x,
-			canvas.y + (config.canvas.height - 7)
-			* canvas.scaleY,
-			0, canvas.scaleX, canvas.scaleY
 		)
 	end
 
@@ -721,28 +694,42 @@ function api.flip()
 
 		for x = -1, 1 do
 			for y = x == 0 and -1 or 0, x == 0 and 1 or 0 do
-				api.onCanvasSpr(
+				api.spr(
 					neko.cursor.current,
-					(mx + x) * canvas.scaleX
-					+ canvas.x,
-					(my + y) * canvas.scaleY
-					+ canvas.y
+					mx + x + canvas.x,
+					my + y + canvas.y
 				)
 			end
 		end
 
 		api.pal()
 
-		api.onCanvasSpr(
+		api.spr(
 			neko.cursor.current,
-			mx * canvas.scaleX
-			+ canvas.x,
-			my * canvas.scaleY
-			+ canvas.y
+			mx + canvas.x,
+			my + canvas.y
 		)
 
 		neko.cart, neko.core = neko.core, neko.cart
 	end
+
+	love.graphics.setShader(
+		colors.displayShader
+	)
+
+	colors.displayShader:send(
+		"palette",
+		shaderUnpack(colors.display)
+	)
+
+	love.graphics.setCanvas()
+	love.graphics.clear()
+
+	love.graphics.draw(
+		canvas.support,
+		canvas.x, canvas.y, 0,
+		canvas.scaleX, canvas.scaleY
+	)
 
 	love.graphics.present()
 	love.graphics.setShader(colors.drawShader)
@@ -821,47 +808,6 @@ function api.spr(n, x, y, w, h, fx, fy)
 	love.graphics.setShader(colors.drawShader)
 end
 
-function api.onCanvasSpr(n, x, y, w, h, fx, fy)
-	if neko.cart == nil then
-		neko.cart = neko.loadedCart
-			and neko.loadedCart or neko.core
-	end
-
-	n = api.flr(n)
-	love.graphics.setShader(colors.onCanvasShader)
-
-	w = w or 1
-	h = h or 1
-
-	local q
-	if w == 1 and h == 1 then
-		q = neko.cart.sprites.quads[n]
-	else
-		local id = string.format('%d-%d-%d', n, w, h)
-		if neko.cart.sprites.quads[id] then
-			q = neko.cart.sprites.quads[id]
-		else
-			q = love.graphics.newQuad(
-				api.flr(n % 16) * 8,
-				api.flr(n / 32) * 8, 8 * w,
-				8 * h, 128, 256
-			)
-
-			neko.cart.sprites.quads[id] = q
-		end
-	end
-
-	love.graphics.draw(
-		neko.cart.sprites.sheet, q,
-		api.flr(x) + (w * 8 * (fx and 1 or 0)),
-		api.flr(y) + (h * 8 * (fy and 1 or 0)),
-		0, api.flr((fx and -1 or 1) * canvas.scaleX),
-		api.flr((fy and -1 or 1) * canvas.scaleY)
-	)
-
-	love.graphics.setShader(colors.displayShader)
-end
-
 function api.sspr(
 	sx, sy, sw, sh, dx, dy, dw, dh, fx,fy
 )
@@ -934,16 +880,6 @@ function api.pal(c0,c1,p)
 			"palette", shaderUnpack(colors.draw)
 		)
 
-			colors.onCanvasShader:send(
-				"disp",
-				shaderUnpack(colors.display)
-			)
-
-			colors.onCanvasShader:send(
-				"palette",
-				shaderUnpack(colors.draw)
-			)
-
 		colors.textShader:send(
 			"palette", shaderUnpack(colors.draw)
 		)
@@ -982,16 +918,6 @@ function api.pal(c0,c1,p)
 		colors.spriteShader:send(
 			"palette", shaderUnpack(colors.draw)
 		)
-
-			colors.onCanvasShader:send(
-				"disp",
-				shaderUnpack(colors.display)
-			)
-
-			colors.onCanvasShader:send(
-				"palette",
-				shaderUnpack(colors.draw)
-			)
 
 		colors.textShader:send(
 			"palette", shaderUnpack(colors.draw)

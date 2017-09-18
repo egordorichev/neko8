@@ -539,13 +539,13 @@ function initCanvas()
 		"nearest", "nearest"
 	)
 
-	canvas.message =
+	canvas.support =
 		love.graphics.newCanvas(
 			config.canvas.width,
-			7
+			config.canvas.height
 		)
 
-	canvas.message:setFilter(
+	canvas.support:setFilter(
 		"nearest", "nearest"
 	)
 
@@ -702,6 +702,13 @@ vec4 effect(vec4 color, Image texture,
 		"palette",
 		shaderUnpack(colors.display)
 	)
+
+	colors.supportShader =
+		love.graphics.newShader([[
+vec4 effect(vec4 color, Image texture,
+			vec2 texture_coords, vec2 screen_coords) {
+	return Texel(texture, texture_coords);
+}]])
 
 	colors.onCanvasShader =
 		love.graphics.newShader([[
