@@ -338,7 +338,28 @@ local function flip(byte, b)
 end
 
 function api.fset(n, v, f)
-	-- fixme: implement
+	if v == nil then
+		v, f = f, nil
+	end
+
+	if f ~= nil then
+		if type(f) == "boolean" then
+			f = f == true and 1 or 0
+		end
+
+		if f == 1 then
+			neko.loadedCart.sprites.flags[n] = bit.bor(
+				neko.loadedCart.sprites.flags[n], (bit.lshift(1, v))
+			)
+		else
+			neko.loadedCart.sprites.flags[n] = bit.band(
+			neko.loadedCart.sprites.flags[n],
+				(bit.lshift(1, v)) == 1 and 0 or 1
+			)
+		end
+	else
+		neko.loadedCart.sprites.flags[n] = v
+	end
 end
 
 function api.mget(x, y)
