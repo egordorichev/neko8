@@ -11,12 +11,12 @@ function neko.init()
 	neko.currentDirectory = "/"
 
 	neko.cursor = {
-		pointer = 5,
-		hand = 21,
-		holding_hand = 22 -- todo: draw it
+		default = 5,
+		pointer = 21,
+		hand = 22 -- todo: draw it
 	}
 
-	neko.cursor.current = neko.cursor.pointer
+	neko.cursor.current = neko.cursor.default
 
 	audio.init()
 
@@ -53,6 +53,8 @@ function neko.showMessage(s)
 end
 
 function neko.update(dt)
+	neko.cursor.current = neko.cursor.default
+
 	for p = 0, 1 do
 		for i = 0, #api.keyMap[p] do
 			for _, key in pairs(

@@ -36,6 +36,8 @@ function UiComponent:update(handled)
 		elseif self.state ~= "hovered" then
 			self.state = "hovered"
 		end
+
+		neko.cursor.current = neko.cursor.pointer
 	elseif self.state ~= "normal" then
 		self.state = "normal"
 	end

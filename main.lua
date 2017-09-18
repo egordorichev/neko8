@@ -61,9 +61,9 @@ function love.load(arg)
 		neko.joystick = joysticks[0]
 	end
 
-	log.info(string.format("neko 8 ", config.version.string))
+	log.info("neko 8 " .. config.version.string)
 
-	love.window.setTitle(string.format("neko 8 ", config.version.string))
+	love.window.setTitle("neko 8 " .. config.version.string)
 	love.window.setDisplaySleepEnabled(false)
 	neko.init()
 end
