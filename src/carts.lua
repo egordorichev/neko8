@@ -715,6 +715,11 @@ function carts.save(name)
 
 	carts.export()
 
+	if #neko.loadedCart.code > 65536 then
+		-- :P
+		return false, "char count is bigger then 65536"
+	end
+
 	local data = {}
 
 	table.insert(data, "neko8 cart\n")
@@ -738,7 +743,6 @@ function carts.save(name)
 		table.concat(data)
 	)
 
-	-- fixme: wrong names
 	neko.loadedCart.pureName = name
 
 	return true

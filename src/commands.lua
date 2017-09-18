@@ -344,9 +344,11 @@ function commands.save(a)
 		return
 	end
 
-	if not carts.save(name) then
+	local ok, m = carts.save(name)
+
+	if not ok then
 		api.smes(
-			"** failed to save cart **"
+			m or "** failed to save cart **"
 		)
 	else
 		api.smes(string.format("saved %s", neko.loadedCart.pureName))

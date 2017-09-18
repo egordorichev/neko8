@@ -24,7 +24,7 @@ function UiButton:draw()
 	elseif self.state == "clicked" then
 		api.pal(self.c, 5)
 	elseif self.state == "hovered" then
-		api.pal(self.c, 5)
+		api.pal(self.c, 13)
 	end
 
 	api.spr(self.spr, self.x, self.y)
