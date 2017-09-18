@@ -3,10 +3,16 @@ local UiManager = Object:extend()
 
 function UiManager:new()
 	self.components = {}
+	self.indexed = {}
 end
 
 function UiManager:add(c, name)
 	self.components[name] = c
+	table.insert(self.indexed, c)
+
+	table.sort(self.indexed, function(a, b)
+		return a.z < b.z
+	end)
 end
 
 function UiManager:del(name)
@@ -14,8 +20,17 @@ function UiManager:del(name)
 end
 
 function UiManager:draw()
-	for _, c in pairs(self.components)  do
-		c:updateAndDraw()
+	local handled = false
+
+	for i = #self.indexed, 1, -1 do
+		local h = self.indexed[i]:update(handled)
+		if h then
+			handled = true
+		end
+	end
+
+	for i = 1, #self.indexed do
+		self.indexed[i]:draw(handled)
 	end
 end
 

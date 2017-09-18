@@ -209,8 +209,8 @@ function commands.pwd()
 end
 
 function isVisible(f, dir)
-	local d1 = love.filesystem.getRealDirectory(string.format("%s/%s", dir, f)) .. f
-	local d2 = love.filesystem.getSaveDirectory() .. f
+	local d1 = love.filesystem.getRealDirectory(string.format("%s/%s", dir, f)) .. dir:sub(2,-1) .. f
+	local d2 = love.filesystem.getSaveDirectory() .. dir:sub(2,-1) .. f
 
 	return d1 == d2
 end
@@ -332,7 +332,7 @@ function commands.save(a)
 
 	if a then
 		if #a == 1 then
-			name = resolveFile(a[1], neko.currentDirectory)
+			name = a[1]
 		elseif #a > 1 then
 			api.print("save (name)")
 			return

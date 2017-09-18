@@ -18,7 +18,7 @@ function carts.load(name)
 	local found = false
 
 	for i = 1, #extensions do
-		local n = resolveFile(neko.currentDirectory, pureName .. extensions[i])
+		local n = resolveFile(pureName .. extensions[i], neko.currentDirectory)
 
 		if love.filesystem.isFile(n)
 			and isVisible(n, "/") then
@@ -710,7 +710,7 @@ function carts.save(name)
 		return false
 	end
 
-	name = name or neko.loadedCart.name
+	name = resolveFile(name or neko.loadedCart.name, neko.currentDirectory)
 	log.info(string.format("saving %s", name))
 
 	carts.export()

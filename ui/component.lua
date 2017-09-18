@@ -12,23 +12,26 @@ function UiComponent:set(x, y, w, h)
 	self.y = y or 0
 	self.w = w or 0
 	self.h = h or 0
+	self.z = 0
 end
 
-function UiComponent:updateAndDraw()
-	self:update()
+function UiComponent:updateAndDraw(handled)
+	local h = self:update(handled)
 	self:draw()
+	return h
 end
 
-function UiComponent:update()
+function UiComponent:update(handled)
 	local mx, my, mb, mr = api.mstat(1, 2)
 
 	if mx > self.x and mx < self.x + self.w and
 		my > self.y and my < self.y + self.h then
 
-		if mb == true then
+		if not handled and mb == true then
 			if not mr and self.state ~= "clicked" then
 				self.state = "clicked"
-				self:click(self, love.mouse.isDown(2), mx, my)
+				self:click(love.mouse.isDown(2), mx, my)
+				return true
 			end
 		elseif self.state ~= "hovered" then
 			self.state = "hovered"
@@ -36,6 +39,8 @@ function UiComponent:update()
 	elseif self.state ~= "normal" then
 		self.state = "normal"
 	end
+
+	return false
 end
 
 function UiComponent:draw()
@@ -44,6 +49,16 @@ end
 
 function UiComponent:onClick(f)
 	self.click = f
+	return self
+end
+
+function UiComponent:onRender(f)
+	self.draw = f
+	return self
+end
+
+function UiComponent:setZIndex(z)
+	self.z = z
 	return self
 end
 

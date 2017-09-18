@@ -1,5 +1,7 @@
 local UiManager = require "ui.manager"
 local UiLabelButton = require "ui.label_button"
+local UiButton = require "ui.button"
+local UiComponent = require "ui.component"
 
 local sfx = {}
 local keyToNoteMap = {
@@ -35,17 +37,127 @@ function sfx.init()
 	}
 
 	sfx.ui = UiManager()
-	sfx.ui:add(
+
+	sfx.ui:add(UiButton(
+		26, 70, 0, 8, 8, 6,
+		config.editors.sfx.bg
+	):onClick(function()
+		sfx.setMode(1)
+	end), "mode1")
+
+	sfx.ui:add(UiButton(
+		25, 77, 0, 8, 8, 6,
+		config.editors.sfx.bg
+	):onClick(function()
+		sfx.setMode(2)
+	end), "mode2")
+
+	sfx.setMode(1)
+
+	sfx.ui1 = UiManager()
+
+	sfx.ui1:add(
 		UiLabelButton(
 			string.format("%02d", sfx.sfx), 17,
 			8, 9, 7, config.editors.sfx.fg
 		):onClick(function(self, b, rb)
 			local v = rb and -1 or 1
+
+			if api.key("lshift") or api.key("rshift") then
+				v = v * 4
+			end
+
 			sfx.sfx = api.mid(0, 63, sfx.sfx + v)
 			b.label = string.format("%02d", sfx.sfx)
 			sfx.forceDraw = true
+
+			-- todo: update other ui
 		end), "sfx"
 	)
+
+	sfx.ui1:add(
+		UiLabelButton(
+			"16", 42,
+			8, 9, 7, config.editors.sfx.fg
+		):onClick(function(b, rb)
+			local v = rb and -1 or 1
+
+			if api.key("lshift") or api.key("rshift") then
+				v = v * 4
+			end
+
+			neko.loadedCart.sfx[sfx.sfx].speed = api.mid(1, 63, neko.loadedCart.sfx[sfx.sfx].speed + v)
+			b.label = string.format("%02d", neko.loadedCart.sfx[sfx.sfx].speed)
+			sfx.forceDraw = true
+		end), "speed"
+	)
+
+	-- piano
+
+	local pos = {
+		[0] = {
+			1, 13, 58, 7,
+		}, {
+			10, 9, 32, 0
+		}, {
+			15, 13, 58, 7,
+		}, {
+			24, 9, 32, 0
+		}, {
+			29, 13, 58, 7,
+		}, {
+			43, 13, 58, 7,
+		}, {
+			52, 9, 32, 0
+		}, {
+			57, 13, 58, 7,
+		}, {
+			66, 9, 32, 0
+		}, {
+			71, 13, 58, 7,
+		}, {
+			80, 9, 32, 0
+		}, {
+			85, 13, 58, 7,
+		}
+	}
+
+	for i = 0, 12 do
+		local p = pos[i]
+		if p then
+			local x, w, h, c = unpack(p)
+
+			sfx.ui1:add(
+				UiComponent(
+					x, 66, w, h
+				):onRender(function(self)
+					local c = c
+
+					if self.state == "clicked" then
+						if c == 0 then c = 5 else c = 6 end
+					end
+
+					api.brectfill(self.x, self.y, self.w, self.h, c)
+					if c == 0 or c == 5 then
+						api.brect(self.x - 1, self.y - 1, self.w + 1, self.h + 1, config.editors.sfx.bg)
+					end
+				end):onClick(function(self)
+					sfx.typeNote(i + sfx.octave * 12)
+					sfx._keydown("down")
+				end):setZIndex(c == 0 and 2 or 1), "piano" .. i
+			)
+		end
+	end
+end
+
+function sfx.setMode(mode)
+	sfx.ui.components["mode1"].active = false
+	sfx.ui.components["mode2"].active = false
+
+	sfx.mode = mode
+	sfx.forceDraw = true
+
+	sfx.ui.components["mode" .. mode].active = true
 end
 
 function sfx.open()
@@ -68,66 +180,81 @@ function sfx._draw()
 	end
 
 	lof = of
-	sfx.ui:draw()
+
+	if sfx.mode == 1 then
+		sfx.ui1:draw()
+	else
+
+	end
+
 	editors.drawUI()
+
+	neko.core, neko.cart = neko.cart, neko.core
+	sfx.ui:draw()
+	neko.core, neko.cart = neko.cart, neko.core
 end
 
 function sfx.redraw()
 	api.cls(sfx.bg)
 
-	for i = 0, 3 do
-		api.brectfill(1 + i * 26, 16, 25, 49, 0)
-	end
+	if sfx.mode == 1 then
+		for i = 0, 3 do
+			api.brectfill(1 + i * 26, 16, 25, 49, 0)
+		end
 
-	local c = config.editors.sfx.fg
-	api.print("SFX", 1, 9, c)
+		local c = config.editors.sfx.fg
+		api.print("SFX", 1, 9, c)
+		api.print("SPD", 27, 9, c)
 
-	for i = 0, 31 do
-		local s = sfx.data[sfx.sfx][i]
-		local x = 2 + api.flr(i / 8) * 26
-		local y = 17 + i % 8 * 6
-		local isEmpty = s[3] == 0
+		for i = 0, 31 do
+			local s = sfx.data[sfx.sfx][i]
+			local x = 2 + api.flr(i / 8) * 26
+			local y = 17 + i % 8 * 6
+			local isEmpty = s[3] == 0
 
-		if audio.sfx[1].sfx ~= nil then
-			if api.flr(audio.sfx[1].offset) == i then
+			if audio.sfx[1].sfx ~= nil then
+				if api.flr(audio.sfx[1].offset) == i then
+					api.brectfill(
+						x - 1, y - 1, 25, 7, 9
+					)
+				end
+			end
+
+			if sfx.cursor.y == i then
 				api.brectfill(
-					x - 1, y - 1, 25, 7, 9
+					x - 1 + sfx.cursor.x * 4 + (sfx.cursor.x > 0 and 4 or 0),
+					y - 1, sfx.cursor.x > 0 and 5 or 9, 7, 8
+				)
+			end
+
+			if isEmpty then
+				api.print(
+					"......", x, y, 2
+				)
+			else
+				api.print(
+					noteToString(s[1]), x, y, 7
+				)
+
+				api.print(
+					noteToOctave(s[1]), x + 8, y, 6
+				)
+
+				api.print(
+					s[2], x + 12, y, 11
+				)
+
+				api.print(
+					s[3], x + 16, y, 12
+				)
+
+				api.print(
+					s[4], x + 20, y, 13
 				)
 			end
 		end
+	else
 
-		if sfx.cursor.y == i then
-			api.brectfill(
-				x - 1 + sfx.cursor.x * 4 + (sfx.cursor.x > 0 and 4 or 0),
-				y - 1, sfx.cursor.x > 0 and 5 or 9, 7, 8
-			)
-		end
-
-		if isEmpty then
-			api.print(
-				"......", x, y, 2
-			)
-		else
-			api.print(
-				noteToString(s[1]), x, y, 7
-			)
-
-			api.print(
-				noteToOctave(s[1]), x + 8, y, 6
-			)
-
-			api.print(
-				s[2], x + 12, y, 11
-			)
-
-			api.print(
-				s[3], x + 16, y, 12
-			)
-
-			api.print(
-				s[4], x + 20, y, 13
-			)
-		end
 	end
 end
 
@@ -171,8 +298,16 @@ function sfx._keydown(k)
 			sfx.forceDraw = true
 		elseif k == "space" then
 			api.sfx(sfx.sfx, 1)
+		elseif k == "backspace" then
+			sfx.data[sfx.sfx][sfx.cursor.y][3] = 0
+			sfx.forceDraw = true
 		elseif sfx.cursor.x == 0 and (string.match("zxcvbnnmsdghj", k)) then
 			sfx.typeNote(keyToNoteMap[k])
+
+			if audio.sfx[1].sfx == nil then
+				-- todo: play it
+			end
+
 			sfx._keydown("down")
 		elseif (string.match("01234567", k)) then
 			local num = tonumber(k)
@@ -195,7 +330,11 @@ function sfx._keydown(k)
 end
 
 function sfx.typeNote(n)
-	sfx.data[sfx.sfx][sfx.cursor.y][1] = stringToNote(n, sfx.octave)
+	if type(n) == "string" then
+		n = stringToNote(n, sfx.octave)
+	end
+
+	sfx.data[sfx.sfx][sfx.cursor.y][1] = n
 
 	if sfx.data[sfx.sfx][sfx.cursor.y][3] == 0 then
 		sfx.data[sfx.sfx][sfx.cursor.y][2] = sfx.instrument

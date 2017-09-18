@@ -28,7 +28,7 @@ function editors.init()
 		editors.ui:add(UiButton(
 			e.icon, 21 + i * 7 - 7, 0, 8, 8, 6,
 			e.bg
-		):onClick(function(b)
+		):onClick(function()
 			editors.openEditor(i)
 		end), e.name)
 	end
