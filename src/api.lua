@@ -669,8 +669,10 @@ function api.flip()
 		canvas.renderable, 0, 0
 	)
 
+	love.graphics.setShader(colors.drawShader)
+
 	if neko.message then
-		api.rectfill(
+		api.brectfill(
 			0, config.canvas.height - 7,
 			config.canvas.width,
 			7,
