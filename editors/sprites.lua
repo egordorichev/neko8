@@ -1,3 +1,7 @@
+local UiManager = require "ui.manager"
+local UiButton = require "ui.button"
+local UiComponent = require "ui.component"
+
 local sprites = {}
 
 function sprites.init()
@@ -101,7 +105,54 @@ function sprites.init()
 	sprites.tools[3] = select
 	sprites.tools[4] = move
 	sprites.tools[5] = fill
-	sprites.tool = pencil
+
+	sprites.ui = UiManager()
+
+	for i, t in ipairs(sprites.tools) do
+		sprites.ui:add(
+			UiButton(
+				t.icon, 1, 63 + i * 10, 7, 7
+			):onClick(function()
+				sprites.selectTool(i)
+			end),
+			"tool" .. i
+		)
+	end
+
+	-- sprite flags
+	for i = 0, 7 do
+		sprites.ui:add(
+			UiComponent(
+				10, 73 + i * 6, 6, 6
+			):onClick(function()
+				api.fset(
+					sprites.sprite, i,
+					not api.fget(sprites.sprite, i)
+				)
+			end):onRender(function(self)
+				local f = sprites.data.flags[
+						sprites.sprite
+					]
+
+				local c =	bit.band(bit.rshift(f, i), 1) == 1
+					and i + 8 or (self.state == "hovered" and 5 or 1)
+
+				api.circfill(self.x + 3, self.y + 3, 2, c)
+				api.circ(self.x + 3, self.y + 3, 2, 0)
+			end),
+			"flag" .. i
+		)
+	end
+
+	sprites.selectTool(1)
+end
+
+function sprites.selectTool(i)
+	sprites.tool = sprites.tools[i]
+
+	for it, t in ipairs(sprites.tools) do
+		sprites.ui.components["tool" .. it].active = (it == i)
+	end
 end
 
 function sprites.open()
@@ -120,10 +171,7 @@ function sprites._draw()
 
 	editors.drawUI()
 
-	if sprites.redrawInfo then
-		sprites.drawInfo()
-		sprites.redrawInfo = false
-	end
+	sprites.drawInfo()
 end
 
 function sprites.redraw()
@@ -153,21 +201,6 @@ function sprites.redraw()
 
 	neko.cart, neko.core = neko.core, neko.cart
 
-	-- tools
-
-	for i, t in ipairs(sprites.tools) do
-		if t == sprites.tool then
-			api.pal(7, 15)
-		else
-			api.pal(7, 6)
-		end
-
-		api.spr(t.icon, 1, 63 + i * 10)
-		i = i + 1
-	end
-
-	api.pal(7, 7)
-
 	-- page buttons
 
 	for i = 0, 3 do
@@ -181,6 +214,8 @@ function sprites.redraw()
 		)
 	end
 
+	sprites.ui:draw()
+
 	neko.cart, neko.core = neko.core, neko.cart
 
 	-- sprites
@@ -193,19 +228,6 @@ function sprites.redraw()
 		0, sprites.page * 64,
 		128, 64, 64, 8, 128, 64
 	)
-
-	-- sprite flags
-	for i = 0, 7 do
-		local f = sprites.data.flags[
-				sprites.sprite
-			]
-
-		local c =	bit.band(bit.rshift(f, i), 1) == 1
-			and i + 8 or 1
-
-		api.circfill(13, 76 + i * 6, 2, c)
-		api.circ(13, 76 + i * 6, 2, 0)
-	end
 
 	-- palette
 	for x = 0, 3 do
@@ -255,9 +277,13 @@ function sprites.redraw()
 	neko.cart = nil -- see spr and sspr
 end
 
-local mx, my, mb, lmb, lmx, lmy
+local mx, my, mb, lmb
 
 function sprites.drawInfo()
+	neko.cart, neko.core = neko.core, neko.cart
+	sprites.ui:draw()
+	neko.cart, neko.core = neko.core, neko.cart
+
 	local s = sprites.sprite
 	local mx = api.flr(mx / (8 * sprites.scale))
 	local my = api.flr((my - 8) / (8 * sprites.scale))
@@ -277,13 +303,7 @@ end
 
 function sprites._update()
 	lmb = mb
-	lmx = mx
-	lmy = my
 	mx, my, mb = api.mstat(1)
-
-	if mx ~= lmx or my ~= lmy then
-		sprites.redrawInfo = true
-	end
 
 	if mb then
 		if not lmb and mx > 64 and mx < 192
@@ -316,35 +336,10 @@ function sprites._update()
 			sprites.color = api.mid(0, 15, mx + my * 4)
 			sprites.forceDraw = true
 		elseif not lmb then
-			if mx >= 10 and mx <= 18 then
-				for i = 0, 7 do
-					if my >= 68 + i * 6 and my <= 76 + i * 6 then
-						api.fset(
-							sprites.sprite, i,
-							not api.fget(sprites.sprite, i)
-						)
-
-						sprites.forceDraw = true
-						return
-					end
-				end
-			end
-
 			if my >= 72 and my <= 80 then
 				for i = 0, 3 do
 					if mx >= 85 + i * 8 and mx <= 85 + 8 + i * 8 then
 						sprites.page = i
-						sprites.forceDraw = true
-						return
-					end
-				end
-			end
-
-			if mx >= 1 and mx <= 9 then
-				for i, t in ipairs(sprites.tools) do
-					if my >= 63 + i * 10
-						and my <= 71 + i * 10 then
-						sprites.tool = t
 						sprites.forceDraw = true
 						return
 					end

@@ -55,12 +55,29 @@ function love.load(arg)
 		end
 	end
 
+	local joysticks = love.joystick.getJoysticks()
+
+	if joysticks[0] then
+		neko.joystick = joysticks[0]
+	end
+
 	log.info(string.format("neko 8 ", config.version.string))
 
 	love.window.setTitle(string.format("neko 8 ", config.version.string))
-
 	love.window.setDisplaySleepEnabled(false)
 	neko.init()
+end
+
+function love.joystickadded(joystick)
+	if not neko.joystick then
+		neko.joystick = joystick
+	end
+end
+
+function love.joystickremoved(joystick)
+	if neko.joystick == joystick then
+		neko.joystick = nil
+	end
 end
 
 function love.touchpressed()
@@ -137,6 +154,30 @@ end
 
 function love.resize(w, h)
 	resizeCanvas(w,h)
+end
+
+function love.joystickpressed(joystick, button)
+	if button == 4 then
+		love.keypressed("up", -1, false)
+	elseif button == 2 then
+		love.keypressed("down", -1, false)
+	elseif button == 3 then
+		love.keypressed("right", -1, false)
+	elseif button == 1 then
+		love.keypressed("left", -1, false)
+	end
+end
+
+function love.joystickreleased(joystick, button)
+	if button == 4 then
+		love.keyreleased("up")
+	elseif button == 2 then
+		love.keyreleased("down")
+	elseif button == 3 then
+		love.keyreleased("right")
+	elseif button == 1 then
+		love.keyreleased("left")
+	end
 end
 
 function love.keypressed(
