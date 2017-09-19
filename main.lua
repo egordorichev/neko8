@@ -733,4 +733,4 @@ vec4 effect(vec4 color, Image texture,
 	)
 end
 
--- vim: noet
+

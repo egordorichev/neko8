@@ -55,7 +55,7 @@ local version = {
 	major = 0,
 	minor = 0.4,
 	name = "web",
-	release = "dev"
+	release = "release"
 }
 
 version.string = string.format(
@@ -135,4 +135,4 @@ function love.conf(t)
 	return t
 end
 
--- vim: noet
+

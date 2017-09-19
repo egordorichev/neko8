@@ -452,4 +452,4 @@ end
 
 return sprites
 
--- vim: noet
+

@@ -117,4 +117,4 @@ end
 
 return editors
 
--- vim: noet
+

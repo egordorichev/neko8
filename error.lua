@@ -100,4 +100,4 @@ function love.errhand(msg)
 	end
 end
 
--- vim: noet
+

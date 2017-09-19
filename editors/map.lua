@@ -80,7 +80,7 @@ function map.redraw()
 		end
 
 		api.brectfill(map.window.x + 65 - 13, map.window.y + 1, 13, 7, 6)
-		api.print(string.format("%03d", map.sprite), map.window.x + 65 - 12, map.window.y + 2, 13)
+		api.print(string.format("%03d", map.sprite), map.window.x + 65 - 12	, map.window.y + 2, 13)
 
 		neko.cart, neko.core = neko.core, neko.cart
 
@@ -201,5 +201,3 @@ function map._keydown(k)
 end
 
 return map
-
--- vim: noet

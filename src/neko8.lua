@@ -85,4 +85,4 @@ end
 
 return neko
 
--- vim: noet
+

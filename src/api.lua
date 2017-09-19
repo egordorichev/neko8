@@ -1177,4 +1177,4 @@ end
 
 return api
 
--- vim: noet
+
