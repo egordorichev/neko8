@@ -1,5 +1,6 @@
 local UiManager = require "ui.manager"
 local UiLabelButton = require "ui.label_button"
+local UiCounter = require "ui.counter"
 local UiButton = require "ui.button"
 local UiComponent = require "ui.component"
 
@@ -57,39 +58,60 @@ function sfx.init()
 	sfx.ui1 = UiManager()
 
 	sfx.ui1:add(
-		UiLabelButton(
-			string.format("%02d", sfx.sfx), 17,
-			8, 9, 7, config.editors.sfx.fg
-		):onClick(function(self, rb)
-			local v = rb and -1 or 1
+		UiCounter(
+			sfx.sfx, 27, 8, 9, 7,
+			function(self)
+				local v = -1
 
-			if api.key("lshift") or api.key("rshift") then
-				v = v * 4
+				if api.key("lshift") or api.key("rshift") then
+					v = v * 4
+				end
+
+				sfx.sfx = api.mid(0, 63, sfx.sfx + v)
+				self.v = sfx.sfx
+				sfx.forceDraw = true
+			end,
+			function(self)
+				local v = 1
+
+				if api.key("lshift") or api.key("rshift") then
+					v = v * 4
+				end
+
+				sfx.sfx = api.mid(0, 63, sfx.sfx + v)
+				self.v = sfx.sfx
+				sfx.forceDraw = true
 			end
-
-			sfx.sfx = api.mid(0, 63, sfx.sfx + v)
-			self.label = string.format("%02d", sfx.sfx)
-			sfx.forceDraw = true
-
-			-- todo: update other ui
-		end), "sfx"
+		), "sfx"
 	)
 
 	sfx.ui1:add(
-		UiLabelButton(
-			"16", 42,
-			8, 9, 7, config.editors.sfx.fg
-		):onClick(function(b, rb)
-			local v = rb and -1 or 1
+		UiCounter(
+			16, 79,
+			8, 9, 7,
+			function(self)
+				local v = -1
 
-			if api.key("lshift") or api.key("rshift") then
-				v = v * 4
+				if api.key("lshift") or api.key("rshift") then
+					v = v * 4
+				end
+
+				neko.loadedCart.sfx[sfx.sfx].speed = api.mid(1, 63, neko.loadedCart.sfx[sfx.sfx].speed + v)
+				self.v =  neko.loadedCart.sfx[sfx.sfx].speed
+				sfx.forceDraw = true
+			end,
+			function(self)
+				local v = 1
+
+				if api.key("lshift") or api.key("rshift") then
+					v = v * 4
+				end
+
+				neko.loadedCart.sfx[sfx.sfx].speed = api.mid(1, 63, neko.loadedCart.sfx[sfx.sfx].speed + v)
+				self.v =  neko.loadedCart.sfx[sfx.sfx].speed
+				sfx.forceDraw = true
 			end
-
-			neko.loadedCart.sfx[sfx.sfx].speed = api.mid(1, 63, neko.loadedCart.sfx[sfx.sfx].speed + v)
-			b.label = string.format("%02d", neko.loadedCart.sfx[sfx.sfx].speed)
-			sfx.forceDraw = true
-		end), "speed"
+		), "speed"
 	)
 
 	-- piano
@@ -204,7 +226,7 @@ function sfx.redraw()
 
 		local c = config.editors.sfx.fg
 		api.print("SFX", 1, 9, c)
-		api.print("SPD", 27, 9, c)
+		api.print("SPD", 53, 9, c)
 
 		for i = 0, 31 do
 			local s = sfx.data[sfx.sfx][i]

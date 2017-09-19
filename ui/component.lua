@@ -30,7 +30,7 @@ function UiComponent:update(handled)
 		if not handled and mb == true then
 			if not mr and self.state ~= "clicked" then
 				self.state = "clicked"
-				self:click(love.mouse.isDown(2), mx, my)
+				self:click(love.mouse.isDown(2), mx - self.x, my - self.y)
 				return true
 			end
 
