@@ -47,10 +47,9 @@ function carts.load(name)
 		return cart
 	end
 
-	if OS == "Windows" then -- FIXES CRLF file endings
-		data = data:gsub("\r\n", "\n")
-		data = data:gsub("\r", "\n")
-	end
+	-- FIXES CRLF file endings
+	data = data:gsub("\r\n", "\n")
+	data = data:gsub("\r", "\n")
 
 	-- local loadData = neko.core
 	local loadData = true
