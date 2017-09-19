@@ -81,8 +81,8 @@ function love.joystickremoved(joystick)
 end
 
 function love.touchpressed()
-	-- open virtual keyboard when in code/sfx editor on mobile
-	if editors.current == editors.modes[1] or editors.modes[4] then
+	-- open virtual keyboard when in code/sfx editor or command line on mobile
+	if (editors.current == editors.modes[1] or editors.modes[4]) or editors.opened == false then
 		love.keyboard.setTextInput(true)
 	end
 end
