@@ -13,7 +13,8 @@ function neko.init()
 	neko.cursor = {
 		default = 5,
 		pointer = 21,
-		hand = 22 -- todo: draw it
+		pointer_down = 37,
+		hand = 38 -- todo: draw it
 	}
 
 	neko.cursor.current = neko.cursor.default
@@ -53,8 +54,6 @@ function neko.showMessage(s)
 end
 
 function neko.update(dt)
-	neko.cursor.current = neko.cursor.default
-
 	for p = 0, 1 do
 		for i = 0, #api.keyMap[p] do
 			for _, key in pairs(

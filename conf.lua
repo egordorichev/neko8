@@ -66,8 +66,6 @@ version.string = string.format(
 	version.release
 )
 
-print(version.string)
-
 config = {
 	version = version,
 

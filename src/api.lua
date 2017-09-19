@@ -671,6 +671,11 @@ function api.flip()
 
 	love.graphics.setShader(colors.drawShader)
 
+	if not neko.focus then
+		love.graphics.clear()
+		api.print("click to focus", 68, 62, 7)
+	end
+
 	if neko.message then
 		api.brectfill(
 			0, config.canvas.height - 7,

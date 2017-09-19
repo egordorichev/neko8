@@ -33,11 +33,15 @@ function UiComponent:update(handled)
 				self:click(love.mouse.isDown(2), mx, my)
 				return true
 			end
-		elseif self.state ~= "hovered" then
-			self.state = "hovered"
-		end
 
-		neko.cursor.current = neko.cursor.pointer
+			neko.cursor.current = neko.cursor.pointer_down
+		else
+			if self.state ~= "hovered" then
+				self.state = "hovered"
+			end
+
+			neko.cursor.current = neko.cursor.pointer
+		end
 	elseif self.state ~= "normal" then
 		self.state = "normal"
 	end

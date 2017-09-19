@@ -58,7 +58,7 @@ function sfx.init()
 
 	sfx.ui1:add(
 		UiLabelButton(
-			string.format("%02d", sfx.sfx), 19,
+			string.format("%02d", sfx.sfx), 17,
 			8, 9, 7, config.editors.sfx.fg
 		):onClick(function(self, rb)
 			local v = rb and -1 or 1
@@ -75,25 +75,9 @@ function sfx.init()
 		end), "sfx"
 	)
 
-	sfx.ui:add(UiButton(
-		37, 14, 8, 5, 7, 7,
-		config.editors.sfx.fg
-	):onClick(function(b, rb)
-		local v = -1
-
-		if api.key("lshift") or api.key("rshift") then
-				v = v * 4
-		end
-
-		sfx.sfx = api.mid(0, 63, sfx.sfx + v)
-		sfx.ui1.components["sfx"].label = string.format("%02d", sfx.sfx)
-		sfx.forceDraw = true
-	end), "sfxminus"
-	)
-
 	sfx.ui1:add(
 		UiLabelButton(
-			"16", 48,
+			"16", 42,
 			8, 9, 7, config.editors.sfx.fg
 		):onClick(function(b, rb)
 			local v = rb and -1 or 1
@@ -107,21 +91,6 @@ function sfx.init()
 			sfx.forceDraw = true
 		end), "speed"
 	)
-
-	sfx.ui:add(UiButton(
-		37, 43, 8, 5, 7, 7,
-		config.editors.sfx.fg
-	):onClick(function(b, rb)
-		local v = -1
-
-		if api.key("lshift") or api.key("rshift") then
-				v = v * 4
-		end
-
-		neko.loadedCart.sfx[sfx.sfx].speed = api.mid(1, 63, neko.loadedCart.sfx[sfx.sfx].speed + v)
-		sfx.ui1.components["speed"].label = string.format("%02d", neko.loadedCart.sfx[sfx.sfx].speed)
-		sfx.forceDraw = true
-	end), "speedminus")
 
 	-- piano
 
@@ -235,7 +204,7 @@ function sfx.redraw()
 
 		local c = config.editors.sfx.fg
 		api.print("SFX", 1, 9, c)
-		api.print("SPD", 30, 9, c)
+		api.print("SPD", 27, 9, c)
 
 		for i = 0, 31 do
 			local s = sfx.data[sfx.sfx][i]
@@ -441,5 +410,3 @@ function sfx.export()
 end
 
 return sfx
-
--- vim: noet
