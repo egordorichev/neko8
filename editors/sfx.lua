@@ -24,7 +24,7 @@ local keyToNoteMap = {
 function sfx.init()
 	sfx.forceDraw = false
 	sfx.icon = 11
-	sfx.name = "sfx editor"
+	sfx.name = "audakitty"
 	sfx.bg = config.editors.sfx.bg
 	sfx.sfx = 0
 	sfx.volume = 5
