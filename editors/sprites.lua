@@ -306,7 +306,7 @@ function sprites._update()
 	mx, my, mb = api.mstat(1)
 
 	if mb then
-		if not lmb and mx > 64 and mx < 192
+		if mx > 64 and mx < 192
 			and my > 8 and my < 72 then
 
 			my = my - 8
