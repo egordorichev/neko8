@@ -53,6 +53,7 @@ end
 function createSandbox(lang)
 	return {
 		pcall = pcall,
+		utf8 = utf8,
 		loadstring = loadstring,
 		setmetatable = setmetatable,
 		require = require,
@@ -703,8 +704,8 @@ function api.flip()
 			for y = x == 0 and -1 or 0, x == 0 and 1 or 0 do
 				api.spr(
 					neko.cursor.current,
-					mx + x + canvas.x,
-					my + y + canvas.y
+					mx + x,
+					my + y
 				)
 			end
 		end
@@ -713,8 +714,8 @@ function api.flip()
 
 		api.spr(
 			neko.cursor.current,
-			mx + canvas.x,
-			my + canvas.y
+			mx,
+			my
 		)
 
 		neko.cart, neko.core = neko.core, neko.cart

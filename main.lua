@@ -1,7 +1,6 @@
 -----------------------------------------
 -- main callbacks
 -----------------------------------------
-
 local requirePath = love.filesystem.getRequirePath()
 love.filesystem.setRequirePath(requirePath ..
 	';src/?.lua;src/?/init.lua' ..
@@ -14,6 +13,14 @@ mobile = OS == "Android" or OS == "iOS"
 require "minify"
 require "log"
 require "error"
+
+local utf8 = require "utf8"
+
+function utf8.sub(s,i,j)
+  i = utf8.offset(s, i)
+  j = utf8.offset(s, j + 1) - 1
+  return string.sub(s, i, j)
+end
 
 -- DEBUG!
 -- mobile = true
@@ -351,7 +358,7 @@ function syntaxError(error)
 end
 
 function replaceChar(pos, str, r)
-	return str:sub(1, pos - 1) .. r .. str:sub(pos + 1)
+	return utf8.sub(str, 1, pos - 1) .. r .. utf8.sub(str, pos + 1)
 end
 
 local function toUTF8(st)
@@ -377,10 +384,10 @@ end
 
 function validateText(text)
 	for i = 1, #text do
-		local c = text:sub(i, i)
+		local c = utf8.sub(text, i, i)
 		local valid = false
 		for j = 1, #config.font.letters do
-			local ch = config.font.letters:sub(j, j)
+			local ch = utf8.sub(config.font.letters, j, j)
 			if c == ch then
 				valid = true
 				break
@@ -393,9 +400,9 @@ function validateText(text)
 
 	if #text == 1 and api.key("ralt")
 		or api.key("lalt") then
-		local c = string.byte(text:sub(1, 1))
+		local c = string.byte(utf8.sub(text, 1, 1))
 
-		if c >= 97
+		if c and c >= 97
 			and c <= 122 then
 			text = replaceChar(
 				1, text, toUTF8(c + 95)
