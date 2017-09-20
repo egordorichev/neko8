@@ -183,7 +183,7 @@ function docs.init()
 	docs.page = 0
 	docs.cate = "keys"
 	docs.item = 1
-	docs.name = "build-in help"
+	docs.name = "mankitty"
 	docs.bg = config.editors.docs.bg
 end
 

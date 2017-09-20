@@ -742,7 +742,7 @@ function carts.save(name)
 		table.concat(data)
 	)
 
-	neko.loadedCart.pureName = name
+	--neko.loadedCart.pureName = name
 
 	return true
 end

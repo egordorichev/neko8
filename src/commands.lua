@@ -351,7 +351,7 @@ function commands.save(a)
 			m or "** failed to save cart **"
 		)
 	else
-		api.smes(string.format("saved %s", neko.loadedCart.pureName))
+		api.smes(string.format("saved %s", resolveFile(neko.loadedCart.pureName, neko.currentDirectory)))
 	end
 end
 
