@@ -14,14 +14,6 @@ require "minify"
 require "log"
 require "error"
 
-local utf8 = require "utf8"
-
-function utf8.sub(s,i,j)
-  i = utf8.offset(s, i)
-  j = utf8.offset(s, j + 1) - 1
-  return string.sub(s, i, j)
-end
-
 -- DEBUG!
 -- mobile = true
 
@@ -358,7 +350,7 @@ function syntaxError(error)
 end
 
 function replaceChar(pos, str, r)
-	return utf8.sub(str, 1, pos - 1) .. r .. utf8.sub(str, pos + 1)
+	return string.sub(str, 1, pos - 1) .. r .. string.sub(str, pos + 1)
 end
 
 local function toUTF8(st)
@@ -384,23 +376,23 @@ end
 
 function validateText(text)
 	for i = 1, #text do
-		local c = utf8.sub(text, i, i)
+		local c = string.sub(text, i, i)
 		local valid = false
 		for j = 1, #config.font.letters do
-			local ch = utf8.sub(config.font.letters, j, j)
+			local ch = string.sub(config.font.letters, j, j)
 			if c == ch then
 				valid = true
 				break
 			end
 		end
 		if not valid then
-			text = replaceChar(i, text, "")
+			text = ""
 		end
 	end
 
-	if #text == 1 and api.key("ralt")
+	--[[if #text == 1 and api.key("ralt")
 		or api.key("lalt") then
-		local c = string.byte(utf8.sub(text, 1, 1))
+		local c = string.byte(string.sub(text, 1, 1))
 
 		if c and c >= 97
 			and c <= 122 then
@@ -408,7 +400,9 @@ function validateText(text)
 				1, text, toUTF8(c + 95)
 			)
 		end
-	end
+	end--]]
+
+	-- todo
 
 	return text
 end

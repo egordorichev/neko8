@@ -53,7 +53,6 @@ end
 function createSandbox(lang)
 	return {
 		pcall = pcall,
-		utf8 = utf8,
 		loadstring = loadstring,
 		setmetatable = setmetatable,
 		require = require,
