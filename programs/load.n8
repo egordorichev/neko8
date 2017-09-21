@@ -1,0 +1,15 @@
+neko8 cart
+__lua__
+if #args ~= 1 then
+	print("load [cart]")
+else
+	local c = load(args[1])
+
+	if not c then
+		color(8)
+		print(string.format("failed to load %s", args[1]))
+	else
+		print(string.format("loaded %s", c.pureName))
+	end
+end
+__end__

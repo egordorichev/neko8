@@ -107,6 +107,7 @@ function carts.load(name)
 	setClip()
 
 	neko.loadedCart = cart
+	editors.openEditor(1)
 
 	return cart
 end
