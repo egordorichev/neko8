@@ -1,0 +1,33 @@
+neko8 cart
+__lua__
+if #args == 0 then
+	--commands.version() -- FIXME: It doesn't appear because
+	--							it goes up the screen
+	color(6)
+	print("made by @egordorichev with love")
+	color(7)
+	print("https://github.com/egordorichev/neko8")
+	print("")
+	print("Command       Description")
+	print("-------       -----------")
+	print("install_demos intall default demos")
+	print("ls            list files")
+	print("new           new cart")
+	print("cd            change dir")
+	print("mkdir         create dir")
+	print("rm            delete file")
+	print("load          load cart")
+	print("run           run cart")
+	print("reboot        reboots neko8")
+	print("shutdown      shutdowns neko8")
+	print("save          save cart")
+	print("edit          opens editor")
+	print("cls           clear screen")
+	print("folder        open working folder on host os")
+	print("pwd           display working directory")
+	print("version       prints neko8 version")
+else
+	-- TODO
+	print(string.format("subject %s is not found", args[1]))
+end
+__end__

@@ -19,10 +19,9 @@ function carts.load(name)
 
 	for i = 1, #extensions do
 		local n = resolveFile(pureName .. extensions[i], neko.currentDirectory)
+		local v = n:sub(1, 10) == "/programs/"
 
-		if love.filesystem.isFile(n)
-			and isVisible(n, "/") then
-
+		if love.filesystem.isFile(n) and (v or isVisible(n, "/")) then
 			found = true
 			name = n
 			break
@@ -30,7 +29,7 @@ function carts.load(name)
 	end
 
 	if not found then
-		log.error("failed to load cart")
+		log.error("failed to load cart " .. name)
 		if neko.core == nil then
 			error("Failed to load neko.n8. Did you delete it, hacker?")
 		end
@@ -259,7 +258,7 @@ function carts.loadCode(data, cart)
 		return
 	end
 
-	local codeEnd = data:find("\n__gfx__\n")
+	local codeEnd = data:find("\n__gfx__\n") or data:find("__end__") - 1
 
 	local code = data:sub(
 		codeStart + 1, codeEnd
@@ -278,6 +277,34 @@ function carts.loadSprites(cdata, cart)
 
 	local _, gfxStart = cdata:find("\n__gfx__\n")
 	local gfxEnd = cdata:find("\n__gff__\n")
+
+	if not gfxStart or not gfxEnd then
+		sprites.data = love.image.newImageData(128, 256)
+		sprites.sheet = love.graphics.newImage(sprites.data)
+		sprites.quads = {}
+
+		local sprite = 0
+
+		for y = 0, 31 do
+			for x = 0, 15 do
+				sprites.quads[sprite] =
+					love.graphics.newQuad(
+						8 * x, 8 * y, 8, 8, 128, 256
+					)
+
+				sprite = sprite + 1
+			end
+		end
+
+		sprites.flags = {}
+
+		for i = 0, 511 do
+			sprites.flags[i] = 0
+		end
+
+		log.info("old file")
+		return sprites -- old versions
+	end
 
 	local data = cdata:sub(gfxStart, gfxEnd)
 
@@ -373,16 +400,7 @@ function carts.loadSprites(cdata, cart)
 end
 
 function carts.loadMap(data, cart)
-
 	local map = {}
-	local _, mapStart = data:find("\n__map__\n")
-	local mapEnd = data:find("\n__sfx__\n")
-
-	if not mapEnd then -- older versions
-		mapEnd = data:find("\n__end__\n") or #data - 1
-	end
-
-	data = data:sub(mapStart, mapEnd)
 
 	for y = 0, 127 do
 		map[y] = {}
@@ -390,6 +408,21 @@ function carts.loadMap(data, cart)
 			map[y][x] = 0
 		end
 	end
+
+	local _, mapStart = data:find("\n__map__\n")
+	local mapEnd = data:find("\n__sfx__\n")
+
+	if not mapStart then
+		log.info("old file")
+		return map -- old versions
+	end
+
+	if not mapEnd then -- older versions
+		mapEnd = data:find("\n__end__\n") or #data - 1
+	end
+
+	data = data:sub(mapStart, mapEnd)
+
 
 	local row = 0
 	local col = 0
@@ -592,7 +625,7 @@ function carts.patchLua(code)
 	return code
 end
 
-function carts.run(cart)
+function carts.run(cart, ...)
 	if not cart or not cart.sandbox then
 		return
 	end
@@ -680,6 +713,8 @@ function carts.run(cart)
 
 	setClip()
 	setCamera()
+
+	cart.sandbox.args = unpack({ ... })
 
 	local result
 	setfenv(f, cart.sandbox)

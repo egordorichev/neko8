@@ -10,30 +10,6 @@ function _init()
  t=0
  cx=0
 
- require "log"
-
- commands={
- help=help,
- ls=ls,
- cd=cd,
- mkdir=mkdir,
- rm=rm,
- shutdown=shutdown,
- install_demos=install_demos,
- reboot=reboot,
- load=load,
- run=run,
- new=new,
- save=save,
- folder=folder,
--- cls expects a number, but all commands receive a table. See issue #9
-  cls=function(a) cls(a and unpck(a)) end,
-  edit=edit,
-  minify=minify,
-  version=version,
-  pwd=pwd
- }
-
  start_screen()
 end
 
@@ -198,14 +174,16 @@ function run_command(c)
 
  cmd=args[1]
  del(args,cmd)
+ local command=load("/programs/"..cmd)
 
- if commands[cmd] then
+ if command then
   color(7)
-  commands[cmd](args)
+  run(command,args)
   return
+ else
+  color(8)
+  print("unknown command")
  end
- color(14)
- print("unknown command")
 end
 
 function _copy()
