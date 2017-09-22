@@ -377,12 +377,15 @@ end
 function validateText(text)
 	for i = 1, #text do
 		local c = string.sub(text, i, i)
-		local valid = false
-		for j = 1, #config.font.letters do
-			local ch = string.sub(config.font.letters, j, j)
-			if c == ch then
-				valid = true
-				break
+		local valid = c == " " or c == "\n" or c == "\r" or c == "\t"
+
+		if not valid then
+			for j = 1, #config.font.letters do
+				local ch = string.sub(config.font.letters, j, j)
+				if c == ch then
+					valid = true
+					break
+				end
 			end
 		end
 		if not valid then

@@ -576,15 +576,15 @@ function code._copy()
 				or code.select.start
 
 			local line = code.lines[min.y + 1]
-			text = line:sub(0, min.x, #line)
+			text = line:sub(min.x, #line)
 
 			local m = 1
 
-			for y = min.y + 1, max.y + m do
-				text = text .. "\n\n" .. code.lines[y]
+			for y = min.y + 2, max.y do
+				text = text .. "\n" .. code.lines[y]
 			end
 
-			text = text .. "\n\n" .. code.lines[max.y + m]:sub(0, max.x)
+			text = text .. "\n" .. code.lines[max.y + m]:sub(0, max.x)
 		end
 
 		code.forceDraw = true
@@ -607,11 +607,12 @@ function code._cut()
 end
 
 function code._text(text)
-	-- todo: rewrite
-	text = text:gsub("\t", " ")
+	--text = text:gsub("\t", " ")
+	print(text)
 	local parts = {}
 
-	for p in text:gmatch("([^\r\n]*)\r?\n") do
+	for p in text:gmatch("[^\r\n]+") do
+		print(p)
 		table.insert(parts, p)
 	end
 
