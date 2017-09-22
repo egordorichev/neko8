@@ -50,8 +50,7 @@ function carts.load(name)
 	data = data:gsub("\r\n", "\n")
 	data = data:gsub("\r", "\n")
 
-	-- local loadData = neko.core
-	local loadData = true
+	local loadData = cart.pureName:sub(1, 10) ~= "/programs/"
 	local header = "neko8 cart"
 
 	if not data:find(header) then

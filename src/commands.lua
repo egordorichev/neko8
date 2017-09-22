@@ -286,6 +286,13 @@ end
 
 function commands.new(a)
 	local lang = a[1] or "lua"
+
+	if lang ~= "asm" and lang ~= "lua" then
+		api.color(8)
+		api.print("unknown lang")
+		return
+	end
+
 	neko.loadedCart = carts.create(lang)
 	carts.import(neko.loadedCart)
 	api.color(7)
