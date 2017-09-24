@@ -189,7 +189,18 @@ function music._keydown(key)
 		end
 	else
 		if key == "space" then
-			api.music(music.track)
+			if audio.sfx[0].sfx ~= nil or
+				audio.sfx[1].sfx ~= nil or
+				audio.sfx[2].sfx ~= nil or
+				audio.sfx[3].sfx ~= nil then
+
+				api.sfx(-1, 0)
+				api.sfx(-1, 1)
+				api.sfx(-1, 2)
+				api.sfx(-1, 3)
+			else
+				api.music(music.track)
+			end
 		end
 	end
 end

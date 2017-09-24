@@ -169,6 +169,7 @@ function api.sfx(n, channel, offset)
 
 	if n == -1 and channel >= 0 then
 		audio.sfx[channel].sfx = nil
+		audio.sfx[channel].offset = -1
 		return
 	elseif n == -2 and channel >= 0 then
 		audio.sfx[channel].loop = false

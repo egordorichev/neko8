@@ -321,7 +321,18 @@ function sfx._keydown(k)
 			end
 			sfx.forceDraw = true
 		elseif k == "space" then
-			api.sfx(sfx.sfx, 1)
+			if audio.sfx[0].sfx ~= nil or
+				audio.sfx[1].sfx ~= nil or
+				audio.sfx[2].sfx ~= nil or
+				audio.sfx[3].sfx ~= nil then
+
+				api.sfx(-1, 0)
+				api.sfx(-1, 1)
+				api.sfx(-1, 2)
+				api.sfx(-1, 3)
+			else
+				api.sfx(sfx.sfx, 1)
+			end
 		elseif k == "backspace" then
 			sfx.data[sfx.sfx][sfx.cursor.y][3] = 0
 			sfx.forceDraw = true
