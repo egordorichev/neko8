@@ -53,11 +53,13 @@ end
 function createSandbox(lang)
 	return {
 		pcall = pcall,
+		string = string,
 		loadstring = loadstring,
 		setmetatable = setmetatable,
 		require = require,
 		tostring = tostring,
 		tonumber = tonumber,
+		assert = assert,
 
 		-- this is required by the asm.lua callx operator
 		unpck = table.unpack,

@@ -730,13 +730,13 @@ function carts.run(cart, ...)
 	end
 
 	try(function()
-		if cart.sandbox._init then
-			cart.sandbox._init()
-		end
-
 		if cart.sandbox._draw or
 			cart.sandbox._update then
 			neko.cart = cart
+		end
+
+		if cart.sandbox._init then
+			cart.sandbox._init()
 		end
 	end, runtimeError)
 

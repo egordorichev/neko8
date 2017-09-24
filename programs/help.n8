@@ -25,6 +25,7 @@ if #args == 0 then
 else
 	-- TODO
 	print(string.format("subject %s is not found", args[1]))
+	exit()
 end
 
 function _draw()
