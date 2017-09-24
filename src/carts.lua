@@ -642,7 +642,8 @@ function carts.run(cart, ...)
 		name = "new cart"
 	end
 
-	if cart ~= neko.core and cart.pureName:sub(1, 10) ~= "/programs/" then
+	if not cart.pureName or
+		cart ~= neko.core and cart.pureName:sub(1, 10) ~= "/programs/" then
 		carts.save(cart.pureName)
 	end
 

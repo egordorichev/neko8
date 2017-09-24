@@ -406,8 +406,12 @@ function commands.rm(a)
 	if not love.filesystem.exists(file)
 		or not isVisible(a[1], neko.currentDirectory) then
 		api.print(
-			"no such file", nil, nil, 14
+			"no such file", nil, nil, 8
 		)
+		return
+	elseif file == "/neko.n8" then
+		api.color(8)
+		api.print("don't you try to delete neko.n8, you hacker!")
 		return
 	end
 
