@@ -70,6 +70,7 @@ function sfx.init()
 
 				sfx.sfx = api.mid(0, 63, sfx.sfx + v)
 				self.v = sfx.sfx
+				sfx.updateUIValues()
 				sfx.forceDraw = true
 			end,
 			function(self)
@@ -81,9 +82,12 @@ function sfx.init()
 
 				sfx.sfx = api.mid(0, 63, sfx.sfx + v)
 				self.v = sfx.sfx
+				sfx.updateUIValues()
 				sfx.forceDraw = true
 			end
-		), "sfx"
+		):bind("updateValue", function(self)
+			self.v = sfx.sfx
+		end), "sfx"
 	)
 
 	sfx.ui1:add(
@@ -109,10 +113,12 @@ function sfx.init()
 				end
 
 				neko.loadedCart.sfx[sfx.sfx].speed = api.mid(1, 63, neko.loadedCart.sfx[sfx.sfx].speed + v)
-				self.v =  neko.loadedCart.sfx[sfx.sfx].speed
+				self.v = neko.loadedCart.sfx[sfx.sfx].speed
 				sfx.forceDraw = true
 			end
-		), "speed"
+		):bind("updateValue", function(self)
+			self.v = neko.loadedCart.sfx[sfx.sfx].speed
+		end), "speed"
 	)
 
 	-- piano
@@ -171,6 +177,8 @@ function sfx.init()
 			)
 		end
 	end
+
+	sfx.ui2 = UiManager()
 end
 
 function sfx.setMode(mode)
@@ -386,6 +394,24 @@ end
 
 function sfx.import(data)
 	sfx.data = data
+end
+
+function sfx.postImport()
+	sfx.updateUIValues()
+end
+
+function sfx.updateUIValues()
+	for _, c in pairs(sfx.ui1.indexed) do
+		if c.updateValue then
+			c:updateValue()
+		end
+	end
+
+	for _, c in pairs(sfx.ui2.indexed) do
+		if c.updateValue then
+			c:updateValue()
+		end
+	end
 end
 
 function sfx.export()

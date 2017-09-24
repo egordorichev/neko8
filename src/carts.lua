@@ -94,10 +94,6 @@ function carts.load(name)
 		return cart
 	end
 
-	if loadData then
-		carts.import(cart)
-	end
-
 	love.graphics.setShader(
 		colors.drawShader
 	)
@@ -108,6 +104,10 @@ function carts.load(name)
 	neko.loadedCart = cart
 	editors.openEditor(1)
 
+	if loadData then
+		carts.import(cart)
+	end
+
 	return cart
 end
 
@@ -117,6 +117,12 @@ function carts.import(cart)
 	editors.map.import(cart.map)
 	editors.sfx.import(cart.sfx)
 	editors.music.import(cart.music)
+
+	for _, m in pairs(editors.modes) do
+		if m.postImport then
+			m.postImport()
+		end
+	end
 end
 
 function carts.export()

@@ -29,6 +29,7 @@ function music.init()
 
 				music.track = api.mid(0, 63, music.track + v)
 				self.v = music.track
+				music.updateUIValues()
 				music.forceDraw = true
 			end,
 			function(self)
@@ -40,9 +41,12 @@ function music.init()
 
 				music.track = api.mid(0, 63, music.track + v)
 				self.v = music.track
+				music.updateUIValues()
 				music.forceDraw = true
 			end
-		), "track"
+		):bind("updateValue", function(self)
+			self.v = music.track
+		end), "track"
 	)
 
 	for i = 0, 3 do
@@ -54,6 +58,8 @@ function music.init()
 					music.data[music.track][i] == -1 and i
 					or -1
 				music.forceDraw = true
+			end):bind("updateValue", function(self)
+				self.v = music.data[music.track][i] ~= -1
 			end), "checkbox" .. i
 		)
 
@@ -82,7 +88,9 @@ function music.init()
 					self.v = music.data[music.track][i]
 					music.forceDraw = true
 				end
-			), "track" .. i
+			):bind("updateValue", function(self)
+				self.v = music.data[music.track][i]
+			end), "track" .. i
 		)
 	end
 end
@@ -207,6 +215,18 @@ end
 
 function music.import(data)
 	music.data = data
+end
+
+function music.postImport()
+	music.updateUIValues()
+end
+
+function music.updateUIValues()
+	for _, c in pairs(music.ui.indexed) do
+		if c.updateValue then
+			c:updateValue()
+		end
+	end
 end
 
 function music.export()

@@ -68,4 +68,9 @@ function UiComponent:setZIndex(z)
 	return self
 end
 
+function UiComponent:bind(name, f)
+	self[name] = f
+	return self
+end
+
 return UiComponent
