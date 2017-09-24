@@ -187,6 +187,7 @@ function run_command(c)
   color(8)
   print("unknown command")
  end
+ unload()
 
  return false
 end

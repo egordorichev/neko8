@@ -146,6 +146,7 @@ function createSandbox(lang)
 		ls = commands.ls,
 		install_demos = commands.installDemos,
 		exit = api.exit,
+		unload = api.unload,
 
 		pairs = pairs,
 		ipairs = ipairs,
@@ -164,6 +165,11 @@ end
 
 function api.exit()
 	neko.cart = nil
+end
+
+function api.unload()
+	neko.cart = nil
+	neko.loadedCart = nil
 end
 
 function api.sfx(n, channel, offset)
