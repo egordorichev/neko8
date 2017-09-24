@@ -608,11 +608,9 @@ end
 
 function code._text(text)
 	--text = text:gsub("\t", " ")
-	print(text)
 	local parts = {}
 
 	for p in text:gmatch("[^\r\n]+") do
-		print(p)
 		table.insert(parts, p)
 	end
 
@@ -644,9 +642,12 @@ function code._text(text)
 			code.select.active = false
 		end
 
-		code.cursor.y = code.cursor.y - 1
+		if #parts > 1 then
+			code.cursor.y = code.cursor.y - 1
+			code.cursor.x = #code.lines[code.cursor.y + 1]
+		end
+		
 		code.checkCursor()
-		code.cursor.x = #code.lines[code.cursor.y + 1]
 	else
 		if code.select.active then
 			code.replaceSelected(text)

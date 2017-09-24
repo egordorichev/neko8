@@ -479,8 +479,8 @@ function api.circ(ox, oy, r, c)
 		api.color(c)
 	end
 
-	ox = api.flr(ox)
-	oy = api.flr(oy)
+	ox = api.flr(ox) + 1
+	oy = api.flr(oy) + 1
 	r = api.flr(r)
 
 	local points = {}
@@ -538,8 +538,8 @@ function api.circfill(cx, cy, r, c)
 		api.color(c)
 	end
 
-	cx = api.flr(cx)
-	cy = api.flr(cy)
+	cx = api.flr(cx) + 1
+	cy = api.flr(cy) + 1
 	r = api.flr(r)
 
 	local x = r
@@ -570,9 +570,11 @@ function api.circfill(cx, cy, r, c)
 end
 
 function api.pget(x, y)
-	if not pgetData or x < 0 or x > config.canvas.width - 1
-		or y < 0 or y > config.canvas.height - 1 then
-		return 0
+	x = x
+	y = y
+	if not pgetData or x < 0 or x > config.canvas.width
+		or y < 0 or y > config.canvas.height then
+		return 10
 	end
 
 	x = api.flr(x)
@@ -588,7 +590,7 @@ function api.pset(x, y, c)
 
 	api.color(c)
 	love.graphics.points(
-		api.flr(x), api.flr(y),
+		api.flr(x) + 0.5, api.flr(y) + 0.5,
 		c * 16, 0, 0, 255
 	)
 end

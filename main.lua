@@ -531,8 +531,8 @@ canvas = {
 function initCanvas()
 	canvas.renderable =
 		love.graphics.newCanvas(
-			config.canvas.width,
-			config.canvas.height
+			config.canvas.width + 1,
+			config.canvas.height + 1 -- +1 for pget
 		)
 
 	canvas.renderable:setFilter(

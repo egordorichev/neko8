@@ -46,8 +46,8 @@ function start_screen()
  delay(6)
  for x=1,192,2 do
  for y=0,128,4 do
-  local c=(x/10+(y+10)/10)%7+7
-  pset(x,y,c)
+	local c=(x/10+(y+10)/10)%7+7
+	pset(x,y,c)
  end
  end
  delay(12)
@@ -102,64 +102,64 @@ end
 
 function _keydown(k)
  if key("rctrl") or key("lctrl") then
-  if k=="s" then
-   redraw_prompt(true)
-   print("")
-   run_command("save")
-  end
+	if k=="s" then
+	 redraw_prompt(true)
+	 print("")
+	 run_command("save")
+	end
  else
-  if k=="backspace" then
-  if #input > 0 and cx > 0 then
-   input=input:sub(1,cx-1)..input:sub(cx+1,#input)
-   cx=max(0,cx-1)
-   redraw_prompt()
-  end
-  elseif k=="delete" then
-   if #input>0 and cx < #input then
-   input=input:sub(1,cx)..input:sub(cx+2,#input)
-   redraw_prompt()
-   end
-  elseif k == "left" then
-  cx=max(0,cx-1)
-  t=0
-  redraw_prompt()
-  elseif k == "right" then
-  cx=min(#input,cx+1)
-  t=0
-  redraw_prompt()
-  elseif k == "up" then
-  if hindex>1 then
-   hindex-=1
-   input=history[hindex]
-   cx=#input
-   redraw_prompt()
-  end
-  elseif k == "down" then
-  if hindex<#history then
-   hindex+=1
-   input=history[hindex]
-  end
-  cx=#input
-  redraw_prompt()
-  elseif k == "return" or k == "kpenter" then
-  if history[#history]~=input then
-   add(history,input)
-   hindex+=1
-  end
-  redraw_prompt(true)
+	if k=="backspace" then
+	if #input > 0 and cx > 0 then
+	 input=input:sub(1,cx-1)..input:sub(cx+1,#input)
+	 cx=max(0,cx-1)
+	 redraw_prompt()
+	end
+	elseif k=="delete" then
+	 if #input>0 and cx < #input then
+	 input=input:sub(1,cx)..input:sub(cx+2,#input)
+	 redraw_prompt()
+	 end
+	elseif k == "left" then
+	cx=max(0,cx-1)
+	t=0
+	redraw_prompt()
+	elseif k == "right" then
+	cx=min(#input,cx+1)
+	t=0
+	redraw_prompt()
+	elseif k == "up" then
+	if hindex>1 then
+	 hindex-=1
+	 input=history[hindex]
+	 cx=#input
+	 redraw_prompt()
+	end
+	elseif k == "down" then
+	if hindex<#history then
+	 hindex+=1
+	 input=history[hindex]
+	end
+	cx=#input
+	redraw_prompt()
+	elseif k == "return" or k == "kpenter" then
+	if history[#history]~=input then
+	 add(history,input)
+	 hindex+=1
+	end
+	redraw_prompt(true)
  flip()
-  print("")
-  if run_command(input) then
+	print("")
+	if run_command(input) then
 		cx=0
-  	input=""
+		input=""
 		return
 	end
 	cx=0
-  input=""
-  redraw_prompt()
-  elseif k=="escape" then
-  redraw_prompt()
-  end
+	input=""
+	redraw_prompt()
+	elseif k=="escape" then
+	redraw_prompt()
+	end
  end
 end
 
@@ -181,11 +181,11 @@ function run_command(c)
  local command=load("/programs/"..cmd)
 
  if command then
-  color(7)
-  return run(command,args)
+	color(7)
+	return run(command,args)
  else
-  color(8)
-  print("unknown command")
+	color(8)
+	print("unknown command")
  end
  unload()
 
