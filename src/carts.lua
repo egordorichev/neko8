@@ -220,7 +220,7 @@ mov [_draw], [draw]
 		}
 
 		for j = 0, 31 do
-			cart.sfx[i][j] = { 0, 0, 0, 0}
+			cart.sfx[i][j] = { 0, 0, 0, 0 }
 		end
 	end
 
@@ -229,10 +229,10 @@ mov [_draw], [draw]
 	for i = 0, 63 do
 		cart.music[i] = {
 			loop = 0,
-			[0] = 1,
-			[1] = 2,
-			[2] = 3,
-			[3] = 4
+			[0] = 0,
+			[1] = 1,
+			[2] = 2,
+			[3] = 3
 		}
 	end
 
@@ -460,7 +460,6 @@ function carts.loadMap(data, cart)
 end
 
 function carts.loadSFX(data, cart)
-
 	local sfx = {}
 
 	for i = 0, 63 do
@@ -529,7 +528,6 @@ function carts.loadSFX(data, cart)
 end
 
 function carts.loadMusic(data, cart)
-
 	local music = {}
 
 	for i = 0, 63 do

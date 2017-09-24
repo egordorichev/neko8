@@ -5,7 +5,8 @@ local UiButton = require "ui.button"
 local UiComponent = require "ui.component"
 
 local sfx = {}
-local keyToNoteMap = {
+
+keyToNoteMap = {
 	[ "z" ] = "c ",
 	[ "x" ] = "d ",
 	[ "c" ] = "e ",

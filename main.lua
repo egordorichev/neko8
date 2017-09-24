@@ -43,9 +43,12 @@ function love.load(arg)
 
 		if DEBUG then
 			lurker = require "lurker"
+			lurker.protected = false
+			lurker.quiet = true
 
 			lurker.postswap = function(f)
-				editors.current.forceDraw = true
+				editors.current.init()
+				carts.import(neko.loadedCart)
 				resizeCanvas(
 					love.graphics.getWidth(),
 					love.graphics.getHeight()
