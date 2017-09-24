@@ -4,7 +4,12 @@
 -----------------------------------------
 
 function resolveFile(a, dir)
-	dir = dir .. a
+	if a:sub(1, 1) == "/" then
+		dir = a
+	else
+		dir = dir .. a
+	end
+
 	dir = dir:gsub("\\","/")
 
 	if #dir:sub(-1, -1) == "/" then
