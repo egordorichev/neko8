@@ -735,6 +735,9 @@ function carts.run(cart, ...)
 	end, runtimeError)
 
 	api.flip()
+
+	return (cart.sandbox._draw or
+		cart.sandbox._update) and true or false
 end
 
 function carts.save(name)

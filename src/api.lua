@@ -143,6 +143,7 @@ function createSandbox(lang)
 		pwd = commands.pwd,
 		ls = commands.ls,
 		install_demos = commands.installDemos,
+		exit = api.exit,
 
 		pairs = pairs,
 		ipairs = ipairs,
@@ -157,6 +158,10 @@ function createSandbox(lang)
 		nver = api.nver,
 		mstat = api.mstat,
 	}
+end
+
+function api.exit()
+	neko.cart = nil
 end
 
 function api.sfx(n, channel, offset)
@@ -217,10 +222,11 @@ function api.music(n, fadeLen, channelMask)
 		for i = 0, 3 do
 			if m[i] < 64 then
 				local sfx = neko.loadedCart.sfx[m[i]]
-
-				if slowestSpeed == nil or slowestSpeed > sfx.speed then
-					slowestSpeed = sfx.speed
-					slowestChannel = i
+				if sfx then
+					if slowestSpeed == nil or slowestSpeed > sfx.speed then
+						slowestSpeed = sfx.speed
+						slowestChannel = i
+					end
 				end
 			end
 		end

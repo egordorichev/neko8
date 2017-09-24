@@ -235,7 +235,8 @@ function sfx.redraw()
 			local y = 17 + i % 8 * 6
 			local isEmpty = s[3] == 0
 
-			if audio.sfx[1].sfx ~= nil then
+			if audio.sfx[1].sfx == sfx.sfx and
+				audio.sfx[1].sfx ~= nil then
 				if api.flr(audio.sfx[1].offset) == i then
 					api.brectfill(
 						x - 1, y - 1, 25, 7, 9

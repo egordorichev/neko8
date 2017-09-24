@@ -149,8 +149,12 @@ function _keydown(k)
   redraw_prompt(true)
  flip()
   print("")
-  run_command(input)
-  cx=0
+  if run_command(input) then
+		cx=0
+  	input=""
+		return
+	end
+	cx=0
   input=""
   redraw_prompt()
   elseif k=="escape" then
@@ -178,12 +182,13 @@ function run_command(c)
 
  if command then
   color(7)
-  run(command,args)
-  return
+  return run(command,args)
  else
   color(8)
   print("unknown command")
  end
+
+ return false
 end
 
 function _copy()
