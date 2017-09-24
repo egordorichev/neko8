@@ -5,7 +5,7 @@ function map.init()
 	map.forceDraw = false
 	map.icon = 10
 	map.bg = config.editors.map.bg
-	map.name = "mapkitty"
+	map.name = "map editor"
 	map.page = 0
 	map.sprite = 0
 

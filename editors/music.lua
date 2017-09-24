@@ -12,7 +12,7 @@ local music = {}
 function music.init()
 	music.forceDraw = true
 	music.icon = 12
-	music.name = "piano cat"
+	music.name = "music editor"
 	music.bg = config.editors.music.bg
 	music.track = 0
 	music.ui = UiManager()

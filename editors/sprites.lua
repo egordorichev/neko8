@@ -10,7 +10,7 @@ function sprites.init()
 	sprites.page = 0
 	sprites.scale = 1
 	sprites.icon = 9
-	sprites.name = "spritty"
+	sprites.name = "sprite editor"
 	sprites.bg = config.editors.sprites.bg
 
 	local pencil = {
