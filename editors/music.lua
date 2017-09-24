@@ -95,11 +95,26 @@ function music.close()
 
 end
 
+local lof = { -1, -1, -1, -1 }
+
 function music._draw()
-	if music.forceDraw then
+	local of = {}
+
+	for i = 0, 3 do
+		of[i] = audio.sfx[i].sfx == nil
+			and -1 or api.flr(audio.sfx[i].offset)
+	end
+
+	if music.forceDraw or
+	 	of[0] ~= lof[0] or
+		of[1] ~= lof[1] or
+		of[2] ~= lof[2] or
+		of[3] ~= lof[3] then
 		music.redraw()
 		music.forceDraw = false
 	end
+
+	lof = of
 
 	editors.drawUI()
 	music.ui:draw()
@@ -121,6 +136,17 @@ function music.redraw()
 				local x = 2 + i * 26
 				local y = 25 + j * 6
 				local isEmpty = s[3] == 0
+
+
+				if audio.currentMusic and
+					audio.currentMusic.music == music.track and
+					audio.sfx[i].sfx ~= -1 then
+					if api.flr(audio.sfx[i].offset) == j then
+						api.brectfill(
+							x - 1, y - 1, 25, 7, 9
+						)
+					end
+				end
 
 				if isEmpty then
 					api.print(
