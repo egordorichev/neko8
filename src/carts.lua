@@ -103,6 +103,7 @@ function carts.load(name)
 
 
 	if loadData then
+		log.debug("loading data")
 		editors.openEditor(1)
 
 		neko.loadedCart = cart
@@ -749,13 +750,13 @@ function carts.run(cart, ...)
 end
 
 function carts.save(name)
-	if type(name) == "table" then name = name[1] end
-
-	if not neko.loadedCart or not name then
+	if not name and neko.loadedCart == nil then
+		log.info("name missing")
 		return false
 	end
 
-	name = resolveFile(name or neko.loadedCart.name, neko.currentDirectory)
+	name = name or neko.loadedCart.name
+	name = resolveFile(name, neko.currentDirectory)
 	log.info(string.format("saving %s", name))
 
 	carts.export()
