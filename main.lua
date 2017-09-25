@@ -119,10 +119,10 @@ function love.update(dt)
 end
 
 function love.draw()
-	if not neko.focus then
-		api.flip()
-		return
-	end
+	--if not neko.focus then
+	--	api.flip()
+	--	return
+	--end
 
 	love.graphics.setCanvas(
 		canvas.renderable

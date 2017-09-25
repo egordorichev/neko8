@@ -101,10 +101,11 @@ function carts.load(name)
 	setCamera()
 	setClip()
 
-	neko.loadedCart = cart
-	editors.openEditor(1)
 
 	if loadData then
+		editors.openEditor(1)
+
+		neko.loadedCart = cart
 		carts.import(cart)
 	end
 
@@ -748,6 +749,8 @@ function carts.run(cart, ...)
 end
 
 function carts.save(name)
+	if type(name) == "table" then name = name[1] end
+
 	if not neko.loadedCart or not name then
 		return false
 	end
@@ -785,7 +788,7 @@ function carts.save(name)
 		table.concat(data)
 	)
 
-	--neko.loadedCart.pureName = name
+	neko.loadedCart.pureName = name
 
 	return true
 end
