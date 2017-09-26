@@ -1077,13 +1077,15 @@ end
 
 function api.cos(n)
 	return math.cos(
-		(n or 0) * (math.pi * 2)
+--		(n or 0) * (math.pi * 2) WTF!?
+			math.rad(n)
 	)
 end
 
 function api.sin(n)
 	return math.sin(
-		-(n or 0) * (math.pi * 2)
+--		-(n or 0) * (math.pi * 2) WTF!?
+			math.rad(n)
 	)
 end
 
