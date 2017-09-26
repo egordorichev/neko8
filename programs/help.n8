@@ -1,8 +1,7 @@
 neko8 cart
 __lua__
 if #args == 0 then
-	--commands.version() -- FIXME: It doesn't appear because
-	--							it goes up the screen
+	version()
 	color(6)
 	print("made by @egordorichev with love")
 	color(7)
