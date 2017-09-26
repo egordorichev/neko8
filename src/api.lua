@@ -129,7 +129,6 @@ function createSandbox(lang)
 		shl = shl,
 		shr = shr,
 		sqrt = api.sqrt,
-		pi = 3.1415926535897932384626433,
 
 		load = carts.load,
 		run = carts.run,
@@ -1077,15 +1076,13 @@ end
 
 function api.cos(n)
 	return math.cos(
---		(n or 0) * (math.pi * 2) WTF!?
-			math.rad(n)
+		(n or 0) * (math.pi * 2)
 	)
 end
 
 function api.sin(n)
 	return math.sin(
---		-(n or 0) * (math.pi * 2) WTF!?
-			math.rad(n)
+		-(n or 0) * (math.pi * 2)
 	)
 end
 
