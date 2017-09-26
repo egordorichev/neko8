@@ -138,6 +138,8 @@ function carts.create(lang)
 	audio.currentMusic = nil
 
 	local cart = {}
+	cart.name = "new"
+	cart.pureName = "new"
 	cart.sandbox = createSandbox()
 	cart.lang = lang or "lua"
 	if cart.lang == "lua" then
@@ -756,7 +758,6 @@ function carts.save(name)
 	end
 
 	name = name or neko.loadedCart.name
-	print(name)
 	name = resolveFile(name, neko.currentDirectory)
 	log.info(string.format("saving %s", name))
 
