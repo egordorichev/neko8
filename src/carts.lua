@@ -756,6 +756,7 @@ function carts.save(name)
 	end
 
 	name = name or neko.loadedCart.name
+	print(name)
 	name = resolveFile(name, neko.currentDirectory)
 	log.info(string.format("saving %s", name))
 
