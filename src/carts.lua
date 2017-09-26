@@ -634,6 +634,10 @@ function carts.patchLua(code)
 end
 
 function carts.run(cart, ...)
+	if not cart then
+		cart = neko.loadedCart
+	end
+
 	if not cart or not cart.sandbox then
 		return
 	end
@@ -641,10 +645,6 @@ function carts.run(cart, ...)
 	editors.close()
 
 	local name = cart.name
-
-	if not name then
-		name = "new cart"
-	end
 
 	if not cart.pureName or
 		cart ~= neko.core and cart.pureName:sub(1, 10) ~= "/programs/" then

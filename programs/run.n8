@@ -1,5 +1,4 @@
 neko8 cart
 __lua__
-exit()
 run()
 __end__

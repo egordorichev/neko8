@@ -280,15 +280,6 @@ function commands.ls(a)
 	end
 end
 
-function commands.run()
-	if neko.loadedCart ~= nil then
-		carts.run(neko.loadedCart)
-	else
-		api.color(14)
-		api.print("no carts loaded")
-	end
-end
-
 function commands.new(a)
 	local lang = a[1] or "lua"
 
