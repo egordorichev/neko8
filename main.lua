@@ -261,19 +261,13 @@ function love.keypressed(
 			s:encode("png", file)
 			api.smes("saved screenshot")
 		elseif key == "f8" then
-			gif = giflib.new("neko8.gif")
+			gif = giflib.new(string.format("neko8-%s.gif", os.time()), config.palette)
 			api.smes("started recording gif")
-			api.smes("gif recording is not supported")
 		elseif key == "f9" then
 			if not gif then return end
 			gif:close()
 			gif = nil
 			api.smes("saved gif")
-			love.filesystem.write(
-				string.format("neko8-%s.gif", os.time()),
-				love.filesystem.read("neko8.gif")
-			)
-			love.filesystem.remove("neko8.gif")
 		else
 			handled = false
 		end
@@ -546,6 +540,16 @@ function initCanvas()
 		)
 
 	canvas.support:setFilter(
+		"nearest", "nearest"
+	)
+
+	canvas.gif =
+		love.graphics.newCanvas(
+			config.canvas.width * config.canvas.gifScale,
+			config.canvas.height * config.canvas.gifScale
+		)
+
+	canvas.gif:setFilter(
 		"nearest", "nearest"
 	)
 

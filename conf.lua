@@ -76,7 +76,8 @@ config = {
 
 	canvas = {
 		width = 192,
-		height = 128
+		height = 128,
+		gifScale = 3
 	},
 
 	font = {

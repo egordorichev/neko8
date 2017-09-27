@@ -670,12 +670,21 @@ function api.print(s, x, y, c)
 end
 
 function api.flip()
-	if gif then
-		gif:frame(canvas.renderable:newImageData())
-	end
-
 	love.graphics.setScissor()
 	love.graphics.origin()
+
+	if gif then
+		love.graphics.setCanvas(canvas.gif)
+		love.graphics.setShader(colors.displayShader)
+
+		love.graphics.draw(
+			canvas.renderable,
+			0, 0, 0, config.canvas.gifScale, config.canvas.gifScale
+		)
+
+		gif:frame(canvas.gif:newImageData())
+	end
+
 	love.graphics.setCanvas(canvas.support)
 
 	love.graphics.setShader(colors.supportShader)
