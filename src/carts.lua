@@ -3,6 +3,7 @@
 -----------------------------------------
 
 local carts = {}
+require "libs.terran-basic.TBASEXEC"
 
 function carts.load(name)
 	local cart = {}
@@ -142,6 +143,7 @@ function carts.create(lang)
 	cart.pureName = "new"
 	cart.sandbox = createSandbox()
 	cart.lang = lang or "lua"
+
 	if cart.lang == "lua" then
 		cart.code = [[
 -- cart name
@@ -184,6 +186,11 @@ end
 mov [_init], [init]
 mov [_update], [update]
 mov [_draw], [draw]
+]]
+	elseif cart.lang == "basic" then
+		cart.sandbox._TBASIC = _TBASIC
+		cart.code = [[
+10 PRINT "HELLO, WORLD"
 ]]
 	end
 
@@ -250,7 +257,7 @@ mov [_draw], [draw]
 end
 
 function carts.loadCode(data, cart)
-	local codeTypes = { "lua", "asm" }
+	local codeTypes = { "lua", "asm", "basic" }
 
 	local codeType
 	local codeStart
@@ -654,8 +661,14 @@ function carts.run(cart, ...)
 	log.info(string.format("running cart %s", name))
 
 	local code
+	local ok, f, e
+
 	if cart.lang == "lua" then
 		code = cart.code
+
+		ok, f, e = pcall(
+			load, carts.patchLua(code), name
+		)
 	elseif cart.lang == "asm" then
 		local std = {}
 		local asm_std = require "asm-lua.include.std"
@@ -687,11 +700,11 @@ function carts.run(cart, ...)
 		}
 
 		code = try(function()
-			return asm.compile(cart.code, DEBUG or false, std, ports, mmap)
-		end,
-		runtimeError,
-		function(result)
-			return result
+				return asm.compile(cart.code, DEBUG or false, std, ports, mmap)
+			end,
+			runtimeError,
+			function(result)
+				return result
 		end)
 
 		if not code then
@@ -699,13 +712,18 @@ function carts.run(cart, ...)
 		end
 
 		api.print(string.format("successfully compiled %s", cart.pureName or "cart"))
+
+		ok, f, e = pcall(
+			load, carts.patchLua(code), name
+		)
+	elseif cart.lang == "basic" then
+		ok = true
+		f = function()
+			_TBASIC.EXEC(cart.code)
+		end
 	else
 		runtimeError("unrecognized language tag")
 	end
-
-	local ok, f, e = pcall(
-		load, carts.patchLua(code), name
-	)
 
 	if not ok or f == nil then
 		syntaxError(e)

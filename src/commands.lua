@@ -242,7 +242,7 @@ end
 function commands.new(a)
 	local lang = a[1] or "lua"
 
-	if lang ~= "asm" and lang ~= "lua" then
+	if lang ~= "asm" and lang ~= "lua" and lang ~= "basic" then
 		api.color(8)
 		api.print("unknown lang")
 		return
