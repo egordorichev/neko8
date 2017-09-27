@@ -614,6 +614,15 @@ function api.print(s, x, y, c)
 
 	local scroll = (y == nil)
 
+	if #s * 4 + cursor.x > config.canvas.width then
+		local x = api.flr((config.canvas.width - cursor.x) / 4)
+		local s1 = s:sub(1, x)
+		local s2 = s:sub(x + 1, -1)
+		api.print(s1)
+		api.print(s2)
+		return
+	end
+
 	if type(y) == "boolean" then
 		scroll = y
 		if not scroll then

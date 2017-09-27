@@ -24,10 +24,12 @@ if #args == 0 then
 else
 	-- TODO
 	print(string.format("subject %s is not found", args[1]))
-	exit()
+	ex = true
 end
 
 function _draw()
+	if ex then exit() end
+
 	if key("space") then
 		print("shutdown      shutdowns neko8")
 		print("save          save cart")

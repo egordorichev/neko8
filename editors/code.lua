@@ -646,7 +646,7 @@ function code._text(text)
 			code.cursor.y = code.cursor.y - 1
 			code.cursor.x = #code.lines[code.cursor.y + 1]
 		end
-		
+
 		code.checkCursor()
 	else
 		if code.select.active then
