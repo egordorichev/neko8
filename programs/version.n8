@@ -1,4 +1,4 @@
 neko8 cart
 __lua__
-version(args)
+print("neko8 " .. nver())
 __end__

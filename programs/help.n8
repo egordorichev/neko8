@@ -1,7 +1,7 @@
 neko8 cart
 __lua__
 if #args == 0 then
-	version()
+	print("neko8 " .. nver())
 	color(6)
 	print("made by @egordorichev with love")
 	color(7)

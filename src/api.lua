@@ -141,7 +141,6 @@ function createSandbox(lang)
 		rm = commands.rm,
 		edit = commands.edit,
 		minify = commands.minify,
-		version = commands.version,
 		pwd = commands.pwd,
 		ls = commands.ls,
 		install_demos = commands.installDemos,
