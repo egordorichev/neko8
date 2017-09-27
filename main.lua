@@ -254,7 +254,9 @@ function love.keypressed(
 			else
 				handled = false
 			end
-		elseif key == "f7" then
+		end
+
+		if key == "f7" then
 			local s = love.graphics.newScreenshot(false)
 			local file = string.format("neko8-%s.png", os.time())
 
@@ -529,9 +531,9 @@ function initCanvas()
 			config.canvas.height
 		)
 
-	canvas.renderable:setFilter(
-		"nearest", "nearest"
-	)
+	--canvas.renderable:setFilter(
+	--	"nearest", "nearest"
+	--)
 
 	canvas.support =
 		love.graphics.newCanvas(
