@@ -518,10 +518,12 @@ function api.print(s, x, y, c)
 
 	local scroll = (y == nil)
 
-	if #s * 4 + cursor.x > config.canvas.width then
+	if s ~= "" and type(x) ~= "boolean" and type(y) ~= "boolean"
+		and #s * 4 + cursor.x > config.canvas.width then
 		local dx = api.flr((config.canvas.width - cursor.x) / 4)
 		local s1 = s:sub(1, dx)
 		local s2 = s:sub(dx + 1, -1)
+
 		api.print(s1, x, y, c)
 
 		if type(y) == "number" then
@@ -1122,6 +1124,7 @@ end
 
 apiList = {
 	[ "pcall" ] = { pcall, 1 },
+	[ "string" ] = { string, 0 },
 	[ "setmetatable" ] = { setmetatable, 1 },
 	[ "require" ] = { require, 1 },
 	[ "tostring" ] = { tostring, 1 },
