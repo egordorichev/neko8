@@ -531,9 +531,9 @@ function initCanvas()
 			config.canvas.height
 		)
 
-	--canvas.renderable:setFilter(
-	--	"nearest", "nearest"
-	--)
+	canvas.renderable:setFilter(
+		"nearest", "nearest"
+	)
 
 	canvas.support =
 		love.graphics.newCanvas(

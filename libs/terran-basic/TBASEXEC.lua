@@ -22,16 +22,6 @@ else
     require "libs.terran-basic.TBASINCL"
 end
 
-table.concat = function(t, delimeter)
-		if not delimeter then delimeter = "\n" end
-    if #t == 0 then return "" end
-    local outstr = t[1]
-    for i = 2, #t do
-        outstr = outstr..delimeter..tostring(t[i])
-    end
-
-    return outstr
-end
 
 -- Copy from TBASINCL; looks like OpenComputers has a bug...
 function string_hash(str)
@@ -327,7 +317,7 @@ do -- Avoid heap allocs for performance
     end
 
     function printdbg(...)
-        local debug = true--false
+        local debug = false
         if debug then print("TBASEXEC", ...) end
     end
 

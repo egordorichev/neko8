@@ -691,7 +691,7 @@ function api.flip()
 	if gif then
 		love.graphics.setCanvas(canvas.gif)
 		love.graphics.setShader(colors.displayShader)
-		love.graphics.setColor(255, 255, 255, 0)
+		--love.graphics.setColor(255, 255, 255, 0)
 
 		love.graphics.draw(
 			canvas.renderable,

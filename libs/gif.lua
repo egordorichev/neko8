@@ -6,15 +6,6 @@
 local _GIFScale, _NEKO_W, _NEKO_H =
 	config.canvas.gifScale, config.canvas.width, config.canvas.height
 
-local palmap = {}
-
-for i = 0, 15 do
-	local color = config.palette[i + 1]
-	local v = bit.lshift(color[1], 32) + bit.lshift(color[2], 16) + color[3]
-	palmap[v] = i
-	palmap[i] = v
-end
-
 local lshift, rshift, band = bit.lshift, bit.rshift, bit.band
 local strchar = string.char
 local mthmin = math.min
@@ -119,12 +110,7 @@ function gif:frame(data,gifpalette,newpal)
 	local stream={16}
 	for y=y0, y1 do
 		for x=x0, x1 do
-			local r, g, b = dataget(data, x, y)
-			local v = bit.lshift(r, 32) + bit.lshift(g, 16) + b
-			if not (palmap[v]) then
-				print(r)
-			end
-			local r = api.mid(0, 15, v)
+			local r = api.mid(0, 15, dataget(data, x, y))
 			local index = strchar(r)
 
 			local temp = buffer..index
@@ -186,6 +172,7 @@ end
 
 function gif:close()
 	self.file:write("\59")
+	self.file:flush()
 	self.file:close()
 	self.file=nil
 	self.last=nil
