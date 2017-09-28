@@ -11,6 +11,15 @@ local strchar = string.char
 local mthmin = math.min
 local tostring = tostring
 
+local palmap = {}
+
+for i = 0, 15 do
+	local color = config.palette[i + 1]
+	local v = bit.lshift(color[1], 32) + bit.lshift(color[2], 16) + color[3]
+	palmap[v] = i
+	palmap[i] = v
+end
+
 local function num2str(data)
 	return strchar(band(data, 0xFF), rshift(data, 8))
 end
@@ -110,8 +119,9 @@ function gif:frame(data,gifpalette,newpal)
 	local stream={16}
 	for y=y0, y1 do
 		for x=x0, x1 do
-			local r = api.mid(0, 15, dataget(data, x, y))
-			local index = strchar(r)
+			local r = dataget(data, x, y)
+			if r ~= 16 and r ~= 0 then print(r) end
+			local index = strchar(api.mid(r, 0, 15))
 
 			local temp = buffer..index
 			if codetbl[temp] then

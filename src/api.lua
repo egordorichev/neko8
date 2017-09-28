@@ -512,6 +512,10 @@ function api.print(s, x, y, c)
 		api.color(c)
 	end
 
+	if type(s) == "number" then
+		s = tostring(s)
+	end
+
 	local scroll = (y == nil)
 
 	if #s * 4 + cursor.x > config.canvas.width then
@@ -585,13 +589,20 @@ function api.print(s, x, y, c)
 end
 
 function api.flip()
+	colors.displayShader:send(
+		"palette",
+		shaderUnpack(colors.display)
+	)
+
 	love.graphics.setScissor()
 	love.graphics.origin()
 
+	-- FIXME
 	if gif then
 		love.graphics.setCanvas(canvas.gif)
-		love.graphics.setShader(colors.displayShader)
-		--love.graphics.setColor(255, 255, 255, 0)
+		love.graphics.setShader()
+		love.graphics.setColor(255, 255, 255, 255)
+		love.graphics.clear(0, 0, 0, 255)
 
 		love.graphics.draw(
 			canvas.renderable,
@@ -661,11 +672,6 @@ function api.flip()
 
 	love.graphics.setShader(
 		colors.displayShader
-	)
-
-	colors.displayShader:send(
-		"palette",
-		shaderUnpack(colors.display)
 	)
 
 	love.graphics.setCanvas()

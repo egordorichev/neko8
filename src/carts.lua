@@ -7,16 +7,13 @@ require "libs.terran-basic.TBASEXEC"
 
 local function defineForBasic(name, f, ar)
 	name = string.upper(name)
-	table.insert(_TBASIC._FNCTION, name)
-	_TBASIC.LUAFN[name] = { pf, ar or 0 }
+
 end
 
 local function initBasicAPI()
-	if lang ~= "basic" then
-		for k, v in pairs(apiList) do
-			defineForBasic(k, v[1], v[2])
-		end
-	end
+	--for k, v in pairs(apiList) do
+	--	defineForBasic(k, v[1], v[2])
+	--end
 end
 
 function carts.load(name)
