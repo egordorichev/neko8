@@ -1205,6 +1205,7 @@ apiList = {
 	[ "save" ] = { commands.save, 1 },
 	[ "reboot" ] = { commands.reboot, 1 },
 	[ "shutdown" ] = { commands.shutdown, 1 },
+	[ "folder" ] = { commands.folder, 1 },
 	[ "cd" ] = { commands.cd, 1 },
 	[ "rm" ] = { commands.rm, 1 },
 	[ "edit" ] = { commands.edit, 1 },
