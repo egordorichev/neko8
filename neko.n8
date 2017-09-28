@@ -9,6 +9,7 @@ function _init()
  hindex=1
  t=0
  cx=0
+ h = 0
 
  start_screen()
 end
@@ -80,8 +81,9 @@ end
 function redraw_prompt(noc)
  local x,y=cget()
 
- rectfill(0,y,(#input+3)*4+3,y+5,0)
- print("> "..input,0,y,6)
+ rectfill(0,y,(#input+3)*4+3,y+5 + h * 6,0)
+ h = print("> "..input,0,y - h * 12,6)
+ printh(h)
  if (cursor_blink() or t < 16) and not noc then
  rectfill((cx+2)*4,y,
  (cx+2)*4+3,y+4,8)
@@ -93,11 +95,11 @@ function cursor_blink()
 end
 
 function _update()
- local lb = cursor_blink()
+ --local lb = cursor_blink()
  t+=1
- if lb~=cursor_blink() then
+ --if lb~=cursor_blink() or #input*4 > 184 then
  redraw_prompt()
- end
+ --end
 end
 
 function _keydown(k)
@@ -179,7 +181,7 @@ function run_command(c)
  cmd=args[1]
  del(args,cmd)
  local command=load("/programs/"..cmd)
- 
+
  if command then
 	color(7)
 	return run(command,args)

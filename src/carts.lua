@@ -130,9 +130,6 @@ end
 
 function carts.export()
 	neko.loadedCart.code = editors.code.export()
-	neko.loadedCart.sprites = editors.sprites.data
-	neko.loadedCart.sfx = editors.sfx.data
-	neko.loadedCart.music = editors.music.data
 end
 
 function carts.create(lang)
@@ -655,7 +652,8 @@ function carts.run(cart, ...)
 
 	if not cart.pureName or
 		cart ~= neko.core and cart.pureName:sub(1, 10) ~= "/programs/" then
-		carts.save(cart.pureName)
+		-- carts.save(cart.pureName)
+		carts.export()
 	end
 
 	log.info(string.format("running cart %s", name))

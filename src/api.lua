@@ -618,9 +618,13 @@ function api.print(s, x, y, c)
 		local x = api.flr((config.canvas.width - cursor.x) / 4)
 		local s1 = s:sub(1, x)
 		local s2 = s:sub(x + 1, -1)
-		api.print(s1)
-		api.print(s2)
-		return
+		api.print(s1, x, y, c)
+
+		if type(t) == "number" then
+			y = y + 6
+			print("true")
+		end
+		return api.print(s2, x, y, c) + 1
 	end
 
 	if type(y) == "boolean" then
@@ -676,6 +680,8 @@ function api.print(s, x, y, c)
 		s, api.flr(x), api.flr(y) + 1
 		-- watch out that +1!
 	)
+
+	return 0
 end
 
 function api.flip()
