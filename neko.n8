@@ -83,7 +83,7 @@ function redraw_prompt(noc)
 
  rectfill(0,y,(#input+3)*4+3,y+5 + h * 6,0)
  h = print("> "..input,0,y - h * 12,6)
- printh(h)
+
  if (cursor_blink() or t < 16) and not noc then
  rectfill((cx+2)*4,y,
  (cx+2)*4+3,y+4,8)

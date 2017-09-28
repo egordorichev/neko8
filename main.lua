@@ -30,10 +30,10 @@ hostTime = 0
 asm = require "asm-lua"
 
 audio = require "audio"
-api = require "api"
-neko = require "neko8"
 carts = require "carts"
 commands = require "commands"
+api = require "api"
+neko = require "neko8"
 
 function love.load(arg)
 	love.filesystem.unmount(love.filesystem.getSource())
@@ -642,14 +642,7 @@ function initPalette()
 	end
 
 	colors.drawShader =
-		love.graphics.newShader([[
-extern float palette[16];
-vec4 effect(vec4 color, Image texture,
-			vec2 texture_coords,
-			vec2 screen_coords) {
-	int index = int(color.r*16.0);
-	return vec4(vec3(palette[index]/16.0),1.0);
-}]])
+		love.graphics.newShader("assets/draw.frag")
 
 	colors.drawShader:send(
 		"palette",
@@ -657,15 +650,7 @@ vec4 effect(vec4 color, Image texture,
 	)
 
 	colors.spriteShader =
-		love.graphics.newShader([[
-extern float palette[16];
-extern float transparent[16];
-vec4 effect(vec4 color, Image texture,
-			vec2 texture_coords, vec2 screen_coords) {
-	int index = int(floor(Texel(texture, texture_coords).r*16.0));
-	float alpha = transparent[index];
-	return vec4(vec3(palette[index]/16.0),alpha);
-}]])
+		love.graphics.newShader("assets/sprite.frag")
 
 	colors.spriteShader:send(
 		"palette",
@@ -677,18 +662,7 @@ vec4 effect(vec4 color, Image texture,
 		shaderUnpack(colors.transparent)
 	)
 
-	colors.textShader =
-		love.graphics.newShader([[
-extern float palette[16];
-vec4 effect(vec4 color, Image texture,
-			vec2 texture_coords, vec2 screen_coords) {
-	vec4 texcolor = Texel(texture, texture_coords);
-	if(texcolor.a == 0.0) {
-		return vec4(0.0,0.0,0.0,0.0);
-	}
-	int index = int(color.r*16.0);
-	return vec4(vec3(palette[index]/16.0),1.0);
-}]])
+	colors.textShader = love.graphics.newShader("assets/text.frag")
 
 	colors.textShader:send(
 		"palette",
@@ -696,54 +670,14 @@ vec4 effect(vec4 color, Image texture,
 	)
 
 	colors.displayShader =
-		love.graphics.newShader([[
-extern vec4 palette[16];
-vec4 effect(vec4 color, Image texture,
-			vec2 texture_coords, vec2 screen_coords) {
-	int index = int(Texel(texture, texture_coords).r*15.0);
-	return palette[index]/256.0;
-}]])
+		love.graphics.newShader("assets/display.frag")
 
 	colors.displayShader:send(
 		"palette",
 		shaderUnpack(colors.display)
 	)
 
-	colors.supportShader =
-		love.graphics.newShader([[
-vec4 effect(vec4 color, Image texture,
-			vec2 texture_coords, vec2 screen_coords) {
-	return Texel(texture, texture_coords);
-}]])
-
-	colors.onCanvasShader =
-		love.graphics.newShader([[
-extern float palette[16];
-extern vec4 disp[16];
-extern float transparent[16];
-vec4 effect(vec4 color, Image texture,
-			vec2 texture_coords, vec2 screen_coords) {
-	int index = int(floor(Texel(texture, texture_coords).r*16.0));
-	float alpha = transparent[index];
-	// return vec4(vec3(palette[index]/16.0),alpha);
-	vec3 clr = vec3(disp[ int( palette[int(floor(Texel(texture, texture_coords).r))] ) ]/16.0);
-	return vec4(clr/16.0,alpha);
-}]])
-
-	colors.onCanvasShader:send(
-		"disp",
-		shaderUnpack(colors.display)
-	)
-
-	colors.onCanvasShader:send(
-		"palette",
-		shaderUnpack(colors.draw)
-	)
-
-	colors.onCanvasShader:send(
-		"transparent",
-		shaderUnpack(colors.transparent)
-	)
+	colors.supportShader = love.graphics.newShader("assets/support.frag")
 end
 
 

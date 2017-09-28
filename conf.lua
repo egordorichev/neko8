@@ -81,7 +81,7 @@ config = {
 	},
 
 	font = {
-		file = "font.ttf",
+		file = "assets/font.ttf",
 		letters = "abcdefghijklmnopqrstuvwxyz" ..
 			"ABCDEFGHIJKLMNOPQRSTUVWXYZ" ..
 			"1234567890!?[](){}.,;:<>+=%#^*~/\\|$" ..
