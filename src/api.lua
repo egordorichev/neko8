@@ -519,16 +519,16 @@ function api.print(s, x, y, c)
 	local scroll = (y == nil)
 
 	if #s * 4 + cursor.x > config.canvas.width then
-		local x = api.flr((config.canvas.width - cursor.x) / 4)
-		local s1 = s:sub(1, x)
-		local s2 = s:sub(x + 1, -1)
+		local dx = api.flr((config.canvas.width - cursor.x) / 4)
+		local s1 = s:sub(1, dx)
+		local s2 = s:sub(dx + 1, -1)
 		api.print(s1, x, y, c)
 
-		if type(t) == "number" then
+		if type(y) == "number" then
 			y = y + 6
-			print("true")
 		end
-		return api.print(s2, x, y, c) + 1
+
+		return api.print(s2, 0, y, c) + 1
 	end
 
 	if type(y) == "boolean" then

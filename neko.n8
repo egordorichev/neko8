@@ -81,8 +81,12 @@ end
 function redraw_prompt(noc)
  local x,y=cget()
 
- rectfill(0,y,(#input+3)*4+3,y+5 + h * 6,0)
- h = print("> "..input,0,y - h * 12,6)
+ if h == 0 then
+  rectfill(0,y,(#input+3)*4+3,y+5,0)
+ else
+  rectfill(0,y,0,y+5+h*6,0)
+ end 
+ h = print("> "..input,0,y,6)
 
  if (cursor_blink() or t < 16) and not noc then
  rectfill((cx+2)*4,y,
@@ -149,6 +153,10 @@ function _keydown(k)
 	 hindex+=1
 	end
 	redraw_prompt(true)
+        if h ~= 0 then
+	 local cx,cy=cget()
+         cursor(0,cy+h*6)
+        end
  flip()
 	print("")
 	if run_command(input) then
