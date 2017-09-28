@@ -893,15 +893,33 @@ function code.highlightNumbers(line, colors, ct)
 end
 
 local signs = {
-	"+", "-", "*", "/", "^", "#", "%%",
+	"+", "-", "*", "/", "^", "#", "%",
 	"&", "~", "|", "<<", ">>", "//",
 	"==", "~=", "<=", ">=", "<", ">", "=",
-	"%(", "%)", "{", "}", "%[", "%]", "::",
+	"(", ")", "{", "}", "[", "]", "::",
 	";", ":", ",", ".", "..", "..."
 }
 
+local function esc(x)
+  return  x:gsub("[%(%)%.%%%+%-%*%?%[%]%^%$]", "%%%1")
+end
+
 function code.highlightSigns(line, colors, ct)
-	-- todo
+	for i = 1, #signs do
+		local sign = esc(signs[i])
+		local start = 1
+
+ 		repeat
+			start = line:find(sign, start)
+
+			if start then
+				for j = start, start + #sign - 1 do
+					colors[j] = ct.token
+				end
+				start = start + #sign + 1
+			end
+		until not start
+	end
 end
 
 function code.highlightLuaComments(line, colors, ct)
