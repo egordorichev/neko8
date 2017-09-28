@@ -790,7 +790,7 @@ function code.colorize(line, ct)
 		code.highlightNumbers(line, colors, ct)
 		code.highlightSigns(line, colors, ct)
 		code.highlightLuaComments(line, colors, ct)
-		code.highlightStrings(line, colors, "\"" ct)
+		code.highlightStrings(line, colors, "\"", ct)
 	elseif neko.loadedCart.lang == "basic" then
 
 	elseif neko.loadedCart.lang == "asm" then
@@ -913,12 +913,32 @@ function code.highlightLuaComments(line, colors, ct)
 	code.highlightCommentsBase(line, colors, "--[[", "]]", 2, ct.comment)
 end
 
-function code.highlightCommentsBase(line, colors, start, end, extra, clr)
+function code.highlightCommentsBase(line, colors, start, finish, extra, clr)
 	-- todo
 end
 
-function code.highlightStrings(line, colors, ct, del)
-	-- todo
+function code.highlightStrings(line, colors, del, ct, s)
+	local start
+
+	if s then
+		start = string.find(line, del, s, true)
+	else
+		start = string.find(line, del, s, true)
+	end
+
+	if start then
+		local finish = string.find(line, del, start + 1, true)
+
+		if finish then
+			for i = start, finish do
+				if colors[i] ~= ct.comment then
+					colors[i] = ct.string
+				end
+			end
+
+			code.highlightStrings(line, colors, del, ct, finish + 1)
+		end
+	end
 end
 
 return code
