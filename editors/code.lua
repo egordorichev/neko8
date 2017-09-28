@@ -900,10 +900,6 @@ local signs = {
 	";", ":", ",", ".", "..", "..."
 }
 
-local function strstr(str, pattern)
-	-- todo
-end
-
 function code.highlightSigns(line, colors, ct)
 	-- todo
 end
@@ -914,7 +910,24 @@ function code.highlightLuaComments(line, colors, ct)
 end
 
 function code.highlightCommentsBase(line, colors, start, finish, extra, clr)
-	-- todo
+	for i = 1, #line do
+		local s = line:find(start, i, true)
+
+		if s then
+			local f = line:find(finish, s + 1, true)
+
+			if not f then
+				f = #line
+				-- todo
+			else
+				f = f + extra
+			end
+
+			for j = s, f do
+				colors[j] = clr
+			end
+		end
+	end
 end
 
 function code.highlightStrings(line, colors, del, ct, s)
