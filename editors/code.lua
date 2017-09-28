@@ -1,6 +1,5 @@
 local code = {}
 local lume = require "libs.lume"
-local colorize = require "libs.colorize"
 
 local tw = 40
 local th = 20
@@ -110,19 +109,15 @@ function code._update()
 	end
 end
 
-local function highlight(lines)
-	return colorize(
-		lines,
-		config.editors.code.colors
-	)
-end
-
-local function colorPrint(tbl)
-	for i = 1, #tbl, 2 do
+local function colorPrint(b, c)
+	for i = 1, #b do
 		local cx, cy = api.cget()
+		local c = c[i] or 6
 
-		api.color(tbl[i])
-		api.print(tbl[i + 1], true, false)
+		if c then
+			api.color(c)
+		end
+		api.print(b:sub(i, i), true, false)
 	end
 
 	api.print("")
@@ -139,7 +134,10 @@ function code.redraw()
 		)
 	)
 
-	buffer = highlight(buffer)
+	local cbuffer = code.colorizeLines(
+		buffer,
+		config.editors.code.colors
+	)
 
 	api.cursor(1 - code.view.x * 4, 9)
 
@@ -193,8 +191,8 @@ function code.redraw()
 		end
 	end
 
-	for l in api.all(buffer) do
-		colorPrint(l)
+	for i = 1, #buffer do
+		colorPrint(buffer[i], cbuffer[i])
 	end
 
 	local cx = code.cursor.x
@@ -772,6 +770,155 @@ function code.export()
 	return table.concat(data)
 end
 
+function code.colorizeLines(lines, ct)
+	local colors = {}
+
+	for i = 1, #lines do
+		colors[i] = code.colorize(lines[i], ct)
+	end
+
+	return colors
+end
+
+function code.colorize(line, ct)
+	local colors = {}
+
+	if neko.loadedCart.lang == "lua" then
+		code.highlightNonChars(line, colors, ct)
+		code.highlightLuaKeywords(line, colors, ct)
+		code.highlightAPI(line, colors, ct)
+		code.highlightNumbers(line, colors, ct)
+		code.highlightSigns(line, colors, ct)
+		code.highlightLuaComments(line, colors, ct)
+		code.highlightStrings(line, colors, "\"" ct)
+	elseif neko.loadedCart.lang == "basic" then
+
+	elseif neko.loadedCart.lang == "asm" then
+
+	else
+
+	end
+
+	return colors
+end
+
+function code.foreach(line, f)
+	for i = 1, #line do
+		f(line:sub(i, i), i)
+	end
+end
+
+function code.highlightNonChars(line, colors, ct)
+	code.foreach(line, function(c, x, y)
+		if string.byte(c) < 32 then
+			colors[x][y] = ct.other
+		end
+	end)
+end
+
+local function isLetter(c)
+	return c and c:match("%a")
+end
+
+local function isNumber(c)
+	return c and (tonumber(c) ~= nil)
+end
+
+local function isDot(c)
+	return c and c == "."
+end
+
+function code.highlightWords(line, colors, words, color)
+	-- todo: check if no char is before, like
+	-- cdsasLS() will mark LS blue
+	-- that's wrong
+
+	for i = 1, #line do
+		local c = line:sub(i, i)
+		local start = i
+
+		while i <= #line and (isLetter(c) or isNumber(c)) do
+			i = i + 1
+			c = line:sub(i, i)
+		end
+
+		local w = line:sub(start, i - 1)
+
+		for j = 1, #words do
+			local word = words[j]
+
+			if word == w then
+				for k = start, i - 1 do
+					colors[k] = color
+				end
+				break
+			end
+		end
+	end
+end
+
+local luaKeywords = {
+	"and", "break", "do", "else", "elseif",
+	"end", "false", "for", "function", "goto", "if",
+	"in", "local", "nil", "not", "or", "repeat",
+	"return", "then", "true", "until", "while"
+}
+
+function code.highlightLuaKeywords(line, colors, ct)
+	code.highlightWords(line, colors, luaKeywords, ct.keyword)
+end
+
+function code.highlightAPI(line, colors, ct)
+	code.highlightWords(line, colors, apiNamesOnly, ct.api)
+end
+
+function code.highlightNumbers(line, colors, ct)
+	for i = 1, #line do
+		local c = line:sub(i, i)
+		local start = i
+
+		if not isLetter(line:sub(i - 1, i - 1)) and isNumber(c) then
+			while i <= #line and (isNumber(c) or isDot(c)) do
+				i = i + 1
+				c = line:sub(i, i)
+			end
+
+			if not isLetter(line:sub(i, i)) then
+				for k = start, i - 1 do
+					colors[k] = ct.number
+				end
+			end
+		end
+	end
+end
+
+local signs = {
+	"+", "-", "*", "/", "^", "#", "%%",
+	"&", "~", "|", "<<", ">>", "//",
+	"==", "~=", "<=", ">=", "<", ">", "=",
+	"%(", "%)", "{", "}", "%[", "%]", "::",
+	";", ":", ",", ".", "..", "..."
+}
+
+local function strstr(str, pattern)
+	-- todo
+end
+
+function code.highlightSigns(line, colors, ct)
+	-- todo
+end
+
+function code.highlightLuaComments(line, colors, ct)
+	code.highlightCommentsBase(line, colors, "--", "\n", 0, ct.comment)
+	code.highlightCommentsBase(line, colors, "--[[", "]]", 2, ct.comment)
+end
+
+function code.highlightCommentsBase(line, colors, start, end, extra, clr)
+	-- todo
+end
+
+function code.highlightStrings(line, colors, ct, del)
+	-- todo
+end
+
 return code
-
-

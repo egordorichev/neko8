@@ -11,8 +11,10 @@ local neko8 = {
 			number = 12,
 			comment = 13,
 			str = 12,
-			selection = 7
-			-- todo: tokens
+			selection = 7,
+			api = 12,
+			other = 5,
+			token = 7
 		}
 	},
 

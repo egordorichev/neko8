@@ -508,6 +508,8 @@ cursor = {
 }
 
 function api.print(s, x, y, c)
+	if s == nil then return end
+
 	if c then
 		api.color(c)
 	end
@@ -1228,5 +1230,11 @@ apiList = {
 	[ "nver" ] = { api.nver, 1 },
 	[ "mstat" ] = { api.mstat, 1 }
 }
+
+apiNamesOnly = {}
+
+for k, v in pairs(apiList) do
+	table.insert(apiNamesOnly, k)
+end
 
 return api
