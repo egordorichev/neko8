@@ -828,6 +828,10 @@ local function isDot(c)
 	return c and c == "."
 end
 
+local function isNil(c)
+	return not isLetter(c) and not isNumber(c) and not isDot(c)
+end
+
 function code.highlightWords(line, colors, words, color)
 	-- todo: check if no char is before, like
 	-- cdsasLS() will mark LS blue
@@ -837,21 +841,23 @@ function code.highlightWords(line, colors, words, color)
 		local c = line:sub(i, i)
 		local start = i
 
-		while i <= #line and (isLetter(c) or isNumber(c)) do
-			i = i + 1
-			c = line:sub(i, i)
-		end
+		if isNil(line:sub(i - 1, i - 1)) then
+			while i <= #line and (isLetter(c) or isNumber(c)) do
+				i = i + 1
+				c = line:sub(i, i)
+			end
 
-		local w = line:sub(start, i - 1)
+			local w = line:sub(start, i - 1)
 
-		for j = 1, #words do
-			local word = words[j]
+			for j = 1, #words do
+				local word = words[j]
 
-			if word == w then
-				for k = start, i - 1 do
-					colors[k] = color
+				if word == w then
+					for k = start, i - 1 do
+						colors[k] = color
+					end
+					break
 				end
-				break
 			end
 		end
 	end
@@ -877,7 +883,7 @@ function code.highlightNumbers(line, colors, ct)
 		local c = line:sub(i, i)
 		local start = i
 
-		if not isLetter(line:sub(i - 1, i - 1)) and isNumber(c) then
+		if isNil(line:sub(i - 1, i - 1)) and isNumber(c) then
 			while i <= #line and (isNumber(c) or isDot(c)) do
 				i = i + 1
 				c = line:sub(i, i)
@@ -893,11 +899,39 @@ function code.highlightNumbers(line, colors, ct)
 end
 
 local signs = {
-	"+", "-", "*", "/", "^", "#", "%",
-	"&", "~", "|", "<<", ">>", "//",
-	"==", "~=", "<=", ">=", "<", ">", "=",
-	"(", ")", "{", "}", "[", "]", "::",
-	";", ":", ",", ".", "..", "..."
+	{ "+", 1 },
+	{ "-", 1 },
+	{ "*", 1 },
+	{ "/", 1 },
+	{ "^", 1 },
+	{ "#", 1 },
+	{ "%", 1 },
+	{ "&", 1 },
+	{ "~", 1 },
+	{ "|", 1 },
+	{ "<<", 2 },
+	{ ">>", 2 },
+	{ "//", 2 },
+	{ "==", 2 },
+	{ "~=", 2 },
+	{ "<=", 2 },
+	{ ">=", 2 },
+	{ "<", 1 },
+	{ ">", 1 },
+	{ "=", 1 },
+	{ "(", 1 },
+	{ ")", 1 },
+	{ "{", 1 },
+	{ "}", 1 },
+	{ "[", 1 },
+	{ "]", 1 },
+	{ "::", 2 },
+	{ ";", 1 },
+	{ ":", 1 },
+	{ ",", 1 },
+	{ ".", 1 },
+	{ "..", 2 },
+	{ "...", 3 }
 }
 
 local function esc(x)
@@ -906,17 +940,18 @@ end
 
 function code.highlightSigns(line, colors, ct)
 	for i = 1, #signs do
-		local sign = esc(signs[i])
+		local sign = signs[i]
+		local sg = esc(sign[1])
 		local start = 1
 
  		repeat
-			start = line:find(sign, start)
+			start = line:find(sg, start)
 
 			if start then
-				for j = start, start + #sign - 1 do
+				for j = start, start + sign[2] - 1 do
 					colors[j] = ct.token
 				end
-				start = start + #sign + 1
+				start = start + sign[2] + 1
 			end
 		until not start
 	end
