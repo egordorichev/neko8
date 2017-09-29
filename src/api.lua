@@ -518,6 +518,35 @@ function api.print(s, x, y, c, i)
 		s = tostring(s)
 	end
 
+	local parts = {}
+
+	for p in string.gmatch(s, "([^\n]+)") do
+		table.insert(parts, p)
+	end
+
+	if #parts > 1 then
+		if y == nil then
+			y = cursor.y
+			scroll = true
+		end
+
+		if x == nil then
+			x = cursor.x
+		end
+
+		local n = 0
+
+		for i, p in ipairs(parts) do
+			n = n + api.print(p, x, y + (i - 1) * 6) + 1
+		end
+
+		if scroll then
+			cursor.y = cursor.y + n * 6
+		end
+
+		return n
+	end
+
 	local scroll = (y == nil)
 
 	if s ~= "" and type(x) ~= "boolean" and type(y) ~= "boolean"
@@ -556,14 +585,8 @@ function api.print(s, x, y, c, i)
 			return
 		end --]] -- todo: scrolling
 
-		local count = 1
-
-		for i in string.gfind(s, "\n") do
-  		count = count + 1
-		end
-
 		y = cursor.y
-		cursor.y = cursor.y + 6 * count
+		cursor.y = cursor.y + 6
 	end
 
 	if x == nil or type(x) == "boolean" then

@@ -219,7 +219,14 @@ mov [_draw], [draw]
 ]]
 	elseif cart.lang == "moonscript" then
 		cart.code = [[
+-- cart name
+-- by @author
 
+function _init ->
+
+function _update ->
+
+function _draw ->
 ]]
 	end
 
@@ -699,6 +706,7 @@ function carts.run(cart, ...)
 		ok, f, e = pcall(
 			load, carts.patchLua(code), name
 		)
+		
 		g=gamepad:new()
 	elseif cart.lang == "asm" then
 		local std = {}
