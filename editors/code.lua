@@ -965,7 +965,7 @@ function code.highlightSigns(line, colors, ct)
 				for j = start, start + sign[2] - 1 do
 					colors[j] = ct.token
 				end
-				start = start + sign[2] + 1
+				start = start + sign[2]
 			end
 		until not start
 	end
