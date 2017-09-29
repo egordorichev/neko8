@@ -974,6 +974,7 @@ function api.memcpy(dest, source, len)
 end
 
 function api.btn(b, p)
+	--[[
 	p = p or 0
 
 	if api.keyMap[p][b] then
@@ -981,10 +982,12 @@ function api.btn(b, p)
 	end
 
 	return false
+	--]]
+	return g.b[p].ispressed
 end
 
 function api.btnp(b, p)
-	p = p or 0
+	--[[p = p or 0
 
 	if api.keyMap[p][b] then
 		local v = api.keyPressed[p][b]
@@ -994,6 +997,8 @@ function api.btnp(b, p)
 	end
 
 	return false
+	--]]
+	return g.b[p].isnewpress
 end
 
 function api.key(k)
