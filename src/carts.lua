@@ -5,8 +5,8 @@
 local carts = {}
 
 require "libs.terran-basic.TBASEXEC"
---require "libs.moonscript.moonscript"
---moonscript = require "libs.moonscript.moonscript.base"
+require "libs.moonscript.moonscript"
+moonscript = require "libs.moonscript.moonscript.base"
 
 local function defineForBasic(name, f, ar)
 	name = string.upper(name)
@@ -225,11 +225,11 @@ mov [_draw], [draw]
 -- cart name
 -- by @author
 
-function _init ->
+_init=->
 
-function _update ->
+_update=->
 
-function _draw ->
+_draw=->
 ]]
 	end
 
@@ -296,7 +296,7 @@ function _draw ->
 end
 
 function carts.loadCode(data, cart)
-	local codeTypes = { "lua", "asm", "basic" }
+	local codeTypes = { "lua", "asm", "basic", "moonscript" }
 
 	local codeType
 	local codeStart
@@ -710,7 +710,7 @@ function carts.run(cart, ...)
 			load, carts.patchLua(code), name
 		)
 
-		g=gamepad:new()
+		g = gamepad:new()
 	elseif cart.lang == "asm" then
 		local std = {}
 		local asm_std = require "asm-lua.include.std"
@@ -765,7 +765,19 @@ function carts.run(cart, ...)
 			_TBASIC.EXEC(cart.code)
 		end
 	elseif cart.lang == "moonscript" then
-		moonscript.loadString(cart.code)
+		parse = require "libs.moonscript.moonscript.parse"
+		compile = require "libs.moonscript.moonscript.compile"
+
+		tree, e = parse.string(cart.code)
+
+		if tree then
+			lua_code, e, pos = compile.tree(tree)
+			if lua_code then
+				ok, f, e = pcall(
+					load, lua_code, name
+				)
+			end
+		end
 	else
 		runtimeError("unrecognized language tag")
 	end

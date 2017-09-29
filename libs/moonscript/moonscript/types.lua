@@ -1,6 +1,6 @@
-local util = require("moonscript.util")
+local util = require("libs.moonscript.moonscript.util")
 local Set
-Set = require("moonscript.data").Set
+Set = require("libs.moonscript.moonscript.data").Set
 local insert
 insert = table.insert
 local unpack
@@ -54,8 +54,8 @@ value_can_be_statement = function(node)
 end
 local is_value
 is_value = function(stm)
-  local compile = require("moonscript.compile")
-  local transform = require("moonscript.transform")
+  local compile = require("libs.moonscript.moonscript.compile")
+  local transform = require("libs.moonscript.moonscript.transform")
   return compile.Block:is_value(stm) or transform.Value:can_transform(stm)
 end
 local value_is_singular

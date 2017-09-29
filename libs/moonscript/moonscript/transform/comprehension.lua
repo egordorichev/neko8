@@ -1,5 +1,5 @@
 local is_value
-is_value = require("moonscript.types").is_value
+is_value = require("libs.moonscript.moonscript.types").is_value
 local construct_comprehension
 construct_comprehension = function(inner, clauses)
   local current_stms = inner

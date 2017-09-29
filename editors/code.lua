@@ -228,7 +228,7 @@ function code.drawInfo()
 	api.print(
 		string.format(
 			"line %d/%d, char %d/%d",
-			code.cursor.y, #code.lines,
+			code.cursor.y + 1, #code.lines,
 			code.cursor.x,
 			#code.lines[code.cursor.y + 1]
 		),

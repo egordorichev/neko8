@@ -1,8 +1,8 @@
 
-import unpack from require "moonscript.util"
+import unpack from require "libs.moonscript.moonscript.util"
 import P, C, S, Cp, Cmt, V from require "lpeg"
-import ntype from require "moonscript.types"
-import Space from require "moonscript.parse.literals"
+import ntype from require "libs.moonscript.moonscript.types"
+import Space from require "libs.moonscript.moonscript.parse.literals"
 
 -- captures an indentation, returns indent depth
 Indent = C(S"\t "^0) / (str) ->

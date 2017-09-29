@@ -1,11 +1,11 @@
-import NameProxy, LocalName from require "moonscript.transform.names"
-import Run from require "moonscript.transform.statements"
+import NameProxy, LocalName from require "libs.moonscript.moonscript.transform.names"
+import Run from require "libs.moonscript.moonscript.transform.statements"
 
 CONSTRUCTOR_NAME = "new"
 
 import insert from table
-import build, ntype, NOOP from require "moonscript.types"
-import unpack from require "moonscript.util"
+import build, ntype, NOOP from require "libs.moonscript.moonscript.types"
+import unpack from require "libs.moonscript.moonscript.util"
 
 transform_super = (cls_name, on_base=true, block, chain) ->
   relative_parent = {

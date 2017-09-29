@@ -1,9 +1,9 @@
 
 import insert from table
-import Set from require "moonscript.data"
-import Block from require "moonscript.compile"
+import Set from require "libs.moonscript.moonscript.data"
+import Block from require "libs.moonscript.moonscript.compile"
 
-{type: mtype} = require("moonscript.util").moon
+{type: mtype} = require("libs.moonscript.moonscript.util").moon
 
 -- globals allowed to be referenced
 default_whitelist = Set {
@@ -140,7 +140,7 @@ class LinterBlock extends Block
 format_lint = (errors, code, header) ->
   return unless next errors
 
-  import pos_to_line, get_line from require "moonscript.util"
+  import pos_to_line, get_line from require "libs.moonscript.moonscript.util"
   formatted = for {msg, pos} in *errors
     if pos
       line = pos_to_line code, pos
@@ -185,7 +185,7 @@ whitelist_for_file = do
     setmetatable Set(final_list), __index: default_whitelist
 
 lint_code = (code, name="string input", whitelist_globals) ->
-  parse = require "moonscript.parse"
+  parse = require "libs.moonscript.moonscript.parse"
   tree, err = parse.string code
   return nil, err unless tree
 

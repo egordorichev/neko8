@@ -1,20 +1,20 @@
-local util = require("moonscript.util")
-local dump = require("moonscript.dump")
-local transform = require("moonscript.transform")
+local util = require("libs.moonscript.moonscript.util")
+local dump = require("libs.moonscript.moonscript.dump")
+local transform = require("libs.moonscript.moonscript.transform")
 local NameProxy, LocalName
 do
-  local _obj_0 = require("moonscript.transform.names")
+  local _obj_0 = require("libs.moonscript.moonscript.transform.names")
   NameProxy, LocalName = _obj_0.NameProxy, _obj_0.LocalName
 end
 local Set
-Set = require("moonscript.data").Set
+Set = require("libs.moonscript.moonscript.data").Set
 local ntype, value_can_be_statement
 do
-  local _obj_0 = require("moonscript.types")
+  local _obj_0 = require("libs.moonscript.moonscript.types")
   ntype, value_can_be_statement = _obj_0.ntype, _obj_0.value_can_be_statement
 end
-local statement_compilers = require("moonscript.compile.statement")
-local value_compilers = require("moonscript.compile.value")
+local statement_compilers = require("libs.moonscript.moonscript.compile.statement")
+local value_compilers = require("libs.moonscript.moonscript.compile.value")
 local concat, insert
 do
   local _obj_0 = table
@@ -730,7 +730,7 @@ tree = function(tree, options)
   return lua_code, posmap
 end
 do
-  local data = require("moonscript.data")
+  local data = require("libs.moonscript.moonscript.data")
   for name, cls in pairs({
     Line = Line,
     Lines = Lines,

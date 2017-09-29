@@ -1,8 +1,8 @@
 
-types = require "moonscript.types"
+types = require "libs.moonscript.moonscript.types"
 import ntype, mtype, is_value, NOOP from types
 
-import comprehension_has_value from require "moonscript.transform.comprehension"
+import comprehension_has_value from require "libs.moonscript.moonscript.transform.comprehension"
 
 -- A Run is a special statement node that lets a function run and mutate the
 -- state of the compiler

@@ -1,8 +1,8 @@
-local types = require("moonscript.types")
+local types = require("libs.moonscript.moonscript.types")
 local ntype, mtype, is_value, NOOP
 ntype, mtype, is_value, NOOP = types.ntype, types.mtype, types.is_value, types.NOOP
 local comprehension_has_value
-comprehension_has_value = require("moonscript.transform.comprehension").comprehension_has_value
+comprehension_has_value = require("libs.moonscript.moonscript.transform.comprehension").comprehension_has_value
 local Run
 do
   local _class_0

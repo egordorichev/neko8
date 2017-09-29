@@ -1,5 +1,5 @@
 
-import unpack from require "moonscript.util"
+import unpack from require "libs.moonscript.moonscript.util"
 
 describe "comprehension", ->
   it "should double every number", ->

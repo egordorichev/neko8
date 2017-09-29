@@ -1,2 +1,2 @@
-with require "moonscript.base"
+with require "libs.moonscript.moonscript.base"
   .insert_loader!

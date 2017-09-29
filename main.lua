@@ -335,19 +335,21 @@ function syntaxError(error)
 	api.clip()
 
 	log.error("syntax error:")
-	log.error(e)
+	log.error(error)
 	editors.close()
 
 	neko.cart = nil
-	local pos = error:find("\"]:")
-	if pos then
-		error = string.format("line %s", error:sub(pos + 3))
+	if error then
+		local pos = error:find("\"]:")
+		if pos then
+			error = string.format("line %s", error:sub(pos + 3))
+		end
+		neko.core.sandbox.redraw_prompt(true)
+		api.print("")
+		api.color(8)
+		api.print(error)
+		neko.core.sandbox.redraw_prompt()
 	end
-	neko.core.sandbox.redraw_prompt(true)
-	api.print("")
-	api.color(8)
-	api.print(error)
-	neko.core.sandbox.redraw_prompt()
 end
 
 function replaceChar(pos, str, r)

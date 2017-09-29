@@ -1,6 +1,6 @@
 local getfenv, setfenv
 do
-  local _obj_0 = require("moonscript.util")
+  local _obj_0 = require("libs.moonscript.moonscript.util")
   getfenv, setfenv = _obj_0.getfenv, _obj_0.setfenv
 end
 local wrap_env

@@ -5,9 +5,9 @@ describe "moonscript.errors", ->
   local moonscript, errors, util, to_lua
 
   -- with_dev ->
-  moonscript = require "moonscript.base"
-  errors = require "moonscript.errors"
-  util = require "moonscript.util"
+  moonscript = require "libs.moonscript.moonscript.base"
+  errors = require "libs.moonscript.moonscript.errors"
+  util = require "libs.moonscript.moonscript.util"
 
   {:to_lua} = moonscript
 
@@ -20,7 +20,7 @@ describe "moonscript.errors", ->
 
     source = tonumber err\match "^.-:(%d+):"
 
-    line_table = assert require("moonscript.line_tables")["@#{fname}"], "missing line table"
+    line_table = assert require("libs.moonscript.moonscript.line_tables")["@#{fname}"], "missing line table"
     errors.reverse_line_number fname, line_table, source, {}
 
   describe "error rewriting", ->

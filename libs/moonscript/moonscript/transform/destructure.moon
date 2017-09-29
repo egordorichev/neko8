@@ -1,10 +1,10 @@
 
-import ntype, mtype, build from require "moonscript.types"
-import NameProxy from require "moonscript.transform.names"
+import ntype, mtype, build from require "libs.moonscript.moonscript.types"
+import NameProxy from require "libs.moonscript.moonscript.transform.names"
 import insert from table
-import unpack from require "moonscript.util"
+import unpack from require "libs.moonscript.moonscript.util"
 
-import user_error from require "moonscript.errors"
+import user_error from require "libs.moonscript.moonscript.errors"
 
 join = (...) ->
   with out = {}

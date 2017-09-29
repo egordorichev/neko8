@@ -3,21 +3,21 @@ local lpeg = require("lpeg")
 lpeg.setmaxstack(10000)
 local err_msg = "Failed to parse:%s\n [%d] >>    %s"
 local Stack
-Stack = require("moonscript.data").Stack
+Stack = require("libs.moonscript.moonscript.data").Stack
 local trim, pos_to_line, get_line
 do
-  local _obj_0 = require("moonscript.util")
+  local _obj_0 = require("libs.moonscript.moonscript.util")
   trim, pos_to_line, get_line = _obj_0.trim, _obj_0.pos_to_line, _obj_0.get_line
 end
 local unpack
-unpack = require("moonscript.util").unpack
+unpack = require("libs.moonscript.moonscript.util").unpack
 local wrap_env
-wrap_env = require("moonscript.parse.env").wrap_env
+wrap_env = require("libs.moonscript.moonscript.parse.env").wrap_env
 local R, S, V, P, C, Ct, Cmt, Cg, Cb, Cc
 R, S, V, P, C, Ct, Cmt, Cg, Cb, Cc = lpeg.R, lpeg.S, lpeg.V, lpeg.P, lpeg.C, lpeg.Ct, lpeg.Cmt, lpeg.Cg, lpeg.Cb, lpeg.Cc
 local White, Break, Stop, Comment, Space, SomeSpace, SpaceBreak, EmptyLine, AlphaNum, Num, Shebang, L, _Name
 do
-  local _obj_0 = require("moonscript.parse.literals")
+  local _obj_0 = require("libs.moonscript.moonscript.parse.literals")
   White, Break, Stop, Comment, Space, SomeSpace, SpaceBreak, EmptyLine, AlphaNum, Num, Shebang, L, _Name = _obj_0.White, _obj_0.Break, _obj_0.Stop, _obj_0.Comment, _obj_0.Space, _obj_0.SomeSpace, _obj_0.SpaceBreak, _obj_0.EmptyLine, _obj_0.AlphaNum, _obj_0.Num, _obj_0.Shebang, _obj_0.L, _obj_0.Name
 end
 local SpaceName = Space * _Name
@@ -29,7 +29,7 @@ Num = Space * (Num / function(v)
 end)
 local Indent, Cut, ensure, extract_line, mark, pos, flatten_or_mark, is_assignable, check_assignable, format_assign, format_single_assign, sym, symx, simple_string, wrap_func_arg, join_chain, wrap_decorator, check_lua_string, self_assign, got
 do
-  local _obj_0 = require("moonscript.parse.util")
+  local _obj_0 = require("libs.moonscript.moonscript.parse.util")
   Indent, Cut, ensure, extract_line, mark, pos, flatten_or_mark, is_assignable, check_assignable, format_assign, format_single_assign, sym, symx, simple_string, wrap_func_arg, join_chain, wrap_decorator, check_lua_string, self_assign, got = _obj_0.Indent, _obj_0.Cut, _obj_0.ensure, _obj_0.extract_line, _obj_0.mark, _obj_0.pos, _obj_0.flatten_or_mark, _obj_0.is_assignable, _obj_0.check_assignable, _obj_0.format_assign, _obj_0.format_single_assign, _obj_0.sym, _obj_0.symx, _obj_0.simple_string, _obj_0.wrap_func_arg, _obj_0.join_chain, _obj_0.wrap_decorator, _obj_0.check_lua_string, _obj_0.self_assign, _obj_0.got
 end
 local build_grammar = wrap_env(debug_grammar, function(root)

@@ -1,6 +1,6 @@
 
-util = require "moonscript.util"
-import Set from require "moonscript.data"
+util = require "libs.moonscript.moonscript.util"
+import Set from require "libs.moonscript.moonscript.data"
 
 import insert from table
 import unpack from util
@@ -47,8 +47,8 @@ value_can_be_statement = (node) ->
   ntype(node[#node]) == "call"
 
 is_value = (stm) ->
-  compile = require "moonscript.compile"
-  transform = require "moonscript.transform"
+  compile = require "libs.moonscript.moonscript.compile"
+  transform = require "libs.moonscript.moonscript.transform"
 
   compile.Block\is_value(stm) or transform.Value\can_transform stm
 

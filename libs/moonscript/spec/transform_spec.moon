@@ -5,7 +5,7 @@ describe "moonscript.transform.destructure", ->
   local extract_assign_names
 
   with_dev ->
-    { :extract_assign_names } = require "moonscript.transform.destructure"
+    { :extract_assign_names } = require "libs.moonscript.moonscript.transform.destructure"
 
   it "extracts names from table destructure", ->
     des = {
@@ -54,7 +54,7 @@ describe "moonscript.transform.statements", ->
   local last_stm, transform_last_stm, Run
 
   with_dev ->
-    { :last_stm, :transform_last_stm, :Run } = require "moonscript.transform.statements"
+    { :last_stm, :transform_last_stm, :Run } = require "libs.moonscript.moonscript.transform.statements"
 
   describe "last_stm", ->
     it "gets last statement from empty list", ->

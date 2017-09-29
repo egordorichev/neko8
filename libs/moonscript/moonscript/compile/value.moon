@@ -1,9 +1,9 @@
 
-util = require "moonscript.util"
-data = require "moonscript.data"
+util = require "libs.moonscript.moonscript.util"
+data = require "libs.moonscript.moonscript.data"
 
-import ntype from require "moonscript.types"
-import user_error from require "moonscript.errors"
+import ntype from require "libs.moonscript.moonscript.types"
+import user_error from require "libs.moonscript.moonscript.errors"
 import concat, insert from table
 import unpack from util
 

@@ -1,4 +1,4 @@
 return {
-  Statement = require("moonscript.transform.statement"),
-  Value = require("moonscript.transform.value")
+  Statement = require("libs.moonscript.moonscript.transform.statement"),
+  Value = require("libs.moonscript.moonscript.transform.value")
 }

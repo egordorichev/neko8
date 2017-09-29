@@ -1,4 +1,4 @@
-import Block from require "moonscript.compile"
+import Block from require "libs.moonscript.moonscript.compile"
 
 import ref, str from require "spec.factory"
 
@@ -11,7 +11,7 @@ class SimpleBlock extends Block
       statement: (...) -> ...
     }
 
-value = require "moonscript.compile.value"
+value = require "libs.moonscript.moonscript.compile.value"
 
 describe "moonscript.compile", ->
   compile_node = (node) ->

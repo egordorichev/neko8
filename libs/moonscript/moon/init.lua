@@ -4,7 +4,7 @@ local lua = {
 }
 local getfenv, setfenv, dump
 do
-  local _obj_0 = require("moonscript.util")
+  local _obj_0 = require("libs.moonscript.moonscript.util")
   getfenv, setfenv, dump = _obj_0.getfenv, _obj_0.setfenv, _obj_0.dump
 end
 local p, is_object, type, debug, run_with_scope, bind_methods, defaultbl, extend, copy, mixin, mixin_object, mixin_table, fold

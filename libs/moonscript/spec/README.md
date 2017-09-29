@@ -20,7 +20,7 @@ When developing you want to make ensure the tests are executing your changes in
 the current directory, and not testing the system install.
 
 Code running in Busted will have the system install take precedence over the
-loaded version. That means that if you `require "moonscript.base"` for a test,
+loaded version. That means that if you `require "libs.moonscript.moonscript.base"` for a test,
 you won't get the local copy.
 
 The `with_dev` spec helper will ensure that any require calls within the spec
@@ -36,7 +36,7 @@ describe "moonscript.base", ->
 
   it "should load code", ->
     -- the local version is loaded
-    moonscript = require "moonscript"
+    moonscript = require "libs.moonscript.moonscript"
     moonscript.load "print 12"
 ```
 

@@ -1,5 +1,5 @@
-local compile = require("moonscript.compile")
-local parse = require("moonscript.parse")
+local compile = require("libs.moonscript.moonscript.compile")
+local parse = require("libs.moonscript.moonscript.parse")
 local concat, insert, remove
 do
   local _obj_0 = table
@@ -7,7 +7,7 @@ do
 end
 local split, dump, get_options, unpack
 do
-  local _obj_0 = require("moonscript.util")
+  local _obj_0 = require("libs.moonscript.moonscript.util")
   split, dump, get_options, unpack = _obj_0.split, _obj_0.dump, _obj_0.get_options, _obj_0.unpack
 end
 local lua = {
@@ -16,7 +16,7 @@ local lua = {
 }
 local dirsep, line_tables, create_moonpath, to_lua, moon_loader, loadstring, loadfile, dofile, insert_loader, remove_loader
 dirsep = "/"
-line_tables = require("moonscript.line_tables")
+line_tables = require("libs.moonscript.moonscript.line_tables")
 create_moonpath = function(package_path)
   local moonpaths
   do
