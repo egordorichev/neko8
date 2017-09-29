@@ -24,7 +24,6 @@ else
 		#Not 0.10.2
 		$msg "LÖVE 0.10.2 is required. Currently installed: `love --version`. Please install LOVE2d v0.10.2 from http://love2d.org."
 	else
-		#0.10.2 installed, launch LIKO-12
 		love .
 	fi
 fi
