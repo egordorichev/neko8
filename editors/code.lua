@@ -792,9 +792,21 @@ function code.colorize(line, ct)
 		code.highlightLuaComments(line, colors, ct)
 		code.highlightStrings(line, colors, "\"", ct)
 	elseif neko.loadedCart.lang == "basic" then
-
+		code.highlightNonChars(line, colors, ct)
+		code.highlightBasicKeywords(line, colors, ct)
+		code.highlightBasicAPI(line, colors, ct)
+		code.highlightNumbers(line, colors, ct)
+		code.highlightSigns(line, colors, ct)
+		code.highlightBasicComments(line, colors, ct)
+		code.highlightStrings(line, colors, "\"", ct)
 	elseif neko.loadedCart.lang == "asm" then
-
+		code.highlightNonChars(line, colors, ct)
+		code.highlightAsmKeywords(line, colors, ct)
+		code.highlightAPI(line, colors, ct)
+		code.highlightNumbers(line, colors, ct)
+		code.highlightSigns(line, colors, ct)
+		code.highlightAsmComments(line, colors, ct)
+		code.highlightStrings(line, colors, "\"", ct)
 	else
 
 	end
@@ -1008,6 +1020,41 @@ function code.highlightStrings(line, colors, del, ct, s)
 			code.highlightStrings(line, colors, del, ct, finish + 1)
 		end
 	end
+end
+
+local basicKeywords = {
+	"LET", "DATA", "IF", "THEN", "ELSE",
+	"FOR", "TO", "NEXT", "WHILE", "WEND", "REPEAT	",
+	"UNTIL", "DO", "LOOP", "GOTO", "GOSUB", "ON",
+	"DEF", "END"
+}
+
+function code.highlightBasicKeywords(line, colors, ct)
+	code.highlightWords(line, colors, basicKeywords, ct.keyword)
+end
+
+function code.highlightBasicComments(line, colors, ct)
+	code.highlightCommentsBase(line, colors, "`", "\n", 0, ct.comment)
+	-- is this right? o_O not too sure
+end
+
+function code.highlightBasicAPI(line, colors, ct)
+	code.highlightWords(line, colors, apiNamesOnlyUpperCase, ct.api)
+end
+
+local asmKeywords = {
+	"if", "then", "end", "until", "repeat",
+	"while", "loop", "ret", "extern", "WEND", "REPEAT	",
+	"UNTIL", "DO", "LOOP", "GOTO", "GOSUB", "ON",
+	"DEF", "END"
+}
+
+function code.highlightAsmKeywords(line, colors, ct)
+	code.highlightWords(line, colors, asmKeywords, ct.keyword)
+end
+
+function code.highlightAsmComments(line, colors, ct)
+	code.highlightCommentsBase(line, colors, "--", "\n", 0, ct.comment)
 end
 
 return code

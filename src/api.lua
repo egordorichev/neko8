@@ -1232,9 +1232,11 @@ apiList = {
 }
 
 apiNamesOnly = {}
+apiNamesOnlyUpperCase = {}
 
 for k, v in pairs(apiList) do
 	table.insert(apiNamesOnly, k)
+	table.insert(apiNamesOnlyUpperCase, string.upper(k))
 end
 
 return api
