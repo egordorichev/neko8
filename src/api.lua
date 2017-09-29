@@ -645,6 +645,11 @@ function api.flip()
 		)
 	end
 
+	if g and neko.cart ~= nil and neko.cart ~= neko.core then 
+		coresprites=true g:update() g:draw() coresprites=false --gamepad
+		if g.b[1].ispressed then neko.cart = nil end
+	end
+
 	if not mobile and editors.opened and neko.cart == nil then
 		local mx, my = api.mstat()
 		neko.cart, neko.core = neko.core, neko.cart
@@ -777,9 +782,12 @@ function api.sspr(
 
 	-- todo: cache this quad
 
-	local q = love.graphics.newQuad(
+	local q = (not coresprites) and love.graphics.newQuad(
 		sx, sy, sw, sh,
 		neko.cart.sprites.sheet:getDimensions()
+	) or love.graphics.newQuad(
+		sx, sy, sw, sh,
+		neko.core.sprites.sheet:getDimensions()
 	)
 
 	love.graphics.setShader(colors.spriteShader)
@@ -788,13 +796,24 @@ function api.sspr(
 		shaderUnpack(colors.transparent)
 	)
 
-	love.graphics.draw(
-		neko.cart.sprites.sheet, q,
-		api.flr(dx) + (dw * (fx and 1 or 0)),
-		api.flr(dy) + (dh * (fy and 1 or 0)),
-		0, fx and -1 or 1 * (dw / sw),
-		fy and -1 or 1 * (dh / sh)
-	)
+
+	if not coresprites then
+		love.graphics.draw(
+			neko.cart.sprites.sheet, q,
+			api.flr(dx) + (dw * (fx and 1 or 0)),
+			api.flr(dy) + (dh * (fy and 1 or 0)),
+			0, fx and -1 or 1 * (dw / sw),
+			fy and -1 or 1 * (dh / sh)
+		)
+	else
+		love.graphics.draw(
+			neko.core.sprites.sheet, q,
+			api.flr(dx) + (dw * (fx and 1 or 0)),
+			api.flr(dy) + (dh * (fy and 1 or 0)),
+			0, fx and -1 or 1 * (dw / sw),
+			fy and -1 or 1 * (dh / sh)
+		)
+	end
 
 	love.graphics.setShader(colors.drawShader)
 end

@@ -35,6 +35,8 @@ function neko.init()
 		)
 	end
 
+	gamepad = require "gamepad"
+
 	editors = require "editors"
 	editors.init()
 
