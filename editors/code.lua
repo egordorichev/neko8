@@ -1044,9 +1044,7 @@ end
 
 local asmKeywords = {
 	"if", "then", "end", "until", "repeat",
-	"while", "loop", "ret", "extern", "WEND", "REPEAT	",
-	"UNTIL", "DO", "LOOP", "GOTO", "GOSUB", "ON",
-	"DEF", "END"
+	"while", "loop", "ret", "extern"
 }
 
 function code.highlightAsmKeywords(line, colors, ct)
