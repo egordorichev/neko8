@@ -106,6 +106,11 @@ function carts.load(name)
 		return cart
 	end
 
+	if cart.lang == "basic" then
+		cart.sandbox._TBASIC = _TBASIC
+		initBasicAPI()
+	end
+
 	love.graphics.setShader(
 		colors.drawShader
 	)
@@ -200,6 +205,7 @@ mov [_draw], [draw]
 		initBasicAPI()
 		cart.code = [[
 10 PRINTH("HELLO, WORLD")
+
 ]]
 	end
 
@@ -727,6 +733,7 @@ function carts.run(cart, ...)
 			load, carts.patchLua(code), name
 		)
 	elseif cart.lang == "basic" then
+		--require "TBASEXEC"
 		ok = true
 		f = function()
 			_TBASIC.EXEC(cart.code)

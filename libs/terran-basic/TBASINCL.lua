@@ -29,6 +29,8 @@ do -- Avoid heap allocs for performance
     end
 end
 
+commands = require "commands"
+api = require "basicapi"
 
 _G._TBASIC = {}
 _G._TBASIC._VERNUM = 0x0004 -- 0.4
@@ -117,6 +119,7 @@ _G._TBASIC._FNCTION = { -- aka OPCODES because of some internal-use-only functio
     "ABORT", -- break as if an error occured
     "ABORTM", -- ABORT with message
     -- stdio
+    "PRINTH",
     "PRINT",
     "INPUT",
     "GET", -- read single key
@@ -436,8 +439,7 @@ Function implementations
 * Every function that returns STRING must prepend "~"
  ]]
 
-
-local function _fnprint(...)
+local function _fnprinth(...)
     function printarg(arg)
         if type(arg) == "function" then
             _TBASIC._ERROR.SYNTAX()
@@ -471,6 +473,11 @@ local function _fnprint(...)
     end
 
     io.write "\n"
+end
+
+local function _fnprint(...)
+	local args = __resolvevararg(...)
+	api.print(args)
 end
 
 local function _fngoto(lnum)
@@ -1119,6 +1126,7 @@ _G._TBASIC.LUAFN = {
     NEXT    = {_fnnext, vararg},
     LABEL   = {_fnlabel, 1},
     -- stdio
+    PRINTH   = {_fnprinth, vararg},
     PRINT   = {_fnprint, vararg},
     INPUT   = {_fninput, vararg},
     -- mathematics
