@@ -1127,6 +1127,7 @@ end
 apiList = {
 	[ "pcall" ] = { pcall, 1 },
 	[ "string" ] = { string, 0 },
+	[ "math" ] = { math, 0 },
 	[ "setmetatable" ] = { setmetatable, 1 },
 	[ "require" ] = { require, 1 },
 	[ "tostring" ] = { tostring, 1 },
