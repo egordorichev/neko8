@@ -167,6 +167,8 @@ _G._TBASIC._FNCTION = { -- aka OPCODES because of some internal-use-only functio
     -- internal use only!!
     "ASSIGNARRAY",
     "READARRAY",
+
+    "CLS"
 }
 _G._TBASIC._OPERATR = {
     -- operators
@@ -473,11 +475,6 @@ local function _fnprinth(...)
     end
 
     io.write "\n"
-end
-
-local function _fnprint(...)
-	local args = __resolvevararg(...)
-	api.print(args)
 end
 
 local function _fngoto(lnum)
@@ -799,6 +796,17 @@ local function _fnreadarray(arrname, ...)
 end
 
 
+
+-- NEKO8 API ------------------------------------------------------------------
+
+local function _fnprint(...)
+	local args = __resolvevararg(...)
+	api.print(args)
+end
+
+local function _fncls()
+	love.graphics.clear()
+end
 
 -- OPERATOR IMPLEMENTS --------------------------------------------------------
 
@@ -1127,7 +1135,6 @@ _G._TBASIC.LUAFN = {
     LABEL   = {_fnlabel, 1},
     -- stdio
     PRINTH   = {_fnprinth, vararg},
-    PRINT   = {_fnprint, vararg},
     INPUT   = {_fninput, vararg},
     -- mathematics
     ABS     = {_fnabs, 1},
@@ -1157,6 +1164,9 @@ _G._TBASIC.LUAFN = {
     CHR     = {_fnchar, 1},
     STR     = {_fntostring, 1},
     VAL     = {_fntonumber, 1},
+    -- neko8 api
+    PRINT   = {_fnprint, vararg},
+    CLS     = {_fncls, 0},
     ---------------
     -- operators --
     ---------------

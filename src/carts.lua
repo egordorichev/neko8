@@ -204,7 +204,12 @@ mov [_draw], [draw]
 		cart.sandbox._TBASIC = _TBASIC
 		initBasicAPI()
 		cart.code = [[
-10 PRINTH("HELLO, WORLD")
+10 T=0
+20 PRINTH("HELLO, WORLD")
+30 PRINT("HELLO WORLD ",T)
+40 T+=1
+50 IF T<10 THEN GOTO 20
+60 END
 
 ]]
 	end
