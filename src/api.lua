@@ -646,7 +646,10 @@ function api.flip()
 	end
 
 	if g and neko.cart ~= nil and neko.cart ~= neko.core then 
-		coresprites=true g:update() g:draw() coresprites=false --gamepad
+		g:update()  --gamepad
+		if mobile then
+			coresprites=true g:draw() coresprites=false
+		end
 		if g.b[1].ispressed then neko.cart = nil end
 	end
 
