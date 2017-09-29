@@ -1006,7 +1006,6 @@ function api.memcpy(dest, source, len)
 end
 
 function api.btn(b, p)
-	--[[
 	p = p or 0
 
 	if api.keyMap[p][b] then
@@ -1014,12 +1013,11 @@ function api.btn(b, p)
 	end
 
 	return false
-	--]]
-	return g.b[p].ispressed
+	--return g.b[p].ispressed
 end
 
 function api.btnp(b, p)
-	--[[p = p or 0
+	p = p or 0
 
 	if api.keyMap[p][b] then
 		local v = api.keyPressed[p][b]
@@ -1029,8 +1027,7 @@ function api.btnp(b, p)
 	end
 
 	return false
-	--]]
-	return g.b[p].isnewpress
+	--return g.b[p].isnewpress
 end
 
 function api.key(k)
@@ -1186,12 +1183,15 @@ apiList = {
 	[ "math" ] = { math, 0 },
 	[ "setmetatable" ] = { setmetatable, 1 },
 	[ "getmetatable" ] = { getmetatable, 1 },
+	[ "table" ] = { table, 0 },
 	[ "type" ] = { type, 1 },
 	[ "require" ] = { require, 1 },
 	[ "tostring" ] = { tostring, 1 },
 	[ "tonumber" ] = { tonumber, 1 },
 	[ "assert" ] = { assert, 1 },
 	[ "unpck" ] = { table.unpack, 1 },
+	[ "next" ] = { next, 1 },
+	[ "nextvar" ] = { nextvar, 1 },
 	[ "unpck" ] = { table.unpack, 1 },
 
 	[ "camera" ] = { api.camera, 1 },

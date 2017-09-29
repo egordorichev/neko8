@@ -3,7 +3,10 @@
 -----------------------------------------
 
 local carts = {}
+
 require "libs.terran-basic.TBASEXEC"
+--require "libs.moonscript.moonscript"
+--moonscript = require "libs.moonscript.moonscript.base"
 
 local function defineForBasic(name, f, ar)
 	name = string.upper(name)
@@ -706,7 +709,7 @@ function carts.run(cart, ...)
 		ok, f, e = pcall(
 			load, carts.patchLua(code), name
 		)
-		
+
 		g=gamepad:new()
 	elseif cart.lang == "asm" then
 		local std = {}
@@ -761,6 +764,8 @@ function carts.run(cart, ...)
 		f = function()
 			_TBASIC.EXEC(cart.code)
 		end
+	elseif cart.lang == "moonscript" then
+		moonscript.loadString(cart.code)
 	else
 		runtimeError("unrecognized language tag")
 	end
