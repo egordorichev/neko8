@@ -913,6 +913,8 @@ local signs = {
 	{ ">>", 2 },
 	{ "//", 2 },
 	{ "==", 2 },
+	{ "+=", 2 },
+	{ "-=", 2 },
 	{ "~=", 2 },
 	{ "<=", 2 },
 	{ ">=", 2 },
@@ -960,6 +962,7 @@ end
 function code.highlightLuaComments(line, colors, ct)
 	code.highlightCommentsBase(line, colors, "--", "\n", 0, ct.comment)
 	code.highlightCommentsBase(line, colors, "--[[", "]]", 2, ct.comment)
+	-- todo: multiline
 end
 
 function code.highlightCommentsBase(line, colors, start, finish, extra, clr)

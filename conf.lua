@@ -12,7 +12,7 @@ local neko8 = {
 			comment = 13,
 			string = 12,
 			selection = 7,
-			api = 12,
+			api = 9,
 			other = 5,
 			token = 7
 		}
