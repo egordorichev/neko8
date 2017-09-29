@@ -690,6 +690,7 @@ function carts.run(cart, ...)
 		ok, f, e = pcall(
 			load, carts.patchLua(code), name
 		)
+		g=gamepad:new()
 	elseif cart.lang == "asm" then
 		local std = {}
 		local asm_std = require "asm-lua.include.std"

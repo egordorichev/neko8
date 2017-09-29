@@ -645,6 +645,14 @@ function api.flip()
 		)
 	end
 
+	if g and neko.cart ~= nil and neko.cart ~= neko.core then 
+		g:update()  --gamepad
+		if mobile then
+			coresprites=true g:draw() coresprites=false
+		end
+		if g.b[1].ispressed then neko.cart = nil end
+	end
+
 	if not mobile and editors.opened and neko.cart == nil then
 		local mx, my = api.mstat()
 		neko.cart, neko.core = neko.core, neko.cart
@@ -777,9 +785,12 @@ function api.sspr(
 
 	-- todo: cache this quad
 
-	local q = love.graphics.newQuad(
+	local q = (not coresprites) and love.graphics.newQuad(
 		sx, sy, sw, sh,
 		neko.cart.sprites.sheet:getDimensions()
+	) or love.graphics.newQuad(
+		sx, sy, sw, sh,
+		neko.core.sprites.sheet:getDimensions()
 	)
 
 	love.graphics.setShader(colors.spriteShader)
@@ -788,13 +799,24 @@ function api.sspr(
 		shaderUnpack(colors.transparent)
 	)
 
-	love.graphics.draw(
-		neko.cart.sprites.sheet, q,
-		api.flr(dx) + (dw * (fx and 1 or 0)),
-		api.flr(dy) + (dh * (fy and 1 or 0)),
-		0, fx and -1 or 1 * (dw / sw),
-		fy and -1 or 1 * (dh / sh)
-	)
+
+	if not coresprites then
+		love.graphics.draw(
+			neko.cart.sprites.sheet, q,
+			api.flr(dx) + (dw * (fx and 1 or 0)),
+			api.flr(dy) + (dh * (fy and 1 or 0)),
+			0, fx and -1 or 1 * (dw / sw),
+			fy and -1 or 1 * (dh / sh)
+		)
+	else
+		love.graphics.draw(
+			neko.core.sprites.sheet, q,
+			api.flr(dx) + (dw * (fx and 1 or 0)),
+			api.flr(dy) + (dh * (fy and 1 or 0)),
+			0, fx and -1 or 1 * (dw / sw),
+			fy and -1 or 1 * (dh / sh)
+		)
+	end
 
 	love.graphics.setShader(colors.drawShader)
 end
@@ -955,6 +977,7 @@ function api.memcpy(dest, source, len)
 end
 
 function api.btn(b, p)
+	--[[
 	p = p or 0
 
 	if api.keyMap[p][b] then
@@ -962,10 +985,12 @@ function api.btn(b, p)
 	end
 
 	return false
+	--]]
+	return g.b[p].ispressed
 end
 
 function api.btnp(b, p)
-	p = p or 0
+	--[[p = p or 0
 
 	if api.keyMap[p][b] then
 		local v = api.keyPressed[p][b]
@@ -975,6 +1000,8 @@ function api.btnp(b, p)
 	end
 
 	return false
+	--]]
+	return g.b[p].isnewpress
 end
 
 function api.key(k)
