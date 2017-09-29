@@ -645,7 +645,7 @@ function api.flip()
 		)
 	end
 
-	if g and neko.cart ~= nil and neko.cart ~= neko.core then 
+	if g and neko.cart ~= nil and neko.cart ~= neko.core then
 		g:update()  --gamepad
 		if mobile then
 			coresprites=true g:draw() coresprites=false
@@ -1156,10 +1156,13 @@ apiList = {
 	[ "string" ] = { string, 0 },
 	[ "math" ] = { math, 0 },
 	[ "setmetatable" ] = { setmetatable, 1 },
+	[ "getmetatable" ] = { getmetatable, 1 },
+	[ "type" ] = { type, 1 },
 	[ "require" ] = { require, 1 },
 	[ "tostring" ] = { tostring, 1 },
 	[ "tonumber" ] = { tonumber, 1 },
 	[ "assert" ] = { assert, 1 },
+	[ "unpck" ] = { table.unpack, 1 },
 	[ "unpck" ] = { table.unpack, 1 },
 
 	[ "camera" ] = { api.camera, 1 },
