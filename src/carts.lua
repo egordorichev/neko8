@@ -176,6 +176,9 @@ end
 ]]
 	elseif cart.lang == "asm" then
 		cart.code = [[
+-- cart name
+-- by @author
+
 section .data
 
 section .text
@@ -204,12 +207,18 @@ mov [_draw], [draw]
 		cart.sandbox._TBASIC = _TBASIC
 		initBasicAPI()
 		cart.code = [[
+` cart name
+` by @author
 10 T=0
 20 PRINTH("HELLO, WORLD")
 30 PRINT("HELLO WORLD ",T)
 40 T+=1
 50 IF T<10 THEN GOTO 20
 60 END
+
+]]
+	elseif cart.lang == "moonscript" then
+		cart.code = [[
 
 ]]
 	end

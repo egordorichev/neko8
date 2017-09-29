@@ -321,10 +321,12 @@ function runtimeError(error)
 	if pos then
 		error = string.format("line %s", error:sub(pos + 3))
 	end
+
 	neko.core.sandbox.redraw_prompt(true)
 	api.print("")
 	api.color(8)
 	api.print(error)
+	api.print(debug.traceback("", 4):gsub("^%s*", ""), nil, nil, nil, true)
 	neko.core.sandbox.redraw_prompt()
 end
 

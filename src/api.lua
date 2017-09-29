@@ -507,7 +507,7 @@ cursor = {
 	y = 0
 }
 
-function api.print(s, x, y, c)
+function api.print(s, x, y, c, i)
 	if s == nil then return end
 
 	if c then
@@ -521,7 +521,7 @@ function api.print(s, x, y, c)
 	local scroll = (y == nil)
 
 	if s ~= "" and type(x) ~= "boolean" and type(y) ~= "boolean"
-		and #s * 4 + cursor.x > config.canvas.width then
+		and #s * 4 + cursor.x > config.canvas.width and not i then
 		local dx = api.flr((config.canvas.width - cursor.x) / 4)
 		local s1 = s:sub(1, dx)
 		local s2 = s:sub(dx + 1, -1)
@@ -556,8 +556,14 @@ function api.print(s, x, y, c)
 			return
 		end --]] -- todo: scrolling
 
+		local count = 1
+
+		for i in string.gfind(s, "\n") do
+  		count = count + 1
+		end
+
 		y = cursor.y
-		cursor.y = cursor.y + 6
+		cursor.y = cursor.y + 6 * count
 	end
 
 	if x == nil or type(x) == "boolean" then
