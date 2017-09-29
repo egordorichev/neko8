@@ -123,7 +123,7 @@ function sprites.init()
 	for i = 0, 7 do
 		sprites.ui:add(
 			UiComponent(
-				10, 73 + i * 6, 6, 6
+				9, 72 + i * 6, 6, 6
 			):onClick(function()
 				api.fset(
 					sprites.sprite, i,
