@@ -535,6 +535,9 @@ function code.replaceSelected(text)
 			table.remove(code.lines, min.y + 1)
 		end
 
+		local line = code.lines[min.y + 1]
+		code.lines[min.y + 1] = line:sub(max.x + 1, -1)
+
 		table.insert(code.lines, min.y + 1, newLine)
 
 		code.cursor.x = #newLine
@@ -574,7 +577,7 @@ function code._copy()
 				or code.select.start
 
 			local line = code.lines[min.y + 1]
-			text = line:sub(min.x, #line)
+			text = line:sub(min.x + 1, #line)
 
 			local m = 1
 
@@ -605,10 +608,10 @@ function code._cut()
 end
 
 function code._text(text)
-	--text = text:gsub("\t", " ")
+	text = text:gsub("\n\n", "\n \n")
 	local parts = {}
 
-	for p in text:gmatch("[^\r\n]") do
+	for p in text:gmatch("[^\r\n]+") do -- fixme: this regex is not working
 		table.insert(parts, p)
 	end
 
