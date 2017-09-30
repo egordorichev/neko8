@@ -987,17 +987,22 @@ function code.highlightLuaComments(line, colors, ct)
 	-- todo: multiline
 end
 
+local unfinishedComment = false
+
 function code.highlightCommentsBase(line, colors, start, finish, extra, clr)
 	for i = 1, #line do
-		local s = line:find(start, i, true)
+		local s = unfinishedComment and 1 or line:find(start, i, true)
 
 		if s then
 			local f = line:find(finish, s + 1, true)
 
 			if not f then
+				if finish ~= "\n" then
+					unfinishedComment = true
+				end
 				f = #line
-				-- todo
 			else
+				unfinishedComment = false	
 				f = f + extra
 			end
 

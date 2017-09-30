@@ -328,10 +328,10 @@ function sprites._update()
 
 			sprites.data.sheet:refresh()
 			sprites.forceDraw = true
-		elseif not lmb and my > 72 and my < 120 and
+		elseif not lmb and my > 74 and my < 121 and
 			mx > 15 and mx < 47 + 16 then
 			mx = api.flr((mx - 16) / 12)
-			my = api.flr((my - 72) / 12)
+			my = api.flr((my - 74) / 12)
 
 			sprites.color = api.mid(0, 15, mx + my * 4)
 			sprites.forceDraw = true
@@ -451,5 +451,3 @@ function sprites._text(text)
 end
 
 return sprites
-
-

@@ -29,9 +29,6 @@ do -- Avoid heap allocs for performance
     end
 end
 
-commands = require "commands"
-api = require "basicapi"
-
 _G._TBASIC = {}
 _G._TBASIC._VERNUM = 0x0004 -- 0.4
 _G._TBASIC._VERSION = tonumber(string.format("%d.%d", bit.rshift(_TBASIC._VERNUM, 8), bit.band(_TBASIC._VERNUM, 0xFF)))
