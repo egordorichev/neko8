@@ -791,6 +791,7 @@ function code.colorize(line, ct)
 		code.highlightSigns(line, colors, ct)
 		code.highlightLuaComments(line, colors, ct)
 		code.highlightStrings(line, colors, "\"", ct)
+		code.highlightStrings(line, colors, "\'", ct)
 	elseif neko.loadedCart.lang == "basic" then
 		code.highlightNonChars(line, colors, ct)
 		code.highlightBasicKeywords(line, colors, ct)
@@ -807,8 +808,14 @@ function code.colorize(line, ct)
 		code.highlightSigns(line, colors, ct)
 		code.highlightAsmComments(line, colors, ct)
 		code.highlightStrings(line, colors, "\"", ct)
-	else
-
+	elseif neko.loadedCart.lang == "moonscript" then
+		code.highlightNonChars(line, colors, ct)
+		code.highlightMoonKeywords(line, colors, ct)
+		code.highlightAPI(line, colors, ct)
+		code.highlightNumbers(line, colors, ct)
+		code.highlightSigns(line, colors, ct)
+		code.highlightMoonComments(line, colors, ct)
+		code.highlightStrings(line, colors, "\"", ct)
 	end
 
 	return colors
@@ -1052,6 +1059,24 @@ function code.highlightAsmKeywords(line, colors, ct)
 end
 
 function code.highlightAsmComments(line, colors, ct)
+	code.highlightCommentsBase(line, colors, "--", "\n", 0, ct.comment)
+end
+
+local asmKeywords = {
+	"false", "true", "nil", "return",
+	"break", "continue", "for", "while",
+	"if", "else", "elseif", "unless", "switch",
+	"when", "and", "or", "in", "do",
+	"not", "super", "try", "catch",
+	"with", "export", "import", "then",
+	"from", "class", "extends", "new"
+}
+
+function code.highlightMoonKeywords(line, colors, ct)
+	code.highlightWords(line, colors, asmKeywords, ct.keyword)
+end
+
+function code.highlightMoonComments(line, colors, ct)
 	code.highlightCommentsBase(line, colors, "--", "\n", 0, ct.comment)
 end
 

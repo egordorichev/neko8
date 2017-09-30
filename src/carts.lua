@@ -225,11 +225,11 @@ mov [_draw], [draw]
 -- cart name
 -- by @author
 
-_init=->
+export _init=->
 
-_update=->
+export _update=->
 
-_draw=->
+export _draw=->
 ]]
 	end
 
@@ -772,8 +772,7 @@ function carts.run(cart, ...)
 
 		if tree then
 			luaCode, e, pos = compile.tree(tree)
-			print(luaCode)
-			if lua_code then
+			if luaCode then
 				ok, f, e = pcall(
 					load, luaCode, name
 				)
