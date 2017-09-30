@@ -675,11 +675,10 @@ function api.flip()
 	end
 
 	if g and neko.cart ~= nil and neko.cart ~= neko.core then
-		g:update()  --gamepad
 		if mobile then
 			coresprites=true g:draw() coresprites=false
 		end
-		if g.b[1].ispressed then neko.cart = nil end
+		--if g.b[1].ispressed then neko.cart = nil end
 	end
 
 	if not mobile and editors.opened and neko.cart == nil then
@@ -1006,18 +1005,18 @@ function api.memcpy(dest, source, len)
 end
 
 function api.btn(b, p)
-	p = p or 0
+	--[[p = p or 0
 
 	if api.keyMap[p][b] then
 		return api.keyPressed[p][b] ~= nil
 	end
 
-	return false
-	--return g.b[p].ispressed
+	return false--]]
+	return g.b[b].ispressed
 end
 
 function api.btnp(b, p)
-	p = p or 0
+	--[[p = p or 0
 
 	if api.keyMap[p][b] then
 		local v = api.keyPressed[p][b]
@@ -1026,8 +1025,8 @@ function api.btnp(b, p)
 		end
 	end
 
-	return false
-	--return g.b[p].isnewpress
+	return false--]]
+	return g.b[b].isnewpress
 end
 
 function api.key(k)

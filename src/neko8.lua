@@ -78,6 +78,10 @@ function neko.update(dt)
 		end
 	end
 
+	if g and neko.cart ~= nil and neko.cart ~= neko.core then
+		g:update()  --gamepad
+	end
+
 	triggerCallback("_update")
 end
 
