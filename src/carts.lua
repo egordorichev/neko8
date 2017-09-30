@@ -196,7 +196,6 @@ mov [_draw], [draw]
 ]]
 	elseif cart.lang == "basic" then
 		cart.sandbox._TBASIC = _TBASIC
-		initBasicAPI()
 		-- todo: comments ??
 		cart.code = [[
 10 T=0

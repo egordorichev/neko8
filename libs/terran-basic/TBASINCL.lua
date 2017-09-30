@@ -38,12 +38,14 @@ _G._TBASIC._VERSION = tonumber(string.format("%d.%d", bit.rshift(_TBASIC._VERNUM
 _G._TBASIC._HEADER = string.format("    **** TERRAN BASIC V%d.%d ****    ", bit.rshift(_TBASIC._VERNUM, 8), bit.band(_TBASIC._VERNUM, 0xFF))
 _G._TBASIC.PROMPT = function() print("\nREADY.") end
 _G._TBASIC._INVOKEERR = function(msg, msg1)
-    if msg1 then
-        print("?L".._G._TBASIC._INTPRTR.PROGCNTR..": "..msg.." "..msg1)
+		local e = ""
+		if msg1 then
+        e = "?L".._G._TBASIC._INTPRTR.PROGCNTR..": "..msg.." "..msg1
     else
-        print("?L".._G._TBASIC._INTPRTR.PROGCNTR..": "..msg, "ERROR")
+        e = "?L".._G._TBASIC._INTPRTR.PROGCNTR..": "..msg, "ERROR"
     end
-    if _TBASIC.SHOWLUAERROR then error("Error thrown") end
+		print(e)
+    if _TBASIC.SHOWLUAERROR then syntaxError(e, false) end
     --os.exit(1) -- terminate
     _G._TBASIC.__appexit = true -- duh, computercraft
 end
@@ -118,9 +120,6 @@ _G._TBASIC._FNCTION = { -- aka OPCODES because of some internal-use-only functio
     "ABORT", -- break as if an error occured
     "ABORTM", -- ABORT with message
     -- stdio
-    "PRINTH",
-    "PRINT",
-    "GET", -- read single key
     "INT", -- integer part of a number (3.78 -> 3, -3.03 -> -3)
     -- string manipulation
     "LEN",
@@ -766,16 +765,6 @@ local function _fnreadarray(arrname, ...)
 end
 
 
-
--- NEKO8 API ------------------------------------------------------------------
-
-local function nekoAPI(f)
-	return function(...)
-		local args = __resolvevararg(...)
-		f(args)
-	end
-end
-
 -- OPERATOR IMPLEMENTS --------------------------------------------------------
 
 local function booleanise(bool)
@@ -1080,9 +1069,6 @@ function _opmodassign(var, value)
     end
 end
 
-
-local vararg = -13 -- magic
-
 _G._TBASIC.LUAFN = {
     -- variable control
     CLR     = {function() _TBASIC._INTPRTR.VARTABLE = {} end, 0},
@@ -1111,10 +1097,6 @@ _G._TBASIC.LUAFN = {
     CHR     = {_fnchar, 1},
     STR     = {_fntostring, 1},
     VAL     = {_fntonumber, 1},
-    -- neko8 api
-    PRINT   = {nekoAPI(api.print), vararg},
-    PRINTH  = {nekoAPI(print), vararg},
-    CLS     = {nekoAPI(api.cls), 0},
     ---------------
     -- operators --
     ---------------
@@ -1153,13 +1135,13 @@ _G._TBASIC.LUAFN = {
     -- misc
     REM     = {_fnnop, 0}
 }
+
+
 _G._TBASIC._GETARGS = function(func)
     local f = _TBASIC.LUAFN[func]
     if f == nil then return nil end
     return f[2]
 end
-
-
 
 -- PARSER IMPL ----------------------------------------------------------------
 
@@ -1452,9 +1434,24 @@ end
 table.sort(_TBASIC._FNCTION, function(a, b) return string.hash(a) < string.hash(b) end)
 
 
-_G._TBASIC._INTPRTR.RESET()
+_G._TBASIC.INIT = function ()
+	for n, f in pairs(apiList) do
+		n = string.upper(n)
+		table.insert(_TBASIC._FNCTION, n)
 
+		if f[2] == vararg then
+			print(vararg)
+			_TBASIC.LUAFN[n] = { function(...)
+				local args = __resolvevararg(...)
+				f[1](args)
+			end, f[2] }
+		else
+			_TBASIC.LUAFN[n] = { f[1], f[2] }
+		end
+	end
 
+	_G._TBASIC._INTPRTR.RESET()
+end
 
 --[[
 Terran BASIC (TBASIC)

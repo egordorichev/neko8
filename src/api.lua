@@ -546,7 +546,7 @@ function api.print(s, x, y, c, i)
 				y = 108
 
 				api.color(c)
-				api.cursor(0, y + 6)
+				api.cursor(0, y)
 				api.flip()
 			end
 		end
@@ -1183,8 +1183,6 @@ function api.all(a)
 	end
 end
 
-local vararg = -13
-
 apiList = {
 	[ "pcall" ] = { pcall, 1 },
 	[ "string" ] = { string, 0 },
@@ -1221,7 +1219,7 @@ apiList = {
 	[ "pset" ] = { api.pset, 3 },
 	[ "pget" ] = { api.pget, 2 },
 	[ "line" ] = { api.line, 5 },
-	[ "print" ] = { api.print, 4 },
+	[ "print" ] = { api.print, vararg },
 	[ "flip" ] = { api.flip, 0 },
 	[ "cursor" ] = { api.cursor, 2 },
 	[ "cget" ] = { api.cget, 0 },
@@ -1296,6 +1294,8 @@ apiList = {
 	[ "nver" ] = { api.nver, 0 },
 	[ "mstat" ] = { api.mstat, 0 }
 }
+
+_TBASIC.INIT()
 
 apiNamesOnly = {}
 apiNamesOnlyUpperCase = {}

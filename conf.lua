@@ -1,3 +1,5 @@
+_G.vararg = -13 -- magic: BASIC
+
 local neko8 = {
 	code = {
 		bg = 2,
