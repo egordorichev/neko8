@@ -1440,7 +1440,6 @@ _G._TBASIC.INIT = function ()
 		table.insert(_TBASIC._FNCTION, n)
 
 		if f[2] == vararg then
-			print(vararg)
 			_TBASIC.LUAFN[n] = { function(...)
 				local args = __resolvevararg(...)
 				f[1](args)

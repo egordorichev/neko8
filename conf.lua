@@ -1,4 +1,6 @@
 _G.vararg = -13 -- magic: BASIC
+local success, lpeg = pcall(require, "lpeg")
+lpeg = success and lpeg or require "libs.lulpeg":register(not _ENV and _G)
 
 local neko8 = {
 	code = {
@@ -59,7 +61,7 @@ local version = {
 	major = 0,
 	minor = 0.5,
 	name = "asm",
-	release = "dev"
+	release = "patch 5"
 }
 
 version.string = string.format(

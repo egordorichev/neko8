@@ -1,6 +1,6 @@
 
 import unpack from require "libs.moonscript.moonscript.util"
-import P, C, S, Cp, Cmt, V from require "lpeg"
+import P, C, S, Cp, Cmt, V from lpeg
 import ntype from require "libs.moonscript.moonscript.types"
 import Space from require "libs.moonscript.moonscript.parse.literals"
 

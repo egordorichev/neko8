@@ -1,5 +1,5 @@
 debug_grammar = false
-lpeg = require "lpeg"
+lpeg = lpeg
 
 lpeg.setmaxstack 10000 -- whoa
 

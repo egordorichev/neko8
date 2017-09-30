@@ -7,7 +7,7 @@ local wrap_env
 wrap_env = function(debug, fn)
   local V, Cmt
   do
-    local _obj_0 = require("lpeg")
+    local _obj_0 = lpeg
     V, Cmt = _obj_0.V, _obj_0.Cmt
   end
   local env = getfenv(fn)

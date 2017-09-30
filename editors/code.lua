@@ -531,7 +531,7 @@ function code.replaceSelected(text)
 			newLine = text
 		end
 
-		for y = min.y, max.y do
+		for y = min.y, max.y - 1 do
 			table.remove(code.lines, min.y + 1)
 		end
 
@@ -608,7 +608,7 @@ function code._text(text)
 	--text = text:gsub("\t", " ")
 	local parts = {}
 
-	for p in text:gmatch("[^\r\n]+") do
+	for p in text:gmatch("[^\r\n]*") do
 		table.insert(parts, p)
 	end
 

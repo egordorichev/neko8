@@ -1,7 +1,7 @@
 
 util = require "libs.moonscript.moonscript.util"
 
-lpeg = require "lpeg"
+lpeg = lpeg
 
 import concat, insert from table
 import split, pos_to_line from util

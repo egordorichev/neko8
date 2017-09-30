@@ -3,7 +3,7 @@ import getfenv, setfenv from require "libs.moonscript.moonscript.util"
 
 -- all undefined Proper globals are automaticlly converted into lpeg.V
 wrap_env = (debug, fn) ->
-  import V, Cmt from require "lpeg"
+  import V, Cmt from lpeg
 
   env = getfenv fn
   wrap_name = V
