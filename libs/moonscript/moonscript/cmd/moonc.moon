@@ -2,7 +2,7 @@
 
 lfs = require "lfs"
 
-import split from require "moonscript.util"
+import split from require "libs.moonscript.moonscript.util"
 
 local *
 
@@ -64,8 +64,8 @@ gettime = do
 -- returns nil, error on error
 -- returns true if some option handled the output instead
 compile_file_text = (text, opts={}) ->
-  parse = require "moonscript.parse"
-  compile = require "moonscript.compile"
+  parse = require "libs.moonscript.moonscript.parse"
+  compile = require "libs.moonscript.moonscript.compile"
 
   parse_time = if opts.benchmark
     assert gettime!
@@ -77,7 +77,7 @@ compile_file_text = (text, opts={}) ->
     parse_time = gettime! - parse_time
 
   if opts.show_parse_tree
-    dump = require "moonscript.dump"
+    dump = require "libs.moonscript.moonscript.dump"
     dump.tree tree
     return true
 
@@ -93,7 +93,7 @@ compile_file_text = (text, opts={}) ->
     compile_time = gettime() - compile_time
 
   if opts.show_posmap
-    import debug_posmap from require "moonscript.util"
+    import debug_posmap from require "libs.moonscript.moonscript.util"
     print "Pos", "Lua", ">>", "Moon"
     print debug_posmap posmap_or_err, text, code
     return true

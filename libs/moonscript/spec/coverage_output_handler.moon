@@ -1,6 +1,6 @@
 
 load_line_table = (chunk_name) ->
-  import to_lua from require "moonscript.base"
+  import to_lua from require "libs.moonscript.moonscript.base"
 
   return unless chunk_name\match "^@"
   fname = chunk_name\sub 2
@@ -13,7 +13,7 @@ load_line_table = (chunk_name) ->
 
   return nil, ltable unless c
 
-  line_tables = require "moonscript.line_tables"
+  line_tables = require "libs.moonscript.moonscript.line_tables"
   line_tables[chunk_name] = ltable
   true
 
@@ -23,7 +23,7 @@ load_line_table = (chunk_name) ->
 
   local spec_name
 
-  coverage = require "moonscript.cmd.coverage"
+  coverage = require "libs.moonscript.moonscript.cmd.coverage"
   cov = coverage.CodeCoverage!
 
   busted.subscribe { "test", "start" }, (context) ->

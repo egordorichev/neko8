@@ -1,5 +1,5 @@
 
-import is_value from require "moonscript.types"
+import is_value from require "libs.moonscript.moonscript.types"
 
 construct_comprehension = (inner, clauses) ->
   current_stms = inner

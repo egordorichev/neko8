@@ -1,6 +1,6 @@
 local lfs = require("lfs")
 local split
-split = require("moonscript.util").split
+split = require("libs.moonscript.moonscript.util").split
 local dirsep, dirsep_chars, mkdir, normalize_dir, parse_dir, parse_file, convert_path, format_time, gettime, compile_file_text, write_file, compile_and_write, is_abs_path, path_to_target
 dirsep = package.config:sub(1, 1)
 if dirsep == "\\" then
@@ -59,8 +59,8 @@ compile_file_text = function(text, opts)
   if opts == nil then
     opts = { }
   end
-  local parse = require("moonscript.parse")
-  local compile = require("moonscript.compile")
+  local parse = require("libs.moonscript.moonscript.parse")
+  local compile = require("libs.moonscript.moonscript.compile")
   local parse_time
   if opts.benchmark then
     parse_time = assert(gettime())
@@ -73,7 +73,7 @@ compile_file_text = function(text, opts)
     parse_time = gettime() - parse_time
   end
   if opts.show_parse_tree then
-    local dump = require("moonscript.dump")
+    local dump = require("libs.moonscript.moonscript.dump")
     dump.tree(tree)
     return true
   end
@@ -90,7 +90,7 @@ compile_file_text = function(text, opts)
   end
   if opts.show_posmap then
     local debug_posmap
-    debug_posmap = require("moonscript.util").debug_posmap
+    debug_posmap = require("libs.moonscript.moonscript.util").debug_posmap
     print("Pos", "Lua", ">>", "Moon")
     print(debug_posmap(posmap_or_err, text, code))
     return true

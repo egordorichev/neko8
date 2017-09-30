@@ -1,9 +1,9 @@
-local util = require("moonscript.util")
-local data = require("moonscript.data")
+local util = require("libs.moonscript.moonscript.util")
+local data = require("libs.moonscript.moonscript.data")
 local ntype
-ntype = require("moonscript.types").ntype
+ntype = require("libs.moonscript.moonscript.types").ntype
 local user_error
-user_error = require("moonscript.errors").user_error
+user_error = require("libs.moonscript.moonscript.errors").user_error
 local concat, insert
 do
   local _obj_0 = table

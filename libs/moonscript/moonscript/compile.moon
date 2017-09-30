@@ -1,14 +1,14 @@
 
-util = require "moonscript.util"
-dump = require "moonscript.dump"
-transform = require "moonscript.transform"
+util = require "libs.moonscript.moonscript.util"
+dump = require "libs.moonscript.moonscript.dump"
+transform = require "libs.moonscript.moonscript.transform"
 
-import NameProxy, LocalName from require "moonscript.transform.names"
-import Set from require "moonscript.data"
-import ntype, value_can_be_statement from require "moonscript.types"
+import NameProxy, LocalName from require "libs.moonscript.moonscript.transform.names"
+import Set from require "libs.moonscript.moonscript.data"
+import ntype, value_can_be_statement from require "libs.moonscript.moonscript.types"
 
-statement_compilers = require "moonscript.compile.statement"
-value_compilers = require "moonscript.compile.value"
+statement_compilers = require "libs.moonscript.moonscript.compile.statement"
+value_compilers = require "libs.moonscript.moonscript.compile.value"
 
 import concat, insert from table
 import pos_to_line, get_closest_line, trim, unpack from util
@@ -478,7 +478,7 @@ tree = (tree, options={}) ->
   lua_code, posmap
 
 -- mmmm
-with data = require "moonscript.data"
+with data = require "libs.moonscript.moonscript.data"
   for name, cls in pairs {:Line, :Lines, :DelayedLine}
     data[name] = cls
 

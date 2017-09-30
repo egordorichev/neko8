@@ -1,16 +1,16 @@
-import Transformer from require "moonscript.transform.transformer"
-import build, ntype, smart_node from require "moonscript.types"
+import Transformer from require "libs.moonscript.moonscript.transform.transformer"
+import build, ntype, smart_node from require "libs.moonscript.moonscript.types"
 
-import NameProxy from require "moonscript.transform.names"
-import Accumulator, default_accumulator from require "moonscript.transform.accumulator"
-import lua_keywords from require "moonscript.data"
+import NameProxy from require "libs.moonscript.moonscript.transform.names"
+import Accumulator, default_accumulator from require "libs.moonscript.moonscript.transform.accumulator"
+import lua_keywords from require "libs.moonscript.moonscript.data"
 
-import Run, transform_last_stm, implicitly_return, chain_is_stub from require "moonscript.transform.statements"
+import Run, transform_last_stm, implicitly_return, chain_is_stub from require "libs.moonscript.moonscript.transform.statements"
 
-import construct_comprehension from require "moonscript.transform.comprehension"
+import construct_comprehension from require "libs.moonscript.moonscript.transform.comprehension"
 
 import insert from table
-import unpack from require "moonscript.util"
+import unpack from require "libs.moonscript.moonscript.util"
 
 Transformer {
   for: default_accumulator

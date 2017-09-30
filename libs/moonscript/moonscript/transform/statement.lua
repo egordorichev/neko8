@@ -1,25 +1,25 @@
 local Transformer
-Transformer = require("moonscript.transform.transformer").Transformer
+Transformer = require("libs.moonscript.moonscript.transform.transformer").Transformer
 local NameProxy, LocalName, is_name_proxy
 do
-  local _obj_0 = require("moonscript.transform.names")
+  local _obj_0 = require("libs.moonscript.moonscript.transform.names")
   NameProxy, LocalName, is_name_proxy = _obj_0.NameProxy, _obj_0.LocalName, _obj_0.is_name_proxy
 end
 local Run, transform_last_stm, implicitly_return, last_stm
 do
-  local _obj_0 = require("moonscript.transform.statements")
+  local _obj_0 = require("libs.moonscript.moonscript.transform.statements")
   Run, transform_last_stm, implicitly_return, last_stm = _obj_0.Run, _obj_0.transform_last_stm, _obj_0.implicitly_return, _obj_0.last_stm
 end
-local types = require("moonscript.types")
+local types = require("libs.moonscript.moonscript.types")
 local build, ntype, is_value, smart_node, value_is_singular, is_slice, NOOP
 build, ntype, is_value, smart_node, value_is_singular, is_slice, NOOP = types.build, types.ntype, types.is_value, types.smart_node, types.value_is_singular, types.is_slice, types.NOOP
 local insert
 insert = table.insert
-local destructure = require("moonscript.transform.destructure")
+local destructure = require("libs.moonscript.moonscript.transform.destructure")
 local construct_comprehension
-construct_comprehension = require("moonscript.transform.comprehension").construct_comprehension
+construct_comprehension = require("libs.moonscript.moonscript.transform.comprehension").construct_comprehension
 local unpack
-unpack = require("moonscript.util").unpack
+unpack = require("libs.moonscript.moonscript.util").unpack
 local with_continue_listener
 with_continue_listener = function(body)
   local continue_name = nil
@@ -180,7 +180,7 @@ return Transformer({
       return implicitly_return(self)(ret_val)
     end
     if ret_val_type == "chain" or ret_val_type == "comprehension" or ret_val_type == "tblcomprehension" then
-      local Value = require("moonscript.transform.value")
+      local Value = require("libs.moonscript.moonscript.transform.value")
       ret_val = Value:transform_once(self, ret_val)
       if ntype(ret_val) == "block_exp" then
         return build.group(transform_last_stm(ret_val[2], function(stm)
@@ -240,7 +240,7 @@ return Transformer({
       local first_name = names[1]
       local first_type = ntype(first_value)
       if first_type == "chain" then
-        local Value = require("moonscript.transform.value")
+        local Value = require("libs.moonscript.moonscript.transform.value")
         first_value = Value:transform_once(self, first_value)
         first_type = ntype(first_value)
       end
@@ -262,7 +262,7 @@ return Transformer({
           }
         })
       elseif "comprehension" == _exp_0 or "tblcomprehension" == _exp_0 or "foreach" == _exp_0 or "for" == _exp_0 or "while" == _exp_0 then
-        local Value = require("moonscript.transform.value")
+        local Value = require("libs.moonscript.moonscript.transform.value")
         return build.assign_one(first_name, Value:transform_once(self, first_value))
       else
         values[1] = first_value
@@ -776,5 +776,5 @@ return Transformer({
       if_stm
     })
   end,
-  class = require("moonscript.transform.class")
+  class = require("libs.moonscript.moonscript.transform.class")
 })

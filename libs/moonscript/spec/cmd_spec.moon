@@ -7,7 +7,7 @@ describe "moonc", ->
   local moonc
 
   dev_loaded = with_dev ->
-    moonc = require "moonscript.cmd.moonc"
+    moonc = require "libs.moonscript.moonscript.cmd.moonc"
 
   same = (fn, a, b) ->
     assert.same b, fn a
@@ -65,7 +65,7 @@ describe "moonc", ->
   describe "watcher", ->
     describe "inotify watcher", ->
       it "gets dirs", ->
-        import InotifyWacher from require "moonscript.cmd.watchers"
+        import InotifyWacher from require "libs.moonscript.moonscript.cmd.watchers"
         watcher = InotifyWacher {
           {"hello.moon", "hello.lua"}
           {"cool/no.moon", "cool/no.lua"}
@@ -78,7 +78,7 @@ describe "moonc", ->
 
   describe "parse args", ->
     it "parses spec", ->
-      import parse_spec from require "moonscript.cmd.args"
+      import parse_spec from require "libs.moonscript.moonscript.cmd.args"
       spec = parse_spec "lt:o:X"
       assert.same {
         X: {}
@@ -88,7 +88,7 @@ describe "moonc", ->
       }, spec
 
     it "parses arguments", ->
-      import parse_arguments from require "moonscript.cmd.args"
+      import parse_arguments from require "libs.moonscript.moonscript.cmd.args"
       out, res = parse_arguments {
         "ga:p"
         print: "p"
@@ -113,12 +113,12 @@ describe "moonc", ->
         attributes: -> "directory"
       }
 
-      moonc = require "moonscript.cmd.moonc"
+      moonc = require "libs.moonscript.moonscript.cmd.moonc"
 
     after_each ->
       package.loaded.lfs = nil
       dev_loaded["moonscript.cmd.moonc"] = nil
-      moonc = require "moonscript.cmd.moonc"
+      moonc = require "libs.moonscript.moonscript.cmd.moonc"
 
     it "should make directory", ->
       moonc.mkdir "hello/world/directory"

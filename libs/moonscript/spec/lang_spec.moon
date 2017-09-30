@@ -89,8 +89,8 @@ describe "input tests", ->
   local parse, compile
 
   with_dev ->
-    parse = require "moonscript.parse"
-    compile = require "moonscript.compile"
+    parse = require "libs.moonscript.moonscript.parse"
+    compile = require "libs.moonscript.moonscript.compile"
   
   for name in *inputs
     input = input_fname name

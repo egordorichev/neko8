@@ -1,11 +1,11 @@
 local insert
 insert = table.insert
 local Set
-Set = require("moonscript.data").Set
+Set = require("libs.moonscript.moonscript.data").Set
 local Block
-Block = require("moonscript.compile").Block
+Block = require("libs.moonscript.moonscript.compile").Block
 local mtype
-mtype = require("moonscript.util").moon.type
+mtype = require("libs.moonscript.moonscript.util").moon.type
 local default_whitelist = Set({
   '_G',
   '_VERSION',
@@ -234,7 +234,7 @@ format_lint = function(errors, code, header)
   end
   local pos_to_line, get_line
   do
-    local _obj_0 = require("moonscript.util")
+    local _obj_0 = require("libs.moonscript.moonscript.util")
     pos_to_line, get_line = _obj_0.pos_to_line, _obj_0.get_line
   end
   local formatted
@@ -299,7 +299,7 @@ lint_code = function(code, name, whitelist_globals)
   if name == nil then
     name = "string input"
   end
-  local parse = require("moonscript.parse")
+  local parse = require("libs.moonscript.moonscript.parse")
   local tree, err = parse.string(code)
   if not (tree) then
     return nil, err

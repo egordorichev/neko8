@@ -1,5 +1,5 @@
 
-util = require "moonscript.util"
+util = require "libs.moonscript.moonscript.util"
 
 lpeg = require "lpeg"
 
@@ -42,7 +42,7 @@ truncate_traceback = (traceback, chunk_func="moonscript_chunk") ->
   concat traceback, "\n"
 
 rewrite_traceback = (text, err) ->
-  line_tables = require "moonscript.line_tables"
+  line_tables = require "libs.moonscript.moonscript.line_tables"
   import V, S, Ct, C from lpeg
   header_text = "stack traceback:"
 

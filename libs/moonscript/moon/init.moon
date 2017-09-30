@@ -1,6 +1,6 @@
 
 lua = { :debug, :type }
-import getfenv, setfenv, dump from require "moonscript.util"
+import getfenv, setfenv, dump from require "libs.moonscript.moonscript.util"
 
 local *
 

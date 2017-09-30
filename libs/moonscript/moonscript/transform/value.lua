@@ -1,30 +1,30 @@
 local Transformer
-Transformer = require("moonscript.transform.transformer").Transformer
+Transformer = require("libs.moonscript.moonscript.transform.transformer").Transformer
 local build, ntype, smart_node
 do
-  local _obj_0 = require("moonscript.types")
+  local _obj_0 = require("libs.moonscript.moonscript.types")
   build, ntype, smart_node = _obj_0.build, _obj_0.ntype, _obj_0.smart_node
 end
 local NameProxy
-NameProxy = require("moonscript.transform.names").NameProxy
+NameProxy = require("libs.moonscript.moonscript.transform.names").NameProxy
 local Accumulator, default_accumulator
 do
-  local _obj_0 = require("moonscript.transform.accumulator")
+  local _obj_0 = require("libs.moonscript.moonscript.transform.accumulator")
   Accumulator, default_accumulator = _obj_0.Accumulator, _obj_0.default_accumulator
 end
 local lua_keywords
-lua_keywords = require("moonscript.data").lua_keywords
+lua_keywords = require("libs.moonscript.moonscript.data").lua_keywords
 local Run, transform_last_stm, implicitly_return, chain_is_stub
 do
-  local _obj_0 = require("moonscript.transform.statements")
+  local _obj_0 = require("libs.moonscript.moonscript.transform.statements")
   Run, transform_last_stm, implicitly_return, chain_is_stub = _obj_0.Run, _obj_0.transform_last_stm, _obj_0.implicitly_return, _obj_0.chain_is_stub
 end
 local construct_comprehension
-construct_comprehension = require("moonscript.transform.comprehension").construct_comprehension
+construct_comprehension = require("libs.moonscript.moonscript.transform.comprehension").construct_comprehension
 local insert
 insert = table.insert
 local unpack
-unpack = require("moonscript.util").unpack
+unpack = require("libs.moonscript.moonscript.util").unpack
 return Transformer({
   ["for"] = default_accumulator,
   ["while"] = default_accumulator,

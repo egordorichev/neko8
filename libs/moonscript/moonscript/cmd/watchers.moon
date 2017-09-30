@@ -22,7 +22,7 @@ class InotifyWacher extends Watcher
     pcall -> require "inotify"
 
   get_dirs: =>
-    import parse_dir from require "moonscript.cmd.moonc"
+    import parse_dir from require "libs.moonscript.moonscript.cmd.moonc"
     dirs = for {file_path} in *@file_list
       dir = parse_dir file_path
       dir = "./" if dir == ""
@@ -71,7 +71,7 @@ class SleepWatcher extends Watcher
       sleep = require("socket").sleep
 
     -- TODO: this is also loading moonloader, which isn't intentional
-    sleep or= require("moonscript")._sleep
+    sleep or= require("libs.moonscript.moonscript")._sleep
     error "Missing sleep function; install LuaSocket" unless sleep
     sleep
 

@@ -1,5 +1,5 @@
 local safe_module
-safe_module = require("moonscript.util").safe_module
+safe_module = require("libs.moonscript.moonscript.util").safe_module
 local S, P, R, C
 do
   local _obj_0 = require("lpeg")

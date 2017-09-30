@@ -1,5 +1,5 @@
 -- non-recursive parsers
-import safe_module from require "moonscript.util"
+import safe_module from require "libs.moonscript.moonscript.util"
 import S, P, R, C from require "lpeg"
 
 lpeg = require "lpeg"

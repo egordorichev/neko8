@@ -1,15 +1,15 @@
-compile = require "moonscript.compile"
-parse = require "moonscript.parse"
+compile = require "libs.moonscript.moonscript.compile"
+parse = require "libs.moonscript.moonscript.parse"
 
 import concat, insert, remove from table
-import split, dump, get_options, unpack from require "moonscript.util"
+import split, dump, get_options, unpack from require "libs.moonscript.moonscript.util"
 
 lua = :loadstring, :load
 
 local *
 
 dirsep = "/"
-line_tables = require "moonscript.line_tables"
+line_tables = require "libs.moonscript.moonscript.line_tables"
 
 -- create moon path package from lua package path
 create_moonpath = (package_path) ->

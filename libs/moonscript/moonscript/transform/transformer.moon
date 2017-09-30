@@ -1,4 +1,4 @@
-import ntype from require "moonscript.types"
+import ntype from require "libs.moonscript.moonscript.types"
 
 class Transformer
   new: (@transformers) =>

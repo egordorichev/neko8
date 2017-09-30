@@ -64,7 +64,7 @@ class CodeCoverage
     @line_counts[source][line_no] += 1
 
   format_results: =>
-    line_table = require "moonscript.line_tables"
+    line_table = require "libs.moonscript.moonscript.line_tables"
     positions = create_counter!
 
     for file, lines in pairs @line_counts

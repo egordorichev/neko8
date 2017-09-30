@@ -69,7 +69,7 @@ do
   local _base_0 = {
     get_dirs = function(self)
       local parse_dir
-      parse_dir = require("moonscript.cmd.moonc").parse_dir
+      parse_dir = require("libs.moonscript.moonscript.cmd.moonc").parse_dir
       local dirs
       do
         local _accum_0 = { }
@@ -182,7 +182,7 @@ do
       pcall(function()
         sleep = require("socket").sleep
       end)
-      sleep = sleep or require("moonscript")._sleep
+      sleep = sleep or require("libs.moonscript.moonscript")._sleep
       if not (sleep) then
         error("Missing sleep function; install LuaSocket")
       end

@@ -1,21 +1,21 @@
-import Transformer from require "moonscript.transform.transformer"
+import Transformer from require "libs.moonscript.moonscript.transform.transformer"
 
-import NameProxy, LocalName, is_name_proxy from require "moonscript.transform.names"
+import NameProxy, LocalName, is_name_proxy from require "libs.moonscript.moonscript.transform.names"
 
 import Run, transform_last_stm, implicitly_return, last_stm
-  from require "moonscript.transform.statements"
+  from require "libs.moonscript.moonscript.transform.statements"
 
-types = require "moonscript.types"
+types = require "libs.moonscript.moonscript.types"
 
 import build, ntype, is_value, smart_node, value_is_singular, is_slice, NOOP
   from types
 
 import insert from table
 
-destructure = require "moonscript.transform.destructure"
-import construct_comprehension from require "moonscript.transform.comprehension"
+destructure = require "libs.moonscript.moonscript.transform.destructure"
+import construct_comprehension from require "libs.moonscript.moonscript.transform.comprehension"
 
-import unpack from require "moonscript.util"
+import unpack from require "libs.moonscript.moonscript.util"
 
 with_continue_listener = (body) ->
   continue_name = nil
@@ -108,7 +108,7 @@ Transformer {
     -- flatten things that create block exp
     if ret_val_type == "chain" or ret_val_type == "comprehension" or ret_val_type == "tblcomprehension"
       -- TODO: clean this up
-      Value = require "moonscript.transform.value"
+      Value = require "libs.moonscript.moonscript.transform.value"
       ret_val = Value\transform_once @, ret_val
       if ntype(ret_val) == "block_exp"
         return build.group transform_last_stm ret_val[2], (stm)->
@@ -147,7 +147,7 @@ Transformer {
       -- reduce colon stub chain to block exp
       if first_type == "chain"
         -- TODO: clean this up
-        Value = require "moonscript.transform.value"
+        Value = require "libs.moonscript.moonscript.transform.value"
         first_value = Value\transform_once @, first_value
         first_type = ntype first_value
 
@@ -164,7 +164,7 @@ Transformer {
 
         when "comprehension", "tblcomprehension", "foreach", "for", "while"
           -- TODO: clean this up
-          Value = require "moonscript.transform.value"
+          Value = require "libs.moonscript.moonscript.transform.value"
           return build.assign_one first_name, Value\transform_once @, first_value
         else
           values[1] = first_value
@@ -489,6 +489,6 @@ Transformer {
       if_stm
     }
 
-  class: require "moonscript.transform.class"
+  class: require "libs.moonscript.moonscript.transform.class"
     
 }

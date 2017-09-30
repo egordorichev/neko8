@@ -1192,6 +1192,7 @@ apiList = {
 	[ "next" ] = { next, 1 },
 	[ "nextvar" ] = { nextvar, 1 },
 	[ "unpck" ] = { table.unpack, 1 },
+	[ "error" ] = { runtimeError, 1 },
 
 	[ "camera" ] = { api.camera, 1 },
 	[ "clip" ] = { api.clip, 1 },

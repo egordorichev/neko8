@@ -1,20 +1,20 @@
 local NameProxy, LocalName
 do
-  local _obj_0 = require("moonscript.transform.names")
+  local _obj_0 = require("libs.moonscript.moonscript.transform.names")
   NameProxy, LocalName = _obj_0.NameProxy, _obj_0.LocalName
 end
 local Run
-Run = require("moonscript.transform.statements").Run
+Run = require("libs.moonscript.moonscript.transform.statements").Run
 local CONSTRUCTOR_NAME = "new"
 local insert
 insert = table.insert
 local build, ntype, NOOP
 do
-  local _obj_0 = require("moonscript.types")
+  local _obj_0 = require("libs.moonscript.moonscript.types")
   build, ntype, NOOP = _obj_0.build, _obj_0.ntype, _obj_0.NOOP
 end
 local unpack
-unpack = require("moonscript.util").unpack
+unpack = require("libs.moonscript.moonscript.util").unpack
 local transform_super
 transform_super = function(cls_name, on_base, block, chain)
   if on_base == nil then

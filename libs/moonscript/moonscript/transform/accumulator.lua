@@ -1,8 +1,8 @@
-local types = require("moonscript.types")
+local types = require("libs.moonscript.moonscript.types")
 local build, ntype, NOOP
 build, ntype, NOOP = types.build, types.ntype, types.NOOP
 local NameProxy
-NameProxy = require("moonscript.transform.names").NameProxy
+NameProxy = require("libs.moonscript.moonscript.transform.names").NameProxy
 local insert
 insert = table.insert
 local is_singular
@@ -17,7 +17,7 @@ is_singular = function(body)
   end
 end
 local transform_last_stm
-transform_last_stm = require("moonscript.transform.statements").transform_last_stm
+transform_last_stm = require("libs.moonscript.moonscript.transform.statements").transform_last_stm
 local Accumulator
 do
   local _class_0

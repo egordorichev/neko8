@@ -1,7 +1,7 @@
-types = require "moonscript.types"
+types = require "libs.moonscript.moonscript.types"
 
 import build, ntype, NOOP from types
-import NameProxy from require "moonscript.transform.names"
+import NameProxy from require "libs.moonscript.moonscript.transform.names"
 
 import insert from table
 
@@ -13,7 +13,7 @@ is_singular = (body) ->
   else
     body[1]
 
-import transform_last_stm from require "moonscript.transform.statements"
+import transform_last_stm from require "libs.moonscript.moonscript.transform.statements"
 
 class Accumulator
   body_idx: { for: 4, while: 3, foreach: 4 }

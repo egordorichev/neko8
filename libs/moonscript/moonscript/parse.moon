@@ -5,10 +5,10 @@ lpeg.setmaxstack 10000 -- whoa
 
 err_msg = "Failed to parse:%s\n [%d] >>    %s"
 
-import Stack from require "moonscript.data"
-import trim, pos_to_line, get_line from require "moonscript.util"
-import unpack from require "moonscript.util"
-import wrap_env from require "moonscript.parse.env"
+import Stack from require "libs.moonscript.moonscript.data"
+import trim, pos_to_line, get_line from require "libs.moonscript.moonscript.util"
+import unpack from require "libs.moonscript.moonscript.util"
+import wrap_env from require "libs.moonscript.moonscript.parse.env"
 
 {
   :R, :S, :V, :P, :C, :Ct, :Cmt, :Cg, :Cb, :Cc
@@ -18,7 +18,7 @@ import wrap_env from require "moonscript.parse.env"
   :White, :Break, :Stop, :Comment, :Space, :SomeSpace, :SpaceBreak, :EmptyLine,
   :AlphaNum, :Num, :Shebang, :L
   Name: _Name
-} = require "moonscript.parse.literals"
+} = require "libs.moonscript.moonscript.parse.literals"
 
 SpaceName = Space * _Name
 Num = Space * (Num / (v) -> {"number", v})
@@ -29,7 +29,7 @@ Num = Space * (Num / (v) -> {"number", v})
   :sym, :symx, :simple_string, :wrap_func_arg, :join_chain,
   :wrap_decorator, :check_lua_string, :self_assign, :got
 
-} = require "moonscript.parse.util"
+} = require "libs.moonscript.moonscript.parse.util"
 
 
 build_grammar = wrap_env debug_grammar, (root) ->
