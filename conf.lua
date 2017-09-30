@@ -61,7 +61,7 @@ local version = {
 	major = 0,
 	minor = 0.5,
 	name = "asm",
-	release = "patch 5"
+	release = "dev"
 }
 
 version.string = string.format(
