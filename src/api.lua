@@ -1009,31 +1009,37 @@ end
 
 function api.btn(b, p)
 	p = p or 0
+	b = b - 1
 
-	if b < 0 or b > 5 or p < 0 or p > 1 then return false end
+	if b < 0 or b > 6 or p < 0 or p > 1 then return false end
 
-	if api.keyMap[p][b] then
-		return api.keyPressed[p][b] ~= nil
+	if p == 1 then
+		if api.keyMap[p][b] then
+			return api.keyPressed[p][b] ~= nil
+		end
+		return false
+	else
+		return g.b[b].ispressed
 	end
-
-	return false
-	-- return g.b[b].ispressed
 end
 
 function api.btnp(b, p)
 	p = p or 0
+	b = b - 1
 
-	if b < 0 or b > 5 or p < 0 or p > 1 then return false end
+	if b < 0 or b > 6 or p < 0 or p > 1 then return false end
 
-	if api.keyMap[p][b] then
-		local v = api.keyPressed[p][b]
-		if v and (v == 0 or (v >= 12 and v % 4 == 0)) then
-			return true
+	if p == 1 then
+		if api.keyMap[p][b] then
+			local v = api.keyPressed[p][b]
+			if v and (v == 0 or (v >= 12 and v % 4 == 0)) then
+				return true
+			end
 		end
+		return false
+	else
+		return g.b[b].isnewpress
 	end
-
-	return false
-	-- return g.b[b].isnewpress
 end
 
 function api.key(k)
