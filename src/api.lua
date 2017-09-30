@@ -356,7 +356,8 @@ function api.brectfill(x, y, w, h, c)
 		api.flr(x),
 		api.flr(y),
 		api.flr(w),
-		api.flr(h))
+		api.flr(h)
+	)
 end
 
 function api.color(c)
@@ -367,7 +368,7 @@ function api.color(c)
 	end
 
 	love.graphics.setColor(
-		c * 16, 0, 0, 255
+		c, 0, 0, 255
 	)
 
 	colors.current = c
@@ -612,10 +613,6 @@ function api.print(s, x, y, c, i)
 		api.color(c)
 	end
 
-	love.graphics.setShader(
-		colors.textShader
-	)
-
 	love.graphics.print(
 		s, api.flr(x), api.flr(y) + 1
 		-- watch out that +1!
@@ -627,7 +624,7 @@ end
 function api.flip()
 	colors.displayShader:send(
 		"palette",
-		shaderUnpack(colors.display)
+		unpack(colors.display)
 	)
 
 	love.graphics.setScissor()
@@ -768,7 +765,7 @@ function api.spr(n, x, y, w, h, fx, fy)
 	n = api.flr(n)
 	love.graphics.setShader(colors.spriteShader)
 	colors.spriteShader:send(
-		"transparent", shaderUnpack(colors.transparent)
+		"transparent", unpack(colors.transparent)
 	)
 
 	w = w or 1
@@ -827,7 +824,7 @@ function api.sspr(
 	love.graphics.setShader(colors.spriteShader)
 	colors.spriteShader:send(
 		"transparent",
-		shaderUnpack(colors.transparent)
+		unpack(colors.transparent)
 	)
 
 
@@ -882,19 +879,15 @@ function api.pal(c0,c1,p)
 		end
 
 		colors.drawShader:send(
-			"palette", shaderUnpack(colors.draw)
+			"palette", unpack(colors.draw)
 		)
 
 		colors.spriteShader:send(
-			"palette", shaderUnpack(colors.draw)
-		)
-
-		colors.textShader:send(
-			"palette", shaderUnpack(colors.draw)
+			"palette", unpack(colors.draw)
 		)
 
 		colors.displayShader:send(
-			"palette", shaderUnpack(colors.display)
+			"palette", unpack(colors.display)
 		)
 
 		paletteModified = false
@@ -909,7 +902,7 @@ function api.pal(c0,c1,p)
 		colors.display[c0] = colors.palette[c1]
 
 		colors.displayShader:send(
-			"palette", shaderUnpack(colors.display)
+			"palette", unpack(colors.display)
 		)
 
 		paletteModified = true
@@ -921,15 +914,11 @@ function api.pal(c0,c1,p)
 		colors.draw[c0] = c1
 
 		colors.drawShader:send(
-			"palette", shaderUnpack(colors.draw)
+			"palette", unpack(colors.draw)
 		)
 
 		colors.spriteShader:send(
-			"palette", shaderUnpack(colors.draw)
-		)
-
-		colors.textShader:send(
-			"palette", shaderUnpack(colors.draw)
+			"palette", unpack(colors.sprites)
 		)
 
 		paletteModified = true
@@ -952,7 +941,7 @@ function api.palt(c, t)
 
 	colors.spriteShader:send(
 		"transparent",
-		shaderUnpack(colors.transparent)
+		unpack(colors.transparent)
 	)
 end
 

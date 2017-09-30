@@ -5,6 +5,8 @@
 local neko = {}
 
 function neko.init()
+	initPalette()
+
 	neko.core = nil
 	neko.fullscreen = false
 	neko.focus = true
@@ -23,7 +25,6 @@ function neko.init()
 
 	initCanvas()
 	initFont()
-	initPalette()
 	initApi()
 
 	if not isVisible("neko.n8", "/") then

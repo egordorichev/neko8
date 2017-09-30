@@ -1002,7 +1002,7 @@ function code.highlightCommentsBase(line, colors, start, finish, extra, clr)
 				end
 				f = #line
 			else
-				unfinishedComment = false	
+				unfinishedComment = false
 				f = f + extra
 			end
 
@@ -1059,7 +1059,7 @@ end
 
 local asmKeywords = {
 	"if", "then", "end", "until", "repeat",
-	"while", "loop", "ret", "extern"
+	"while", "loop", "ret", "extern", "section", "def", "do"
 }
 
 function code.highlightAsmKeywords(line, colors, ct)

@@ -611,30 +611,31 @@ end
 colors = {}
 colors.current = 7
 
-function shaderUnpack(t)
-	return unpack(t, 1, 17)
-	-- change to 16 once love2d
-	-- shader bug is fixed
-end
-
 function initPalette()
 	colors.palette = config.palette
 	colors.display = {}
 	colors.draw = {}
+	colors.sprites = {}
 	colors.transparent = {}
 
-	for i = 1, 16 do
-		colors.draw[i] = i
-		colors.transparent[i] = i == 1 and 0 or 1
-		colors.display[i] = colors.palette[i]
-	end
+	for i = 0, 15 do
+    colors.transparent[i] = (i == 0 and 0 or 1) --Black is transparent by default.
+    colors.draw[i] = i - 1
+		colors.sprites[i] = i - 1
+    colors.display[i] = config.palette[i]
+  end
+
+  colors.display[16] = { 0, 0, 0, 0 } --A bug in unpack ???
+  colors.draw[16] = 0
+  colors.sprites[16] = 0
+  colors.transparent[16] = 0
 
 	colors.drawShader =
 		love.graphics.newShader("assets/draw.frag")
 
 	colors.drawShader:send(
 		"palette",
-		shaderUnpack(colors.draw)
+		unpack(colors.draw)
 	)
 
 	colors.spriteShader =
@@ -642,19 +643,12 @@ function initPalette()
 
 	colors.spriteShader:send(
 		"palette",
-		shaderUnpack(colors.draw)
+		unpack(colors.sprites)
 	)
 
 	colors.spriteShader:send(
 		"transparent",
-		shaderUnpack(colors.transparent)
-	)
-
-	colors.textShader = love.graphics.newShader("assets/text.frag")
-
-	colors.textShader:send(
-		"palette",
-		shaderUnpack(colors.draw)
+		unpack(colors.transparent)
 	)
 
 	colors.displayShader =
@@ -662,7 +656,7 @@ function initPalette()
 
 	colors.displayShader:send(
 		"palette",
-		shaderUnpack(colors.display)
+		unpack(colors.display)
 	)
 
 	colors.supportShader = love.graphics.newShader("assets/support.frag")

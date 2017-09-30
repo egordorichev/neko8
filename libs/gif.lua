@@ -14,7 +14,7 @@ local tostring = tostring
 local palmap = {}
 
 for i = 0, 15 do
-	local color = config.palette[i + 1]
+	local color = config.palette[i]
 	local v = bit.lshift(color[1], 32) + bit.lshift(color[2], 16) + color[3]
 	palmap[v] = i
 	palmap[i] = v
@@ -120,7 +120,6 @@ function gif:frame(data,gifpalette,newpal)
 	for y=y0, y1 do
 		for x=x0, x1 do
 			local r = dataget(data, x, y)
-			if r ~= 16 and r ~= 0 then print(r) end
 			local index = strchar(api.mid(r, 0, 15))
 
 			local temp = buffer..index
@@ -203,7 +202,7 @@ function giflib.new(filename,colorset)
 	end
 	file:write("GIF89a"..num2str(_NEKO_W*_GIFScale)..num2str(_NEKO_H*_GIFScale).."\243\0\0")
 	for i=0, 15 do
-		local palette=colorset[i + 1]
+		local palette=config.palette[i]
 		file:write(strchar(palette[1], palette[2], palette[3]))
 	end
 	file:write("\33\255\11NETSCAPE2.0\3\1\0\0\0") --For gif auto looping
