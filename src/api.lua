@@ -1005,31 +1005,32 @@ function api.memcpy(dest, source, len)
 end
 
 function api.btn(b, p)
-	--p = p or 0
+	p = p or 0
 
-	if p == 1 then
-		if api.keyMap[p][b] then
-			return api.keyPressed[p][b] ~= nil
-		end
+	if b < 0 or b > 5 or p < 0 or p > 1 then return false end
+
+	if api.keyMap[p][b] then
+		return api.keyPressed[p][b] ~= nil
 	end
 
-	--return false
-	return g.b[b].ispressed
+	return false
+	-- return g.b[b].ispressed
 end
 
 function api.btnp(b, p)
-	--p = p or 0
-	if p == 1 then
-		if api.keyMap[p][b] then
-			local v = api.keyPressed[p][b]
-			if v and (v == 0 or (v >= 12 and v % 4 == 0)) then
-				return true
-			end
+	p = p or 0
+
+	if b < 0 or b > 5 or p < 0 or p > 1 then return false end
+
+	if api.keyMap[p][b] then
+		local v = api.keyPressed[p][b]
+		if v and (v == 0 or (v >= 12 and v % 4 == 0)) then
+			return true
 		end
 	end
 
-	--return false
-	return g.b[b].isnewpress
+	return false
+	-- return g.b[b].isnewpress
 end
 
 function api.key(k)
