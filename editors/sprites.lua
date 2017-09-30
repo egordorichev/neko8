@@ -234,7 +234,7 @@ function sprites.redraw()
 		for y = 0, 3 do
 			local c = x + y * 4
 			api.brectfill(
-				15 + x * 12, 72 + y * 12,
+				15 + x * 12, 73 + y * 12,
 				12, 12, c
 			)
 		end
@@ -248,13 +248,13 @@ function sprites.redraw()
 	local y = api.flr(sprites.color / 4)
 
 	api.brect(
-		15 + x * 12, 72 + y * 12,
-		12, 12, 0
+		16 + x * 12, 74 + y * 12,
+		9, 9, 0
 	)
 
 	api.brect(
-		15 + x * 12 - 1, 71 + y * 12,
-		14, 14, 7
+		16 + x * 12 - 1, 73 + y * 12,
+		11, 11, 7
 	)
 
 	-- current sprite

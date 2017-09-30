@@ -141,5 +141,3 @@ function love.conf(t)
 
 	return t
 end
-
-
