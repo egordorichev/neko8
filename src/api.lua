@@ -1007,15 +1007,6 @@ function api.memcpy(dest, source, len)
 	-- todo
 end
 
-function api.gdisable()
-	exg = g
-	g = null
-end
-
-function api.genable()
-	g = g or exg
-end
-
 function api.btn(b, p)
 	p = p or 0
 	b = b + 1
@@ -1056,6 +1047,51 @@ function api.btnp(b, p)
 		else
 			return false
 		end
+	end
+end
+
+function api.gdisable()
+	exg = g
+	g = null
+end
+
+function api.genable()
+	g = g or exg
+end
+
+function api.btnkpressed(b)
+	b = b + 1
+
+	if b < 0 or b > 6 then return end
+
+	if g then
+		return g.b[b]:keeppressed()
+	else
+		return
+	end
+end
+
+function api.btnkreleased(b)
+	b = b + 1
+
+	if b < 0 or b > 6 then return end
+
+	if g then
+		return g.b[b]:keepreleased()
+	else
+		return
+	end
+end
+
+function api.btnrelease(b)
+	b = b + 1
+
+	if b < 0 or b > 6 then return end
+
+	if g then
+		return g.b[b]:release()
+	else
+		return
 	end
 end
 
@@ -1265,6 +1301,9 @@ apiList = {
 
 	[ "btn" ] = { api.btn, 1 },
 	[ "btnp" ] = { api.btnp, 1 },
+	[ "btnkpressed" ] = { api.btnkpressed, 1 },
+	[ "btnkreleased" ] = { api.btnkreleased, 1 },
+	[ "btnrelease" ] = { api.btnrelease, 1 },
 	[ "genable" ] = { api.genable, 0 },
 	[ "gdisable" ] = { api.gdisable, 0 },
 	[ "key" ] = { api.key, 1 },
