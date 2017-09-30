@@ -771,10 +771,11 @@ function carts.run(cart, ...)
 		tree, e = parse.string(cart.code)
 
 		if tree then
-			lua_code, e, pos = compile.tree(tree)
+			luaCode, e, pos = compile.tree(tree)
+			print(luaCode)
 			if lua_code then
 				ok, f, e = pcall(
-					load, lua_code, name
+					load, luaCode, name
 				)
 			end
 		end

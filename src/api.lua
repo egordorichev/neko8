@@ -537,7 +537,18 @@ function api.print(s, x, y, c, i)
 		local n = 0
 
 		for i, p in ipairs(parts) do
-			n = n + api.print(p, x, y + (i - 1) * 6) + 1
+			n = n + api.print(p, x, y)
+			y = y + 6
+
+			if scroll and y >= 120 then
+				local c = c or colors.current
+				api.scroll(12)
+				y = 108
+
+				api.color(c)
+				api.cursor(0, y + 6)
+				api.flip()
+			end
 		end
 
 		if scroll then
@@ -577,14 +588,6 @@ function api.print(s, x, y, c, i)
 	end
 
 	if scroll then
-		--[[ if #s * 4 + cursor.x > config.canvas.width then
-			local xy = api.ceil((config.canvas.width - cursor.x) / 4 - #s - 1)
-			log.info(s:sub(1, xy))
-			api.print(s:sub(1, xy), x, y, c)
-			api.print(s:sub(xy, -1), x, y, c)
-			return
-		end --]] -- todo: scrolling
-
 		y = cursor.y
 		cursor.y = cursor.y + 6
 	end

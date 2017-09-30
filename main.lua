@@ -317,15 +317,17 @@ function runtimeError(error)
 
 	neko.cart = nil
 
-	local pos = error:find("\"]:")
-	if pos then
-		error = string.format("line %s", error:sub(pos + 3))
-	end
+	if error then
+		local pos = string.find(error, "\"]:")
+		if pos then
+			error = string.format("line %s", error:sub(pos + 3))
+		end
 
-	neko.core.sandbox.redraw_prompt(true)
-	api.print("")
-	api.color(8)
-	api.print(error)
+		neko.core.sandbox.redraw_prompt(true)
+		api.print("")
+		api.color(8)
+		api.print(error)
+	end
 	api.print(debug.traceback("", 4):gsub("^%s*", ""), nil, nil, nil, true)
 	neko.core.sandbox.redraw_prompt()
 end
@@ -340,7 +342,7 @@ function syntaxError(error)
 
 	neko.cart = nil
 	if error then
-		local pos = error:find("\"]:")
+		local pos = string.find(error, "\"]:")
 		if pos then
 			error = string.format("line %s", error:sub(pos + 3))
 		end
