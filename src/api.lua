@@ -1009,7 +1009,7 @@ end
 
 function api.btn(b, p)
 	p = p or 0
-	b = b - 1
+	b = b + 1
 
 	if b < 0 or b > 6 or p < 0 or p > 1 then return false end
 
@@ -1025,7 +1025,7 @@ end
 
 function api.btnp(b, p)
 	p = p or 0
-	b = b - 1
+	b = b + 1
 
 	if b < 0 or b > 6 or p < 0 or p > 1 then return false end
 
