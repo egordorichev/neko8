@@ -103,7 +103,6 @@ _G._TBASIC._ERROR = {
 }
 _G._TBASIC._FNCTION = { -- aka OPCODES because of some internal-use-only functions
     -- variable control
-    "CLR", -- deletes all user-defined variables and functions
     "DIM", -- allocates an array
     "DEF", -- defines new function. Synopsis "DEF FN FOOBAR(arg)"
     "FN", -- denotes function
@@ -121,24 +120,8 @@ _G._TBASIC._FNCTION = { -- aka OPCODES because of some internal-use-only functio
     -- stdio
     "PRINTH",
     "PRINT",
-    "INPUT",
     "GET", -- read single key
-    "HTAB", "TAB", -- set cursor's X position
-    "VTAB", -- set cursor's Y position
-    "SCROLL",
-    "CLS", -- clear screen
-    "TEXTCOL", -- foreground colour
-    "BACKCOL", -- background colour
-    -- mathematics
-    "ABS", "SIN", "COS", "TAN", "FLOOR", "CEIL", "ROUND", "LOG",
     "INT", -- integer part of a number (3.78 -> 3, -3.03 -> -3)
-    "RND", -- random number 0.0 <= x < 1.0
-    "SGN", -- sign of a number (-1, 0, 1)
-    "SQRT", -- square root
-    "CBRT", -- cubic root
-    "MAX", "MIN",
-    "INV", -- returns (1.0 / arg)
-    "RAD", -- converts deg into rad
     -- string manipulation
     "LEN",
     "LEFT", -- just like in Excel
@@ -151,19 +134,6 @@ _G._TBASIC._FNCTION = { -- aka OPCODES because of some internal-use-only functio
     "VAL", -- string to number
     -- misc
     "REM", -- mark this line as comment
-    "NEW", -- clean up any programs on the buffer (this is a Shell function)
-    -- pc speaker
-    "BEEP", -- beeps. Synopsis: "BEEP", "BEEP [pattern]" (not for CC)
-    "TEMIT", -- emits a tone. Synopsis: "TEMIT [frequency] [seconds]" (not for CC)
-    -- commands
-    "RUN", -- run a program or a line. Synopsis: "RUN", "RUN [line]" (this is a Shell function)
-    "LIST", -- list currently entered program. Synopsis: "LIST", "LIST [line]", "LIST [from "-" to]" (this is a Shell function)
-    "NEW", -- clear program lines buffer (this is a Shell function)
-    "RENUM", -- re-number BASIC statements (this is a Shell function)
-    "DELETE", -- delete line (this is a Shell function)
-    -- external IO
-    "LOAD", -- file load. Synopsis: "LOAD [filename]"
-    "SAVE", -- file save. Synopsis: "SAVE [filename]"
     -- internal use only!!
     "ASSIGNARRAY",
     "READARRAY",
@@ -799,13 +769,11 @@ end
 
 -- NEKO8 API ------------------------------------------------------------------
 
-local function _fnprint(...)
-	local args = __resolvevararg(...)
-	api.print(args)
-end
-
-local function _fncls()
-	love.graphics.clear()
+local function nekoAPI(f)
+	return function(...)
+		local args = __resolvevararg(...)
+		f(args)
+	end
 end
 
 -- OPERATOR IMPLEMENTS --------------------------------------------------------
@@ -1133,27 +1101,6 @@ _G._TBASIC.LUAFN = {
     FOR     = {_fnfor, 1},
     NEXT    = {_fnnext, vararg},
     LABEL   = {_fnlabel, 1},
-    -- stdio
-    PRINTH   = {_fnprinth, vararg},
-    INPUT   = {_fninput, vararg},
-    -- mathematics
-    ABS     = {_fnabs, 1},
-    CBRT    = {_fncbrt, 1},
-    CEIL    = {_fnceil, 1},
-    COS     = {_fncos, 1},
-    FLOOR   = {_fnfloor, 1},
-    INT     = {_fnint, 1},
-    INV     = {_fnmultinv, 1},
-    LOG     = {_fnloge, 1},
-    MAX     = {_fnmax, vararg},
-    MIN     = {_fnmin, vararg},
-    RAD     = {_fntorad, 1},
-    RND     = {_fnrand, 0},
-    ROUND   = {_fnround, 1},
-    SGN     = {_fnsign, 1},
-    SIN     = {_fnsin, 1},
-    SQRT    = {_fnsqrt, 1},
-    TAN     = {_fntan, 1},
     -- string manipulation
     LEFT    = {_fnsubstrleft, 2},
     LEN     = {_fnlen, 1},
@@ -1165,8 +1112,9 @@ _G._TBASIC.LUAFN = {
     STR     = {_fntostring, 1},
     VAL     = {_fntonumber, 1},
     -- neko8 api
-    PRINT   = {_fnprint, vararg},
-    CLS     = {_fncls, 0},
+    PRINT   = {nekoAPI(api.print), vararg},
+    PRINTH  = {nekoAPI(print), vararg},
+    CLS     = {nekoAPI(api.cls), 0},
     ---------------
     -- operators --
     ---------------

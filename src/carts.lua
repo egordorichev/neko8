@@ -8,17 +8,6 @@ require "libs.terran-basic.TBASEXEC"
 require "libs.moonscript.moonscript"
 moonscript = require "libs.moonscript.moonscript.base"
 
-local function defineForBasic(name, f, ar)
-	name = string.upper(name)
-
-end
-
-local function initBasicAPI()
-	--for k, v in pairs(apiList) do
-	--	defineForBasic(k, v[1], v[2])
-	--end
-end
-
 function carts.load(name)
 	local cart = {}
 
@@ -111,7 +100,6 @@ function carts.load(name)
 
 	if cart.lang == "basic" then
 		cart.sandbox._TBASIC = _TBASIC
-		initBasicAPI()
 	end
 
 	love.graphics.setShader(
@@ -209,9 +197,8 @@ mov [_draw], [draw]
 	elseif cart.lang == "basic" then
 		cart.sandbox._TBASIC = _TBASIC
 		initBasicAPI()
+		-- todo: comments ??
 		cart.code = [[
-` cart name
-` by @author
 10 T=0
 20 PRINTH("HELLO, WORLD")
 30 PRINT("HELLO WORLD ",T)

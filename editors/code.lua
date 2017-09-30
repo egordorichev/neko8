@@ -1033,7 +1033,7 @@ local basicKeywords = {
 	"LET", "DATA", "IF", "THEN", "ELSE",
 	"FOR", "TO", "NEXT", "WHILE", "WEND", "REPEAT	",
 	"UNTIL", "DO", "LOOP", "GOTO", "GOSUB", "ON",
-	"DEF", "END"
+	"DEF", "END", "ABORT", "ABORTM", "REM"
 }
 
 function code.highlightBasicKeywords(line, colors, ct)
