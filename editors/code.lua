@@ -608,7 +608,7 @@ function code._text(text)
 	--text = text:gsub("\t", " ")
 	local parts = {}
 
-	for p in text:gmatch("[^\r\n]*") do
+	for p in text:gmatch("[^\r\n]") do
 		table.insert(parts, p)
 	end
 

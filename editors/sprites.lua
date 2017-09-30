@@ -22,7 +22,7 @@ function sprites.init()
 
 		sprites.data.data:setPixel(
 			x, y,
-			v, v, v
+			v, v, v, 255
 		)
 	end
 

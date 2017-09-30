@@ -594,6 +594,7 @@ end
 -----------------------------------------
 
 function initFont()
+	love.graphics.setDefaultFilter("nearest", "nearest")
 	font = love.graphics.newFont(
 		config.font.file, 4
 	)
