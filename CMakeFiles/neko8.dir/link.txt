@@ -1,1 +1,0 @@
-/usr/bin/c++      CMakeFiles/neko8.dir/src/main.cpp.o  -o neko8 -rdynamic -Wl,-Bstatic -lSDL2main -Wl,-Bdynamic /usr/local/lib/libSDL2.so -lpthread -lluajit-5.1 -lm -Wl,-rpath,/usr/local/lib 
