@@ -677,13 +677,6 @@ function api.flip()
 		)
 	end
 
-	if g and neko.cart ~= nil and neko.cart ~= neko.core then
-		if mobile then
-			coresprites=true g:draw() coresprites=false
-		end
-		--if g.b[1].ispressed then neko.cart = nil end
-	end
-
 	if not mobile and editors.opened and neko.cart == nil then
 		local mx, my = api.mstat()
 		neko.cart, neko.core = neko.core, neko.cart
@@ -1009,7 +1002,7 @@ end
 
 function api.btn(b, p)
 	p = p or 0
-	b = b + 1
+	b = b + 2
 
 	if b < 0 or b > 6 or p < 0 or p > 1 then return false end
 

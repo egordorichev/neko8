@@ -85,7 +85,7 @@ function gamepad:new()
    gamepad.button:new(15,90,2,"left"),gamepad.button:new(45,90,3,"right"),
    gamepad.button:new(30,75,0,"up"),gamepad.button:new(30,105,1,"down"),
    
-   gamepad.button:new(150,105,4,"x"),gamepad.button:new(165,90,5,"z")}
+   gamepad.button:new(165,90,5,"z"),gamepad.button:new(150,105,4,"x")}
  
  return tg
 end

@@ -86,6 +86,10 @@ function neko.update(dt)
 end
 
 function neko.draw()
+	if mobile and g and neko.cart ~= nil and neko.cart ~= neko.core then
+			coresprites=true g:draw() coresprites=false --gamepad
+	end
+
 	triggerCallback("_draw")
 end
 
