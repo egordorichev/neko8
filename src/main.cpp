@@ -1,10 +1,9 @@
 #include <SDL2/SDL.h>
+#include <LuaJIT/lua.hpp>
 #include <iostream>
+#include <sol.hpp>
 
-#define WINDOW_WIDTH 224
-#define WINDOW_HEIGHT 128
-#define SCALE 3
-#define NOT(o) o == NULL
+#include <neko.hpp>
 
 #define STATUS_OK 0
 #define ERROR_FAILED_TO_OPEN_WINDOW 1
@@ -14,10 +13,53 @@ int main() {
 	// Init SDL video system
 	SDL_Init(SDL_INIT_VIDEO);
 
+	// Open config
+
+	sol::state lua;
+	Config config;
+
+	try {
+		// Run config
+		sol::load_result configState = lua.load_file(CONFIG_NAME);
+		configState();
+
+		if (lua["config"]) {
+			// Config is ok
+			// Read window width
+			if (lua["config"]["window"]["width"]) {
+				config.windowWidth = lua["config"]["window"]["width"];
+			}
+
+			// Read window height
+			if (lua["config"]["window"]["height"]) {
+				config.windowHeight = lua["config"]["window"]["height"];
+			}
+
+			// Read canvas width
+			if (lua["config"]["window"]["width"]) {
+				config.canvasWidth = lua["config"]["canvas"]["width"];
+			}
+
+			// Read canvas height
+			if (lua["config"]["window"]["height"]) {
+				config.canvasHeight = lua["config"]["canvas"]["height"];
+			}
+
+			// Read canvas scale
+			if (lua["config"]["window"]["scale"]) {
+				config.windowWidth = lua["config"]["canvas"]["scale"];
+			}
+		} else {
+			std::cerr << "Invalid config file\n";
+		}
+	} catch (sol::error error) {
+		std::cout << error.what() << "\n";
+	}
+
 	// Attempt to open a centred window
 	SDL_Window *window = SDL_CreateWindow(
 		"neko8", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-		WINDOW_WIDTH * SCALE, WINDOW_HEIGHT * SCALE,
+		config.windowWidth, config.windowHeight,
 		SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE
 	);
 
