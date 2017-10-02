@@ -84,7 +84,8 @@ end
 
 function love.touchpressed()
 	-- open virtual keyboard when in code/sfx editor or command line on mobile
-	if (editors.current == editors.modes[1] or editors.modes[4]) or editors.opened == false then
+	if ((editors.current == editors.modes[1] or editors.modes[4])
+		or editors.opened == false) and not neko.cart then
 		love.keyboard.setTextInput(true)
 	end
 end

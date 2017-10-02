@@ -59,8 +59,8 @@ local neko8 = {
 
 local version = {
 	major = 0,
-	minor = 0.5,
-	name = "asm",
+	minor = 0.6,
+	name = "basic",
 	release = "dev"
 }
 
