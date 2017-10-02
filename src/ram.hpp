@@ -31,11 +31,6 @@
 #define MUSIC_SIZE 0x00FF
 #define MUSIC_END (MUSIC_START + MUSIC_SIZE)
 
-// Music memory
-#define MUSIC_START SFX_END
-#define MUSIC_SIZE 0x00FF
-#define MUSIC_END (MUSIC_START + MUSIC_SIZE)
-
 // Persistent data memory
 #define PERSISTENT_START MUSIC_END
 #define PERSISTENT_SIZE 0x00FF
