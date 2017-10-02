@@ -198,6 +198,8 @@ mov [_draw], [draw]
 		cart.sandbox._TBASIC = _TBASIC
 		-- todo: comments ??
 		cart.code = [[
+01 REM CART NAME
+02 REM BY @AUTHOR
 10 T=0
 20 PRINTH("HELLO, WORLD")
 30 PRINT("HELLO WORLD ",T)

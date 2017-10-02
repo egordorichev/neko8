@@ -1049,8 +1049,8 @@ function code.highlightBasicKeywords(line, colors, ct)
 end
 
 function code.highlightBasicComments(line, colors, ct)
-	code.highlightCommentsBase(line, colors, "`", "\n", 0, ct.comment)
-	-- is this right? o_O not too sure
+	code.highlightCommentsBase(line, colors, "REM", "\n", 0, ct.comment)
+	-- ;)
 end
 
 function code.highlightBasicAPI(line, colors, ct)
