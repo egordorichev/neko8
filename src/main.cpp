@@ -16,7 +16,7 @@ int main() {
 	// Open config
 
 	sol::state lua;
-	Config config;
+	neko_config config;
 
 	try {
 		// Run config
@@ -55,6 +55,9 @@ int main() {
 	} catch (sol::error error) {
 		std::cout << error.what() << "\n";
 	}
+
+	// Init neko8
+	initNeko(&config);
 
 	// Attempt to open a centred window
 	SDL_Window *window = SDL_CreateWindow(
