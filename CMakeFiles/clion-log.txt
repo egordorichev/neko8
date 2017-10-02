@@ -1,6 +1,0 @@
-/home/egor/code/apps/clion-2017.2.2/bin/cmake/bin/cmake -DCMAKE_BUILD_TYPE= -G "CodeBlocks - Unix Makefiles" /home/egor/neko8
-<FindSDL2.cmake>
-</FindSDL2.cmake>
--- Configuring done
--- Generating done
--- Build files have been written to: /home/egor/neko8
