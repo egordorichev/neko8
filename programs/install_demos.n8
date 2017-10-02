@@ -1,4 +1,0 @@
-neko8 cart
-__lua__
-install_demos(args)
-__end__

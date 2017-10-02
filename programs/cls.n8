@@ -1,4 +1,0 @@
-neko8 cart
-__lua__
-cls(args[1])
-__end__

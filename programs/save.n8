@@ -1,5 +1,0 @@
-neko8 cart
-__lua__
-exit()
-save(args)
-__end__
