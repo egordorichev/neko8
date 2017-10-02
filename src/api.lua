@@ -674,13 +674,6 @@ function api.flip()
 		)
 	end
 
-	if g and neko.cart ~= nil and neko.cart ~= neko.core then
-		if mobile then
-			coresprites=true g:draw() coresprites=false
-		end
-		--if g.b[1].ispressed then neko.cart = nil end
-	end
-
 	if not mobile and editors.opened and neko.cart == nil then
 		local mx, my = api.mstat()
 		neko.cart, neko.core = neko.core, neko.cart
@@ -998,31 +991,90 @@ end
 
 function api.btn(b, p)
 	p = p or 0
+	b = b + 2
 
-	if b < 0 or b > 5 or p < 0 or p > 1 then return false end
+	if b < 1 or b > 7 or p < 0 or p > 1 then return false end
 
-	if api.keyMap[p][b] then
-		return api.keyPressed[p][b] ~= nil
+	if p == 1 then
+		if api.keyMap[p][b] then
+			return api.keyPressed[p][b] ~= nil
+		end
+		return false
+	else
+		if g then
+			return g.b[b].ispressed
+		else
+			return false
+		end
 	end
-
-	return false
-	-- return g.b[b].ispressed
 end
 
 function api.btnp(b, p)
 	p = p or 0
+	b = b + 2
 
-	if b < 0 or b > 5 or p < 0 or p > 1 then return false end
+	if b < 1 or b > 7 or p < 0 or p > 1 then return false end
 
-	if api.keyMap[p][b] then
-		local v = api.keyPressed[p][b]
-		if v and (v == 0 or (v >= 12 and v % 4 == 0)) then
-			return true
+	if p == 1 then
+		if api.keyMap[p][b] then
+			local v = api.keyPressed[p][b]
+			if v and (v == 0 or (v >= 12 and v % 4 == 0)) then
+				return true
+			end
+		end
+		return false
+	else
+		if g then
+			return g.b[b].isnewpress
+		else
+			return false
 		end
 	end
+end
 
-	return false
-	-- return g.b[b].isnewpress
+function api.gdisable()
+	exg = g
+	g = null
+end
+
+function api.genable()
+	g = g or exg
+end
+
+function api.btnkpressed(b)
+	b = b + 2
+
+	if b < 1 or b > 7 then return end
+
+	if g then
+		return g.b[b]:keeppressed()
+	else
+		return
+	end
+end
+
+function api.btnkreleased(b)
+	b = b + 2
+
+	if b < 1 or b > 7 then return end
+
+	if g then
+		return g.b[b]:keepreleased()
+	else
+		return
+	end
+end
+
+function api.btnrelease(b)
+	b = b + 2
+
+	if b < 1 or b > 7 then return end
+
+	if g then
+		return g.b[b]:release()
+	else
+		return
+	end
 end
 
 function api.key(k)
@@ -1231,6 +1283,11 @@ apiList = {
 
 	[ "btn" ] = { api.btn, 1 },
 	[ "btnp" ] = { api.btnp, 1 },
+	[ "btnkpressed" ] = { api.btnkpressed, 1 },
+	[ "btnkreleased" ] = { api.btnkreleased, 1 },
+	[ "btnrelease" ] = { api.btnrelease, 1 },
+	[ "genable" ] = { api.genable, 0 },
+	[ "gdisable" ] = { api.gdisable, 0 },
 	[ "key" ] = { api.key, 1 },
 
 	[ "flr" ] = { api.flr, 1 },

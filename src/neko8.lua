@@ -80,6 +80,9 @@ function neko.update(dt)
 	end
 
 	if g and neko.cart ~= nil and neko.cart ~= neko.core then
+		if g.b[1].ispressed then
+			api.exit()
+		end
 		g:update()  --gamepad
 	end
 
@@ -88,6 +91,9 @@ end
 
 function neko.draw()
 	triggerCallback("_draw")
+	if mobile and g and neko.cart ~= nil and neko.cart ~= neko.core then
+			coresprites=true g:draw() coresprites=false --gamepad
+	end
 end
 
 return neko

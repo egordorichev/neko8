@@ -697,6 +697,7 @@ function carts.run(cart, ...)
 		)
 
 		g = gamepad:new()
+
 	elseif cart.lang == "asm" then
 		local std = {}
 		local asm_std = require "asm-lua.include.std"

@@ -5,8 +5,8 @@
     
     Buttons:
     
-    (1: Exit Button - 2: Up - 3: Down - 4: Left - 5: Right
-     6: X - 7: Z)
+    (1: Exit Button - 2: Left - 3: Right - 4: Up - 5: Down
+     6: Z - 7: X)
     
     Practical Use:
 
@@ -82,10 +82,10 @@ function gamepad:new()
  setmetatable(tg,gamepad)
  
  tg.b={gamepad.button:new(15,10,7,"q"),
-   gamepad.button:new(30,75,0,"up"),gamepad.button:new(30,105,1,"down"),
    gamepad.button:new(15,90,2,"left"),gamepad.button:new(45,90,3,"right"),
+   gamepad.button:new(30,75,0,"up"),gamepad.button:new(30,105,1,"down"),
    
-   gamepad.button:new(150,105,4,"x"),gamepad.button:new(165,90,5,"z")}
+   gamepad.button:new(165,90,5,"z"),gamepad.button:new(150,105,4,"x")}
  
  return tg
 end
