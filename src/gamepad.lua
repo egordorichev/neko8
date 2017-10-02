@@ -6,7 +6,7 @@
     Buttons:
     
     (1: Exit Button - 2: Left - 3: Right - 4: Up - 5: Down
-     6: X - 7: Z)
+     6: Z - 7: X)
     
     Practical Use:
 

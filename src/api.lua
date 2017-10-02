@@ -1004,7 +1004,7 @@ function api.btn(b, p)
 	p = p or 0
 	b = b + 2
 
-	if b < 0 or b > 6 or p < 0 or p > 1 then return false end
+	if b < 1 or b > 7 or p < 0 or p > 1 then return false end
 
 	if p == 1 then
 		if api.keyMap[p][b] then
@@ -1022,9 +1022,9 @@ end
 
 function api.btnp(b, p)
 	p = p or 0
-	b = b + 1
+	b = b + 2
 
-	if b < 0 or b > 6 or p < 0 or p > 1 then return false end
+	if b < 1 or b > 7 or p < 0 or p > 1 then return false end
 
 	if p == 1 then
 		if api.keyMap[p][b] then
@@ -1053,9 +1053,9 @@ function api.genable()
 end
 
 function api.btnkpressed(b)
-	b = b + 1
+	b = b + 2
 
-	if b < 0 or b > 6 then return end
+	if b < 1 or b > 7 then return end
 
 	if g then
 		return g.b[b]:keeppressed()
@@ -1065,9 +1065,9 @@ function api.btnkpressed(b)
 end
 
 function api.btnkreleased(b)
-	b = b + 1
+	b = b + 2
 
-	if b < 0 or b > 6 then return end
+	if b < 1 or b > 7 then return end
 
 	if g then
 		return g.b[b]:keepreleased()
@@ -1077,9 +1077,9 @@ function api.btnkreleased(b)
 end
 
 function api.btnrelease(b)
-	b = b + 1
+	b = b + 2
 
-	if b < 0 or b > 6 then return end
+	if b < 1 or b > 7 then return end
 
 	if g then
 		return g.b[b]:release()

@@ -15,7 +15,7 @@ require "log"
 require "error"
 
 -- DEBUG!
-mobile = true
+--mobile = true
 
 if mobile then
 	keyboard = require "keyboard"
