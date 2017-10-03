@@ -1,6 +1,8 @@
 #ifndef neko_ram_hpp
 #define neko_ram_hpp
 
+#include <config.hpp>
+
 // Video memory
 #define VRAM_START 0x0
 #define VRAM_SIZE 0x3800
@@ -52,14 +54,16 @@
 
 typedef struct neko_ram {
 	// The actual memory
-	char *string;
+	byte *string;
 } neko_ram;
 
 // Basic memory operations
 void memcpy(unsigned int destination, unsigned int src, unsigned int len);
-void memset(unsigned int destination, char value, unsigned int len);
-char peek(unsigned int address);
-void poke(unsigned int address, char value);
+void memset(unsigned int destination, byte value, unsigned int len);
+byte peek(unsigned int address);
+byte peek4(unsigned int address);
+void poke(unsigned int address, byte value);
+void poke4(unsigned int address, byte value);
 // Creates RAM instance
 neko_ram *initRAM();
 

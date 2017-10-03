@@ -1,7 +1,9 @@
 #ifndef neko_hpp
 #define neko_hpp
 
+#include <config.hpp>
 #include <ram.hpp>
+#include <graphics.hpp>
 
 #define NOT(o) o == NULL
 #define CONFIG_NAME "config.lua"
@@ -18,11 +20,13 @@ typedef struct neko_config {
 
 typedef struct neko {
 	neko_ram *ram;
+	neko_graphics *graphics;
 	neko_config *config;
 } neko;
 
 extern neko machine;
 // Inits neko
 void initNeko(neko_config *config);
+void renderNeko();
 
 #endif
