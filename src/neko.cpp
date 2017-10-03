@@ -8,6 +8,8 @@ void initNeko(neko_config *config) {
 	machine.carts = initCarts();
 	machine.graphics = initGraphics();
 	machine.state = STATE_BOOTING;
+
+	runCart();
 }
 
 void renderNeko() {

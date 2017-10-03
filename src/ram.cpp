@@ -74,7 +74,7 @@ void poke4(unsigned int address, byte value) {
 }
 
 neko_ram *initRAM() {
-	neko_ram *ram = (neko_ram *) malloc(sizeof(neko_ram));
+	neko_ram *ram = new neko_ram;
 	ram->string = (byte *) malloc(RAM_SIZE * sizeof(byte));
 
 	return ram;

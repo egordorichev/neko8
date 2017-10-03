@@ -6,7 +6,7 @@
 #include <config.hpp>
 
 neko_graphics *initGraphics() {
-	neko_graphics *graphics = (neko_graphics *) malloc(sizeof(neko_graphics));
+	neko_graphics *graphics = new neko_graphics;
 
 	// Attempt to open a centred window
 	graphics->window = SDL_CreateWindow(
