@@ -7,15 +7,14 @@ void initNeko(neko_config *config) {
 	machine.ram = initRAM();
 	machine.carts = initCarts();
 	machine.graphics = initGraphics();
-	machine.state = STATE_BOOTING;
+	machine.prevState = STATE_CONSOLE;
+	machine.state = STATE_CONSOLE;
 
 	runCart();
 }
 
 void renderNeko() {
 	switch (machine.state) {
-		case STATE_BOOTING:
-			break;
 		case STATE_RUNNING_CART:
 			renderCarts();
 			break;

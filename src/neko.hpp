@@ -7,7 +7,6 @@
 #include <graphics.hpp>
 
 typedef enum neko_state {
-	STATE_BOOTING,
 	STATE_CONSOLE,
 	STATE_CODE_EDITOR,
 	STATE_RUNNING_CART
@@ -18,6 +17,7 @@ typedef struct neko {
 	neko_graphics *graphics;
 	neko_carts *carts;
 	neko_state state;
+	neko_state prevState;
 	neko_config *config;
 } neko;
 

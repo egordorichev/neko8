@@ -18,7 +18,7 @@ neko_carts *initCarts();
 // Renders current
 void renderCarts();
 // Attemps to call a callback in cart
-void triggerCallbackInCart(char *callback); // TODO: add args
+void triggerCallbackInCart(const char *callback); // TODO: add args
 // Creates new cart
 neko_cart *createNewCart();
 // Runs current loaded cart
