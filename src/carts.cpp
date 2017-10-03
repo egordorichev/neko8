@@ -19,9 +19,11 @@ void renderCarts() {
 
 void triggerCallbackInCart(const char *name) {
 	if (machine.state == STATE_RUNNING_CART) {
-		if (machine.carts->loaded->env[name]) {
+		auto callback = machine.carts->loaded->env[name];
+		if (callback != sol::nil) {
 			try {
-				machine.carts->loaded->env[name]();
+				callback();
+
 			} catch (sol::error error) {
 				machine.state = STATE_CONSOLE;
 				std::cout << error.what() << "\n";
@@ -36,19 +38,35 @@ neko_cart *createNewCart() {
 
 	cart->code = (char *)
 "-- cart name\n"
-"-- @author\n";
-"cls(0)";
+"-- @author\n"
+"t=0\n"
+"function _draw()\n"
+" for i=0,199 do\n"
+"  x,y=rnd(223),rnd(127)\n"
+"  c=t+x/30+y/30\n"
+"  circ(x,y,1,c)\n"
+" end\n"
+"end\n"
+"function _update()\n"
+" t=t+0.01\n"
+"end\n";
 
 	// Create safe lua sandbox
 	cart->lua = sol::state();
 	cart->lua.open_libraries();
-	cart->lua.new_usertype<byte>("byte");
 	cart->env = sol::environment(cart->lua, sol::create);
 
 	// Add API
 	cart->env["printh"] = cart->lua["print"];
 	cart->env["cls"] = cls;
 	cart->env["pget"] = pget;
+	cart->env["pset"] = pset;
+	cart->env["line"] = line;
+	cart->env["rect"] = rect;
+	cart->env["rectfill"] = rectfill;
+	cart->env["circ"] = circ;
+	cart->env["circfill"] = circfill;
+	cart->env["rnd"] = rnd;
 
 	return cart;
 }
@@ -58,7 +76,7 @@ void runCart() {
 	machine.state = STATE_RUNNING_CART;
 	machine.carts->loaded->lua.script(machine.carts->loaded->code, machine.carts->loaded->env);
 
-	if (!machine.carts->loaded->env["_draw"] && !machine.carts->loaded->env["_update"]) {
+	if (machine.carts->loaded->env["_draw"] == sol::nil && machine.carts->loaded->env["_update"] == sol::nil) {
 		machine.state = machine.prevState;
 	}
 }

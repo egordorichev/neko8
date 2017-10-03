@@ -1,4 +1,5 @@
 #include <neko.hpp>
+#include <iostream>
 
 neko machine;
 
