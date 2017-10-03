@@ -48,6 +48,16 @@
 #define OTHER_SIZE 0x00FF
 #define OTHER_END (OTHER_START + OTHER_SIZE)
 
+/*
+ * Other memory layout:
+ * 0x0000 - pen color (1 byte)
+ * 0x0001 - camera position (2 bytes)
+ * 0x0003 - cursor position (2 bytes)
+ * 0x0005 - clip rect (4 bytes)
+ * 0x0009 - palette (48 bytes)
+ * 0x0039 - palette mapping (8 bytes)
+ */
+
 // Total memory size
 #define RAM_SIZE (VRAM_SIZE + SPRITE_END + MAP_SIZE \
 	+ FLAGS_SIZE + MUSIC_SIZE + PERSISTENT_SIZE + DRAW_SIZE + OTHER_SIZE)

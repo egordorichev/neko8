@@ -77,5 +77,28 @@ neko_ram *initRAM() {
 	neko_ram *ram = new neko_ram;
 	ram->string = (byte *) malloc(RAM_SIZE * sizeof(byte));
 
+	// Poke data into memory
+	machine.ram = ram; // Lil hack
+
+	poke(OTHER_START, 0); // Pen color
+	poke(OTHER_START + 0x0001, 0); // Camera X
+	poke(OTHER_START + 0x0002, 0); // Camera Y
+	poke(OTHER_START + 0x0003, 0); // Cursor X
+	poke(OTHER_START + 0x0004, 0); // Cursor Y
+	poke(OTHER_START + 0x0005, 0); // Clip X
+	poke(OTHER_START + 0x0006, 0); // Clip Y
+	poke(OTHER_START + 0x0007, machine.config->canvasWidth); // Clip W
+	poke(OTHER_START + 0x0008, machine.config->canvasHeight); // Clip H
+
+	// Palette
+	for (unsigned int i = 0; i < 15; i++) {
+		for (unsigned int j = 0; j < 3; j++) {
+			poke(OTHER_START + 0x0009 + i * 3 + j, machine.config->palette[i][j]);
+		}
+
+		// Color mapping
+		poke(OTHER_START + 0x0039 + i, i);
+	}
+
 	return ram;
 }

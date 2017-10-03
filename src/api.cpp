@@ -9,6 +9,26 @@ void cls(unsigned int color) {
 	memset(VRAM_START, (byte) color, VRAM_SIZE);
 }
 
+void color(unsigned int c) {
+
+}
+
+void rect(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, unsigned int c) {
+	color(c);
+
+	if (x0 > x1) {
+		unsigned int tmp = x0;
+		x0 = x1;
+		x1 = tmp;
+	}
+
+	if (y0 > y1) {
+		unsigned int tmp = y0;
+		y0 = y1;
+		y1 = tmp;
+	}
+}
+
 unsigned int pget(unsigned int x, unsigned int y) {
 	if (x < 0 || y < 0 || x > machine.config->canvasWidth || y > machine.config->canvasHeight) {
 		return 0;
