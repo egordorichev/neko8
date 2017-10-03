@@ -79,10 +79,10 @@ function gamepad.button:draw()
   api.sspr(self.spr*8,24,8,8,self.x,self.y,16,16)
  else
   if self.ispressed then
-   api.sspr(self.spr+63,0,1,2,self.x,self.y+4,12,12)
+   api.sspr(self.spr+63,24,1,2,self.x,self.y+4,12,12)
    return
   end
-  api.sspr(self.spr+63,0,1,3,self.x,self.y,12,16)
+  api.sspr(self.spr+63,24,1,3,self.x,self.y,12,16)
  end
 end
 
