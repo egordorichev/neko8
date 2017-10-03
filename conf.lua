@@ -127,7 +127,7 @@ config = {
 		sampleRate = 22050
 	},
 
-	gamepadstyle = 0
+	gamepadstyle = 1
 }
 
 function love.conf(t)
