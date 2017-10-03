@@ -125,7 +125,9 @@ config = {
 	audio = {
 		bufferSize = 2048,
 		sampleRate = 22050
-	}
+	},
+
+	gamepadstyle = 0
 }
 
 function love.conf(t)

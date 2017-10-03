@@ -37,6 +37,7 @@ function gamepad.button:new(x,y,spr,key)
  tbtn.key=key
  tbtn.spr=spr or 0
  tbtn.keep=0
+ tbtn.style=config.gamepadstyle
  tbtn.oldpress=false
  tbtn.ispressed=false
  tbtn.isnewpress=false
@@ -70,22 +71,37 @@ function gamepad.button:update()
 end
 
 function gamepad.button:draw()
- if self.ispressed then
-  api.sspr(self.spr*8,32,8,8,self.x,self.y+2,16,16)
-  return
+ if self.style==0 then
+  if self.ispressed then
+   api.sspr(self.spr*8,32,8,8,self.x,self.y+2,16,16)
+   return
+  end
+  api.sspr(self.spr*8,24,8,8,self.x,self.y,16,16)
+ else
+  if self.ispressed then
+   api.sspr(self.spr+63,0,1,2,self.x,self.y+4,12,12)
+   return
+  end
+  api.sspr(self.spr+63,0,1,3,self.x,self.y,12,16)
  end
- api.sspr(self.spr*8,24,8,8,self.x,self.y,16,16)
 end
 
 function gamepad:new()
  tg={}
  setmetatable(tg,gamepad)
- 
- tg.b={gamepad.button:new(15,10,7,"q"),
-   gamepad.button:new(15,90,2,"left"),gamepad.button:new(45,90,3,"right"),
-   gamepad.button:new(30,75,0,"up"),gamepad.button:new(30,105,1,"down"),
-   
-   gamepad.button:new(165,90,5,"z"),gamepad.button:new(150,105,4,"x")}
+ if style==0 then
+  tg.b={gamepad.button:new(15,10,7,"q"),
+    gamepad.button:new(15,90,2,"left"),gamepad.button:new(45,90,3,"right"),
+    gamepad.button:new(30,75,0,"up"),gamepad.button:new(30,105,1,"down"),
+    
+    gamepad.button:new(165,90,5,"z"),gamepad.button:new(150,105,4,"x")}
+  else
+   tg.b={gamepad.button:new(15,10,1,"q"),
+    gamepad.button:new(15,93,1,"left"),gamepad.button:new(39,93,1,"right"),
+    gamepad.button:new(27,82,1,"up"),gamepad.button:new(27,104,1,"down"),
+
+    gamepad.button:new(165,94,3,"z"),gamepad.button:new(153,105,2,"x")}
+  end
  
  return tg
 end
