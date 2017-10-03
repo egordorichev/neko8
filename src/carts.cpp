@@ -1,4 +1,5 @@
 #include <neko.hpp>
+#include <api.hpp>
 #include <iostream>
 
 neko_carts *initCarts() {
@@ -36,14 +37,18 @@ neko_cart *createNewCart() {
 	cart->code = (char *)
 "-- cart name\n"
 "-- @author\n";
+"cls(0)";
 
 	// Create safe lua sandbox
 	cart->lua = sol::state();
 	cart->lua.open_libraries();
+	cart->lua.new_usertype<byte>("byte");
 	cart->env = sol::environment(cart->lua, sol::create);
 
 	// Add API
 	cart->env["printh"] = cart->lua["print"];
+	cart->env["cls"] = cls;
+	cart->env["pget"] = pget;
 
 	return cart;
 }
