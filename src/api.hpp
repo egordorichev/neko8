@@ -5,5 +5,6 @@
 
 void cls(unsigned int color);
 unsigned int pget(unsigned int x, unsigned int y);
+void pset(unsigned int x, unsigned int y, unsigned int color);
 
 #endif
