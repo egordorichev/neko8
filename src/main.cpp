@@ -6,6 +6,9 @@
 #include <neko.hpp>
 
 int main() {
+	// Set random seed based on system time
+	srand(time(NULL));
+
 	// Init SDL video system
 	SDL_Init(SDL_INIT_VIDEO);
 

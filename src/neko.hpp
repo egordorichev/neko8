@@ -3,28 +3,27 @@
 
 #include <config.hpp>
 #include <ram.hpp>
+#include <carts.hpp>
 #include <graphics.hpp>
 
-#define NOT(o) o == NULL
-#define CONFIG_NAME "config.lua"
-
-typedef struct neko_config {
-	// Canvas settings
-	unsigned short canvasWidth = 224;
-	unsigned short canvasHeight = 128;
-	unsigned short canvasScale = 3;
-	// Window settings
-	unsigned short windowWidth = 672;
-	unsigned short windowHeight = 384;
-} neko_config;
+typedef enum neko_state {
+	STATE_BOOTING,
+	STATE_CONSOLE,
+	STATE_CODE_EDITOR,
+	STATE_RUNNING_CART
+} neko_state;
 
 typedef struct neko {
 	neko_ram *ram;
 	neko_graphics *graphics;
+	neko_carts *carts;
+	neko_state state;
 	neko_config *config;
 } neko;
 
+// Global neko instance
 extern neko machine;
+
 // Inits neko
 void initNeko(neko_config *config);
 void renderNeko();
