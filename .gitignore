@@ -1,2 +1,9 @@
 build/
 *.sw?
+CMakeCache*
+Makefile
+cmake_*
+neko8
+neko8.cbp
+CMakeFiles/
+.idea/
