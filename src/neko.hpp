@@ -23,7 +23,8 @@ typedef struct neko {
 
 namespace machine {
 	neko *init(neko_config *config);
-	void render(neko *neko);
+	void free(neko *machine);
+	void render(neko *machine);
 };
 
 #endif

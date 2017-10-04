@@ -85,6 +85,8 @@ void poke4(neko *machine, unsigned int address, byte value);
 namespace ram {
 	// Creates RAM instance
 	neko_ram *init(neko *machine);
+	// Free stuff
+	void free(neko_ram *ram);
 };
 
 #endif

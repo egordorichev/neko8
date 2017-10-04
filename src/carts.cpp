@@ -60,4 +60,8 @@ namespace carts {
 			machine->state = machine->prevState;
 		}
 	}
+
+	void free(neko_carts *carts) {
+		delete carts;
+	}
 }

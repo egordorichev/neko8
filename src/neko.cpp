@@ -16,6 +16,12 @@ namespace machine {
 		return machine;
 	}
 
+	void free(neko *machine) {
+		ram::free(machine->ram);
+		carts::free(machine->carts);
+		graphics::free(machine->graphics); // Last! Because of SDL stuff
+	}
+
 	void render(neko *machine) {
 		switch (machine->state) {
 			case STATE_RUNNING_CART:

@@ -82,10 +82,8 @@ int main() {
 		}
 	}
 
-	// Free renderer
-	SDL_DestroyRenderer(machine->graphics->renderer);
-	// Free window
-	SDL_DestroyWindow(machine->graphics->window);
+	// Free neko
+	machine::free(machine);
 	// And exit
 	SDL_Quit();
 

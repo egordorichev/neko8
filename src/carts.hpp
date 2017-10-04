@@ -27,6 +27,8 @@ namespace carts {
 	neko_cart *createNew(neko *machine);
 	// Runs current loaded cart
 	void run(neko *machine);
+	// Free all
+	void free(neko_carts *carts);
 }
 
 #endif

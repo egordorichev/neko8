@@ -14,6 +14,7 @@ struct neko;
 
 namespace graphics {
 	neko_graphics *init(neko *machine);
+	void free(neko_graphics *graphics);
 }
 
 #endif

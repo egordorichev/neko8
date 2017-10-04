@@ -102,4 +102,9 @@ namespace ram {
 
 		return ram;
 	}
+
+	void free(neko_ram *ram) {
+		free(ram->string);
+		delete ram;
+	}
 }
