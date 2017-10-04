@@ -1,5 +1,6 @@
 #include <ram.hpp>
 #include <neko.hpp>
+#include <iostream>
 
 void memcpy(neko *machine, unsigned int destination, unsigned int src, unsigned int len) {
 	if (destination < 0 || destination > RAM_SIZE - 1
@@ -20,6 +21,16 @@ void memset(neko *machine, unsigned int destination, byte value, unsigned int le
 
 	for (unsigned int i = 0; (i < len && destination + i < RAM_SIZE); i++) {
 		machine->ram->string[destination + i] = value;
+	}
+}
+
+void memseta(neko *machine, unsigned int destination, byte *value, unsigned int len) {
+	if (destination < 0 || destination > RAM_SIZE - 1) {
+		return;
+	}
+
+	for (unsigned int i = 0; (i < len && destination + i < RAM_SIZE); i++) {
+		machine->ram->string[destination + i] = value[i];
 	}
 }
 

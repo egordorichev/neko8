@@ -2,12 +2,12 @@
 #include <api.hpp>
 #include <iostream>
 
+#define COMPRESSED_CODE_MAX_SIZE 16384
+
 namespace carts {
 	neko_carts *init(neko *machine) {
 		neko_carts *carts = new neko_carts;
 
-		carts->path = SDL_GetPrefPath("egordorichev", "neko8");
-		std::cout << carts->path << "\n";
 		carts->loaded = carts::createNew(machine);
 
 		return carts;
@@ -59,6 +59,35 @@ namespace carts {
 		if (machine->carts->loaded->env["_draw"] == sol::nil && machine->carts->loaded->env["_update"] == sol::nil) {
 			machine->state = machine->prevState;
 		}
+	}
+
+	void load(neko *machine, char *name) {
+		char *data = (char *) fs::read(machine, name);
+
+		if (data == nullptr) {
+			return;
+		}
+	}
+
+	void save(neko *machine, char *name) {
+		byte compressedCode[COMPRESSED_CODE_MAX_SIZE] = { 0 };
+
+		// Compress code
+		for (int i = 0; i < COMPRESSED_CODE_MAX_SIZE; i++) {
+			// TODO: compress :P
+			compressedCode[i] = machine->ram->string[CODE_START + i];
+		}
+
+		// Copy it to memory
+		memseta(machine, CODE_START, (byte *) compressedCode, COMPRESSED_CODE_MAX_SIZE);
+
+		char buffer[RAM_SIZE] = { 0 };
+
+		for (int i = 0; i < RAM_SIZE; i++) {
+			buffer[i] = machine->ram->string[i].to_ulong();
+		}
+
+		fs::write(machine, name, buffer, RAM_SIZE);
 	}
 
 	void free(neko_carts *carts) {

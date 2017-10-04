@@ -1,4 +1,5 @@
 #include <neko.hpp>
+#include <iostream>
 
 namespace machine {
 	neko *init(neko_config *config) {
@@ -8,10 +9,12 @@ namespace machine {
 		machine->ram = ram::init(machine);
 		machine->carts = carts::init(machine);
 		machine->graphics = graphics::init(machine);
+		machine->fs = fs::init(machine);
 		machine->prevState = STATE_CONSOLE;
 		machine->state = STATE_CONSOLE;
 
 		carts::run(machine);
+		// carts::save(machine, "test.txt");
 
 		return machine;
 	}

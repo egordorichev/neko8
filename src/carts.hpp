@@ -11,7 +11,6 @@ typedef struct neko_cart {
 
 typedef struct neko_carts {
 	neko_cart *loaded;
-	char *path;
 } neko_carts;
 
 struct neko;
@@ -27,6 +26,10 @@ namespace carts {
 	neko_cart *createNew(neko *machine);
 	// Runs current loaded cart
 	void run(neko *machine);
+	// Loads a cart
+	void load(neko *machine, char *name);
+	// Saves a cart
+	void save(neko *machine, char *name);
 	// Free all
 	void free(neko_carts *carts);
 }

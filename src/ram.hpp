@@ -67,6 +67,7 @@
 #define RAM_SIZE (VRAM_SIZE + SPRITE_END + MAP_SIZE \
 	+ FLAGS_SIZE + MUSIC_SIZE + PERSISTENT_SIZE + CODE_SIZE + DRAW_SIZE + OTHER_SIZE)
 
+
 typedef struct neko_ram {
 	// The actual memory
 	byte *string;
@@ -77,6 +78,7 @@ struct neko;
 // Basic memory operations
 void memcpy(neko *machine, unsigned int destination, unsigned int src, unsigned int len);
 void memset(neko *machine, unsigned int destination, byte value, unsigned int len);
+void memseta(neko *machine, unsigned int destination, byte *value, unsigned int len);
 byte peek(neko *machine, unsigned int address);
 byte peek4(neko *machine, unsigned int address);
 void poke(neko *machine, unsigned int address, byte value);
