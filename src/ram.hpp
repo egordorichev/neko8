@@ -67,14 +67,19 @@ typedef struct neko_ram {
 	byte *string;
 } neko_ram;
 
+struct neko;
+
 // Basic memory operations
-void memcpy(unsigned int destination, unsigned int src, unsigned int len);
-void memset(unsigned int destination, byte value, unsigned int len);
-byte peek(unsigned int address);
-byte peek4(unsigned int address);
-void poke(unsigned int address, byte value);
-void poke4(unsigned int address, byte value);
-// Creates RAM instance
-neko_ram *initRAM();
+void memcpy(neko *machine, unsigned int destination, unsigned int src, unsigned int len);
+void memset(neko *machine, unsigned int destination, byte value, unsigned int len);
+byte peek(neko *machine, unsigned int address);
+byte peek4(neko *machine, unsigned int address);
+void poke(neko *machine, unsigned int address, byte value);
+void poke4(neko *machine, unsigned int address, byte value);
+
+namespace ram {
+	// Creates RAM instance
+	neko_ram *init(neko *machine);
+};
 
 #endif

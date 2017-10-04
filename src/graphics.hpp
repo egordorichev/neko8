@@ -7,8 +7,13 @@
 typedef struct neko_graphics {
 	SDL_Window *window;
 	SDL_Renderer *renderer;
+	unsigned int scale = 3;
 } neko_graphics;
 
-neko_graphics *initGraphics();
+struct neko;
+
+namespace graphics {
+	neko_graphics *init(neko *machine);
+}
 
 #endif

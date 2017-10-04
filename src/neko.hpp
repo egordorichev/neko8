@@ -21,11 +21,9 @@ typedef struct neko {
 	neko_config *config;
 } neko;
 
-// Global neko instance
-extern neko machine;
-
-// Inits neko
-void initNeko(neko_config *config);
-void renderNeko();
+namespace machine {
+	neko *init(neko_config *config);
+	void render(neko *neko);
+};
 
 #endif
