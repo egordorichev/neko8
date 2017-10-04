@@ -38,8 +38,13 @@
 #define PERSISTENT_SIZE 0x00FF
 #define PERSISTENT_END (PERSISTENT_START + PERSISTENT_SIZE)
 
+// Code memory
+#define CODE_START PERSISTENT_END
+#define CODE_SIZE 0x4000
+#define CODE_END (CODE_START + CODE_SIZE)
+
 // Draw state memory
-#define DRAW_START PERSISTENT_END
+#define DRAW_START CODE_END
 #define DRAW_SIZE 0x00FF
 #define DRAW_END (DRAW_START + DRAW_SIZE)
 
@@ -60,7 +65,7 @@
 
 // Total memory size
 #define RAM_SIZE (VRAM_SIZE + SPRITE_END + MAP_SIZE \
-	+ FLAGS_SIZE + MUSIC_SIZE + PERSISTENT_SIZE + DRAW_SIZE + OTHER_SIZE)
+	+ FLAGS_SIZE + MUSIC_SIZE + PERSISTENT_SIZE + CODE_SIZE + DRAW_SIZE + OTHER_SIZE)
 
 typedef struct neko_ram {
 	// The actual memory
