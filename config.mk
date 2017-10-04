@@ -28,3 +28,15 @@ endif
 ifeq ($(TARGET),release)
 CFLAGS:=$(CFLAGS) -O2 -DNDEBUG
 endif
+
+ifeq ($(OS),linux)
+LDFLAGS:=$(LDFLAGS) $(shell sdl2-config --libs) -lluajit-5.1
+endif
+
+ifeq ($(OS),linux)
+LDFLAGS:=$(LDFLAGS) $(shell sdl2-config --libs) -lluajit-5.1
+endif
+
+ifeq ($(OS),windows)
+LIBS:=$(LIBS) $(wildcard libs/**/*.lib)
+endif

@@ -2,7 +2,6 @@
 include config.mk
 
 INCLUDE:=$(INCLUDE) -I src -I libs/include -I libs/include/LuaJIT
-LDFLAGS:=$(LDFLAGS) $(shell sdl2-config --libs) -lluajit-5.1
 CFLAGS:=$(CFLAGS) $(shell sdl2-config --cflags)
 
 SRCDIR=src
@@ -46,7 +45,7 @@ help:
 	@echo " mrproper 	- removes all files"
 	@echo "Available options are:"
 	@echo " ARCH 	- sets the target architecture"
-	@echo " OS 		- sets the target operating system"
+	@echo " OS 		- sets the target operating system (linux/windows/macos)"
 	@echo " TARGET 	- sets the target (debug/release)"
 
 clean:
