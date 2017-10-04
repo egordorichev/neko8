@@ -9,8 +9,9 @@ SRCDIR=src
 BIN=target/$(ARCH)-$(OS)-$(TARGET)
 OBJDIR=$(BIN)/obj
 
-SRC:=$(SRC) $(shell find $(SRCDIR) -type f -name '*.cpp')
-OBJECTS:=$(OBJECTS) $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.cpp.o,$(SRC)) $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.c.o,$(SRC))
+CXXFILES:=$(CXXFILES) $(wildcard $(SRCDIR)/*.cpp)
+CFILES:=$(CFILES) $(wildcard $(SRCDIR)/*.c)
+OBJECTS:=$(OBJECTS) $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.cpp.o,$(CXXFILES)) $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.c.o,$(CFILES))
 
 .PHONY: default build help mrproper clean
 
@@ -25,13 +26,13 @@ $(OBJDIR)/%.cpp.o: $(SRCDIR)/%.cpp
 	@mkdir -p $(OBJDIR)
 	$(CXX) $(INCLUDE) $(CFLAGS) $(CXXFLAGS) -c -o $@ $<
 
-$(OBJDIR)/%.c.o: $(SRCDIR)/%.cpp
+$(OBJDIR)/%.c.o: $(SRCDIR)/%.c
 	@mkdir -p $(OBJDIR)
 	$(CC) $(INCLUDE) $(CFLAGS) -c -o $@ $<
 
-$(BIN)/$(BINARY): $(OBJECTS)
+$(BIN)/$(BINARY): $(OBJECTS) $(LIBS)
 	@mkdir -p $(BIN)
-	$(CXX) $(LDFLAGS) $(CFLAGS) $(CXXFLAGS) -o $@ $< $(LIBS)
+	$(CXX) $(LDFLAGS) $(CFLAGS) $(CXXFLAGS) -o $@ $^
 
 $(BINARY): $(BIN)/$(BINARY)
 	cp $(BIN)/$(BINARY) $(BINARY)
