@@ -4,6 +4,8 @@
 
 [**Neko8**](https://egordorichev.itch.io/neko8) is a **fantasy console**, inspired by [**pico8**](https://www.lexaloffle.com/pico-8.php), [**liko12**](https://ramilego4game.itch.io/liko12) and [**tic80**](https://tic.computer/). It is open-source and fully free. Its goal is to be a fun and useful tool for game development and **especially for game jams**. It includes build-in tools, such as: code editor, sprite editor, tile map editor, sfx editor, music editor command line and a bunch of other stuff. 
 
+###### Important note: neko8 is currently being ported to c++, on the c branch
+
 The console adds some technical limitations: 192x128 display, 512 8x8 sprites and other. It uses lua as a scripting language.
 
 [![](https://media.discordapp.net/attachments/356934835052478470/358195024808116225/Screenshot_2017-09-15_at_1.18.32_PM.png)](https://egordorichev.itch.io/neko8)
