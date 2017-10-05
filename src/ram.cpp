@@ -91,24 +91,24 @@ namespace ram {
 		// Poke data into memory
 		machine->ram = ram; // Lil hack
 
-		poke(machine, OTHER_START, 0); // Pen color
-		poke(machine, OTHER_START + 0x0001, 0); // Camera X
-		poke(machine, OTHER_START + 0x0002, 0); // Camera Y
-		poke(machine, OTHER_START + 0x0003, 0); // Cursor X
-		poke(machine, OTHER_START + 0x0004, 0); // Cursor Y
-		poke(machine, OTHER_START + 0x0005, 0); // Clip X
-		poke(machine, OTHER_START + 0x0006, 0); // Clip Y
-		poke(machine, OTHER_START + 0x0007, NEKO_W); // Clip W
-		poke(machine, OTHER_START + 0x0008, NEKO_H); // Clip H
+		poke(machine, DRAW_START, 0); // Pen color
+		poke(machine, DRAW_START + 0x0001, 0); // Camera X
+		poke(machine, DRAW_START + 0x0002, 0); // Camera Y
+		poke(machine, DRAW_START + 0x0003, 0); // Cursor X
+		poke(machine, DRAW_START + 0x0004, 0); // Cursor Y
+		poke(machine, DRAW_START + 0x0005, 0); // Clip X
+		poke(machine, DRAW_START + 0x0006, 0); // Clip Y
+		poke(machine, DRAW_START + 0x0007, NEKO_W); // Clip W
+		poke(machine, DRAW_START + 0x0008, NEKO_H); // Clip H
 
 		// Palette
 		for (unsigned int i = 0; i < 15; i++) {
 			for (unsigned int j = 0; j < 3; j++) {
-				poke(machine, OTHER_START + 0x0009 + i * 3 + j, machine->config->palette[i][j]);
+				poke(machine, DRAW_START + 0x0009 + i * 3 + j, machine->config->palette[i][j]);
 			}
 
 			// Color mapping
-			poke(machine, OTHER_START + 0x0039 + i, i);
+			poke(machine, DRAW_START + 0x0039 + i, i);
 		}
 
 		return ram;

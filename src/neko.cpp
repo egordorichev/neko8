@@ -44,9 +44,9 @@ namespace machine {
 				int v = (int) p.to_ullong();
 
 				SDL_SetRenderDrawColor(machine->graphics->renderer,
-					static_cast<Uint8>(machine->config->palette[v][0]),
-					static_cast<Uint8>(machine->config->palette[v][1]),
-					static_cast<Uint8>(machine->config->palette[v][2]), 255
+					static_cast<Uint8>(peek(machine, DRAW_START + 0x0009 + p * 3),
+					static_cast<Uint8>(peek(machine, DRAW_START + 0x0009 + p * 3 + 1),
+					static_cast<Uint8>(peek(machine, DRAW_START + 0x0009 + p * 3 + 2), 255
 				);
 
 				SDL_Rect rect = {(int) x * s, (int) y * s, s, s};

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="neko8"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\cmake\;CMake Files\cmake\modules\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/egor/neko8"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/egor/neko8/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/egor/neko8/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/egor/neko8/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/egor/neko8/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/egor/neko8"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/egor/neko8/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/egor/neko8/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/egor/neko8/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/egor/neko8/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/egor/neko8"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/egor/neko8/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/egor/neko8/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/egor/neko8/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/egor/neko8/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="neko8">
+				<Option output="/home/egor/neko8/neko8" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/egor/neko8"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/include/SDL2"/>
+					<Add directory="/usr/include/luajit-2.0"/>
+					<Add directory="/home/egor/neko8/libs/include"/>
+					<Add directory="/home/egor/neko8/src"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/egor/neko8/Makefile&quot;  VERBOSE=1 neko8"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/egor/neko8/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/egor/neko8/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/egor/neko8/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="neko8/fast">
+				<Option output="/home/egor/neko8/neko8" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/egor/neko8"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/include/SDL2"/>
+					<Add directory="/usr/include/luajit-2.0"/>
+					<Add directory="/home/egor/neko8/libs/include"/>
+					<Add directory="/home/egor/neko8/src"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/egor/neko8/Makefile&quot;  VERBOSE=1 neko8/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/egor/neko8/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/egor/neko8/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/egor/neko8/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/egor/neko8/src/api.cpp">
+			<Option target="neko8"/>
+		</Unit>
+		<Unit filename="/home/egor/neko8/src/api.hpp">
+			<Option target="neko8"/>
+		</Unit>
+		<Unit filename="/home/egor/neko8/src/carts.cpp">
+			<Option target="neko8"/>
+		</Unit>
+		<Unit filename="/home/egor/neko8/src/carts.hpp">
+			<Option target="neko8"/>
+		</Unit>
+		<Unit filename="/home/egor/neko8/src/fs.cpp">
+			<Option target="neko8"/>
+		</Unit>
+		<Unit filename="/home/egor/neko8/src/fs.hpp">
+			<Option target="neko8"/>
+		</Unit>
+		<Unit filename="/home/egor/neko8/src/graphics.cpp">
+			<Option target="neko8"/>
+		</Unit>
+		<Unit filename="/home/egor/neko8/src/graphics.hpp">
+			<Option target="neko8"/>
+		</Unit>
+		<Unit filename="/home/egor/neko8/src/main.cpp">
+			<Option target="neko8"/>
+		</Unit>
+		<Unit filename="/home/egor/neko8/src/neko.cpp">
+			<Option target="neko8"/>
+		</Unit>
+		<Unit filename="/home/egor/neko8/src/neko.hpp">
+			<Option target="neko8"/>
+		</Unit>
+		<Unit filename="/home/egor/neko8/src/ram.cpp">
+			<Option target="neko8"/>
+		</Unit>
+		<Unit filename="/home/egor/neko8/src/ram.hpp">
+			<Option target="neko8"/>
+		</Unit>
+		<Unit filename="/home/egor/neko8/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/egor/neko8/cmake/modules/FindSDL2.cmake">
+			<Option virtualFolder="CMake Files\cmake\modules\"/>
+		</Unit>
+		<Unit filename="/home/egor/neko8/cmake/modules/FindLuaJIT.cmake">
+			<Option virtualFolder="CMake Files\cmake\modules\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
