@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include <cstring>
 #include <iostream>
+#include <stdio.h>
 
 #if !defined(__WINRT__) && !defined(__WINDOWS__)
 #include <unistd.h>
