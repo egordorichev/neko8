@@ -35,7 +35,7 @@ $(BIN)/$(BINARY): $(OBJECTS) $(LIBS)
 
 $(BINARY): $(BIN)/$(BINARY)
 	cp $(BIN)/$(BINARY) ./$(BINARY)
-	@cp $(BIN)/*.dll ./
+	@if [ "$(OS)" = "windows" ]; @cp $(BIN)/*.dll ./; fi
 
 help:
 	@echo "Available targets are:"
