@@ -2,3 +2,6 @@ build/
 target/
 *.sw?
 neko8.*
+neko8
+neko.cbp
+.idea/
