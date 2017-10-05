@@ -1,14 +1,3 @@
 build/
 target/
 *.sw?
-<<<<<<< HEAD
-CMakeCache*
-Makefile
-cmake_*
-neko8
-neko8.cbp
-CMakeFiles/
-.idea/
-=======
-neko8.*
->>>>>>> b37ab70fa22187ef80d14079696f8c166cc3f56f
