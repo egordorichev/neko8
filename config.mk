@@ -33,7 +33,7 @@ ifeq ($(OS),linux)
 LDFLAGS:=$(LDFLAGS) $(shell sdl2-config --libs) -lluajit-5.1
 endif
 
-ifeq ($(OS),linux)
+ifeq ($(OS),macos)
 LDFLAGS:=$(LDFLAGS) $(shell sdl2-config --libs) -lluajit-5.1
 endif
 
