@@ -34,21 +34,6 @@ int main() {
 			if (lua["config"]["window"]["height"]) {
 				config.windowHeight = lua["config"]["window"]["height"];
 			}
-
-			// Read canvas width
-			if (lua["config"]["window"]["width"]) {
-				config.canvasWidth = lua["config"]["canvas"]["width"];
-			}
-
-			// Read canvas height
-			if (lua["config"]["window"]["height"]) {
-				config.canvasHeight = lua["config"]["canvas"]["height"];
-			}
-
-			// Read canvas scale
-			if (lua["config"]["window"]["scale"]) {
-				config.windowWidth = lua["config"]["canvas"]["scale"];
-			}
 		} else {
 			std::cerr << "Invalid config file\n";
 		}
@@ -57,17 +42,15 @@ int main() {
 	}
 
 	// Init neko8
-	initNeko(&config);
+	neko *machine = machine::init(&config);
 
 	// Used to get info about events
 	SDL_Event event;
 	// If true, neko8 should draw next frame
 	bool running = true;
 	// Used for capping FPS
-	float startTime = SDL_GetTicks();
-	float deltaTime = 0;
-	float fps = 0;
-	float timePerFrame = 1000.0f / 60.0f;
+	float nextFrame = SDL_GetPerformanceCounter();
+	float timePerFrame = SDL_GetPerformanceFrequency() / 60.0f;
 
 	while (running) {
 		while (SDL_PollEvent(&event)) {
@@ -85,28 +68,23 @@ int main() {
 		}
 
 		// Clear the window
-		SDL_RenderClear(machine.graphics->renderer);
+		SDL_RenderClear(machine->graphics->renderer);
 		// Render neko8
-		renderNeko();
+		machine::render(machine);
 		// Sync window
-		SDL_RenderPresent(machine.graphics->renderer);
+		SDL_RenderPresent(machine->graphics->renderer);
 		// Calculate FPS
-		int time = SDL_GetTicks();
-		deltaTime = time - startTime;
-		startTime = time;
+		float delay = nextFrame - SDL_GetPerformanceCounter();
 
-		if (deltaTime != 0) {
-			fps = 1000 / deltaTime;
+		if (delay > 0) {
+			SDL_Delay(delay * 1000 / SDL_GetPerformanceFrequency());
+		} else {
+			nextFrame -= delay;
 		}
-
-		// TODO: better cap algorithm
-		SDL_Delay(timePerFrame);
 	}
 
-	// Free renderer
-	SDL_DestroyRenderer(machine.graphics->renderer);
-	// Free window
-	SDL_DestroyWindow(machine.graphics->window);
+	// Free neko
+	machine::free(machine);
 	// And exit
 	SDL_Quit();
 

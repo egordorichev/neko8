@@ -5,6 +5,7 @@
 #include <ram.hpp>
 #include <carts.hpp>
 #include <graphics.hpp>
+#include <fs.hpp>
 
 typedef enum neko_state {
 	STATE_CONSOLE,
@@ -19,13 +20,13 @@ typedef struct neko {
 	neko_state state;
 	neko_state prevState;
 	neko_config *config;
+	neko_fs *fs;
 } neko;
 
-// Global neko instance
-extern neko machine;
-
-// Inits neko
-void initNeko(neko_config *config);
-void renderNeko();
+namespace machine {
+	neko *init(neko_config *config);
+	void free(neko *machine);
+	void render(neko *machine);
+};
 
 #endif

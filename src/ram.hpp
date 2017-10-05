@@ -38,8 +38,13 @@
 #define PERSISTENT_SIZE 0x00FF
 #define PERSISTENT_END (PERSISTENT_START + PERSISTENT_SIZE)
 
+// Code memory
+#define CODE_START PERSISTENT_END
+#define CODE_SIZE 0x4000
+#define CODE_END (CODE_START + CODE_SIZE)
+
 // Draw state memory
-#define DRAW_START PERSISTENT_END
+#define DRAW_START CODE_END
 #define DRAW_SIZE 0x00FF
 #define DRAW_END (DRAW_START + DRAW_SIZE)
 
@@ -60,21 +65,30 @@
 
 // Total memory size
 #define RAM_SIZE (VRAM_SIZE + SPRITE_END + MAP_SIZE \
-	+ FLAGS_SIZE + MUSIC_SIZE + PERSISTENT_SIZE + DRAW_SIZE + OTHER_SIZE)
+	+ FLAGS_SIZE + MUSIC_SIZE + PERSISTENT_SIZE + CODE_SIZE + DRAW_SIZE + OTHER_SIZE)
+
 
 typedef struct neko_ram {
 	// The actual memory
 	byte *string;
 } neko_ram;
 
+struct neko;
+
 // Basic memory operations
-void memcpy(unsigned int destination, unsigned int src, unsigned int len);
-void memset(unsigned int destination, byte value, unsigned int len);
-byte peek(unsigned int address);
-byte peek4(unsigned int address);
-void poke(unsigned int address, byte value);
-void poke4(unsigned int address, byte value);
-// Creates RAM instance
-neko_ram *initRAM();
+void memcpy(neko *machine, unsigned int destination, unsigned int src, unsigned int len);
+void memset(neko *machine, unsigned int destination, byte value, unsigned int len);
+void memseta(neko *machine, unsigned int destination, byte *value, unsigned int len);
+byte peek(neko *machine, unsigned int address);
+byte peek4(neko *machine, unsigned int address);
+void poke(neko *machine, unsigned int address, byte value);
+void poke4(neko *machine, unsigned int address, byte value);
+
+namespace ram {
+	// Creates RAM instance
+	neko_ram *init(neko *machine);
+	// Free stuff
+	void free(neko_ram *ram);
+};
 
 #endif

@@ -2,81 +2,95 @@
 #include <api.hpp>
 #include <iostream>
 
-neko_carts *initCarts() {
-	neko_carts *carts = new neko_carts;
+#define COMPRESSED_CODE_MAX_SIZE 16384
 
-	carts->path = SDL_GetPrefPath("egordorichev", "neko8");
-	std::cout << carts->path << "\n";
-	carts->loaded = createNewCart();
+namespace carts {
+	neko_carts *init(neko *machine) {
+		neko_carts *carts = new neko_carts;
 
-	return carts;
-}
+		carts->loaded = carts::createNew(machine);
 
-void renderCarts() {
-	triggerCallbackInCart("_update");
-	triggerCallbackInCart("_draw");
-}
+		return carts;
+	}
 
-void triggerCallbackInCart(const char *name) {
-	if (machine.state == STATE_RUNNING_CART) {
-		auto callback = machine.carts->loaded->env[name];
-		if (callback != sol::nil) {
-			try {
-				callback();
+	void render(neko *machine) {
+		carts::triggerCallback(machine, "_update");
+		carts::triggerCallback(machine, "_draw");
+	}
 
-			} catch (sol::error error) {
-				machine.state = STATE_CONSOLE;
-				std::cout << error.what() << "\n";
-				// TODO: output the error in the console
+	void triggerCallback(neko *machine, const char *name) {
+		if (machine->state == STATE_RUNNING_CART) {
+			auto callback = machine->carts->loaded->env[name];
+			if (callback != sol::nil) {
+				try {
+					callback();
+
+				} catch (sol::error error) {
+					machine->state = STATE_CONSOLE;
+					std::cout << error.what() << "\n";
+					// TODO: output the error in the console
+				}
 			}
 		}
 	}
-}
 
-neko_cart *createNewCart() {
-	neko_cart *cart = new neko_cart;
+	neko_cart *createNew(neko *machine) {
+		neko_cart *cart = new neko_cart;
 
-	cart->code = (char *)
-"-- cart name\n"
-"-- @author\n"
-"t=0\n"
-"function _draw()\n"
-" for i=0,199 do\n"
-"  x,y=rnd(223),rnd(127)\n"
-"  c=t+x/30+y/30\n"
-"  circ(x,y,1,c)\n"
-" end\n"
-"end\n"
-"function _update()\n"
-" t=t+0.01\n"
-"end\n";
+		cart->code = (char *) "-- cart name\n"
+			"-- @author\n";
 
-	// Create safe lua sandbox
-	cart->lua = sol::state();
-	cart->lua.open_libraries();
-	cart->env = sol::environment(cart->lua, sol::create);
+		// Create safe lua sandbox
+		cart->lua = sol::state();
+		cart->lua.open_libraries();
+		cart->env = sol::environment(cart->lua, sol::create);
 
-	// Add API
-	cart->env["printh"] = cart->lua["print"];
-	cart->env["cls"] = cls;
-	cart->env["pget"] = pget;
-	cart->env["pset"] = pset;
-	cart->env["line"] = line;
-	cart->env["rect"] = rect;
-	cart->env["rectfill"] = rectfill;
-	cart->env["circ"] = circ;
-	cart->env["circfill"] = circfill;
-	cart->env["rnd"] = rnd;
+		// Add API
+		// TODO: define it :D
 
-	return cart;
-}
+		return cart;
+	}
 
-void runCart() {
-	machine.prevState = machine.state;
-	machine.state = STATE_RUNNING_CART;
-	machine.carts->loaded->lua.script(machine.carts->loaded->code, machine.carts->loaded->env);
+	void run(neko *machine) {
+		machine->prevState = machine->state;
+		machine->state = STATE_RUNNING_CART;
+		machine->carts->loaded->lua.script(machine->carts->loaded->code, machine->carts->loaded->env);
 
-	if (machine.carts->loaded->env["_draw"] == sol::nil && machine.carts->loaded->env["_update"] == sol::nil) {
-		machine.state = machine.prevState;
+		if (machine->carts->loaded->env["_draw"] == sol::nil && machine->carts->loaded->env["_update"] == sol::nil) {
+			machine->state = machine->prevState;
+		}
+	}
+
+	void load(neko *machine, char *name) {
+		char *data = (char *) fs::read(machine, name);
+
+		if (data == nullptr) {
+			return;
+		}
+	}
+
+	void save(neko *machine, char *name) {
+		byte compressedCode[COMPRESSED_CODE_MAX_SIZE] = { 0 };
+
+		// Compress code
+		for (int i = 0; i < COMPRESSED_CODE_MAX_SIZE; i++) {
+			// TODO: compress :P
+			compressedCode[i] = machine->ram->string[CODE_START + i];
+		}
+
+		// Copy it to memory
+		memseta(machine, CODE_START, (byte *) compressedCode, COMPRESSED_CODE_MAX_SIZE);
+
+		char buffer[RAM_SIZE] = { 0 };
+
+		for (int i = 0; i < RAM_SIZE; i++) {
+			buffer[i] = machine->ram->string[i].to_ulong();
+		}
+
+		fs::write(machine, name, buffer, RAM_SIZE);
+	}
+
+	void free(neko_carts *carts) {
+		delete carts;
 	}
 }

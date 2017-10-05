@@ -1,46 +1,58 @@
 #include <neko.hpp>
 #include <iostream>
 
-neko machine;
+namespace machine {
+	neko *init(neko_config *config) {
+		neko *machine = new neko;
 
-void initNeko(neko_config *config) {
-	machine.config = config;
-	machine.ram = initRAM();
-	machine.carts = initCarts();
-	machine.graphics = initGraphics();
-	machine.prevState = STATE_CONSOLE;
-	machine.state = STATE_CONSOLE;
+		machine->config = config;
+		machine->ram = ram::init(machine);
+		machine->carts = carts::init(machine);
+		machine->graphics = graphics::init(machine);
+		machine->fs = fs::init(machine);
+		machine->prevState = STATE_CONSOLE;
+		machine->state = STATE_CONSOLE;
 
-	runCart();
-}
+		carts::run(machine);
+		// carts::save(machine, "test.txt");
 
-void renderNeko() {
-	switch (machine.state) {
-		case STATE_RUNNING_CART:
-			renderCarts();
-			break;
-		default:
-			break;
+		return machine;
 	}
 
-	// Render VRAM contents
-	int s = machine.config->canvasScale;
+	void free(neko *machine) {
+		ram::free(machine->ram);
+		carts::free(machine->carts);
+		graphics::free(machine->graphics); // Last! Because of SDL stuff
+	}
 
-	for (unsigned int x = 0; x < machine.config->canvasWidth; x++) {
-		for (unsigned int y = 0; y < machine.config->canvasHeight; y++) {
-			// Get pixel at this position
-			byte p = peek4(VRAM_START + x + y * machine.config->canvasWidth);
-			int v = (int) p.to_ullong();
+	void render(neko *machine) {
+		switch (machine->state) {
+			case STATE_RUNNING_CART:
+				carts::render(machine);
+				break;
+			default:
+				break;
+		}
 
-			SDL_SetRenderDrawColor(machine.graphics->renderer,
-				static_cast<Uint8>(machine.config->palette[v][0]),
-				static_cast<Uint8>(machine.config->palette[v][1]),
-				static_cast<Uint8>(machine.config->palette[v][2]), 255
-			);
+		// Render VRAM contents
+		int s = machine->graphics->scale;
 
-			SDL_Rect rect = { (int) x * s, (int) y * s, s, s };
-			// And draw it
-			SDL_RenderFillRect(machine.graphics->renderer, &rect);
+		for (unsigned int x = 0; x < NEKO_W; x++) {
+			for (unsigned int y = 0; y < NEKO_H; y++) {
+				// Get pixel at this position
+				byte p = peek4(machine, VRAM_START + x + y * NEKO_W);
+				int v = (int) p.to_ullong();
+
+				SDL_SetRenderDrawColor(machine->graphics->renderer,
+					static_cast<Uint8>(machine->config->palette[v][0]),
+					static_cast<Uint8>(machine->config->palette[v][1]),
+					static_cast<Uint8>(machine->config->palette[v][2]), 255
+				);
+
+				SDL_Rect rect = {(int) x * s, (int) y * s, s, s};
+				// And draw it
+				SDL_RenderFillRect(machine->graphics->renderer, &rect);
+			}
 		}
 	}
 }

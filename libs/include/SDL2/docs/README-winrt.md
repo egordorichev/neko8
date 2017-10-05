@@ -33,7 +33,7 @@ Requirements
     Visual Studio add-in, "Tools for Maintaining Store apps for Windows 8",
     allows Visual C++ 2013 to load and build Windows 8.0 projects that were
     created with Visual C++ 2012, so long as Visual C++ 2012 is installed
-    on the same machine.  More details on targeting different versions of
+    on the same machine->  More details on targeting different versions of
     Windows can found at the following web pages:
       - [Develop apps by using Visual Studio 2013](http://msdn.microsoft.com/en-us/library/windows/apps/br211384.aspx)
       - [To add the Tools for Maintaining Store apps for Windows 8](http://msdn.microsoft.com/en-us/library/windows/apps/dn263114.aspx#AddMaintenanceTools)
@@ -428,7 +428,7 @@ C++, one each for MSVC 2015, 2013, and 2012.
 To setup Visual C++ to launch your app on an ARM device:
 
 1. make sure the Remote Debugger is running on your ARM device, and that it's on 
-   the same IP network as your development machine.
+   the same IP network as your development machine->
 2. from Visual C++'s toolbar, find a drop-down menu that says, "Win32".  Click 
    it, then change the value to "ARM".
 3. make sure Visual C++ knows the hostname or IP address of the ARM device.  To 

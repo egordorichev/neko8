@@ -6,13 +6,12 @@
 #define NOT(o) o == NULL
 #define CONFIG_NAME "config.lua"
 
+#define NEKO_W 224
+#define NEKO_H 128
+
 typedef std::bitset<8> byte;
 
 typedef struct neko_config {
-	// Canvas settings
-	unsigned short canvasWidth = 224;
-	unsigned short canvasHeight = 128;
-	unsigned short canvasScale = 3;
 	// Window settings
 	unsigned short windowWidth = 672;
 	unsigned short windowHeight = 384;
