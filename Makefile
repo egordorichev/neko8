@@ -51,8 +51,9 @@ help:
 	@echo " TARGET  - sets the target (debug/release)"
 
 clean:
-	rm -rf target/**/obj
+	rm -rf ./target/**/obj
 
 mrproper: clean
-	rm -rf target
-	rm -f $(BINARY)
+	rm -rf ./$(BIN)
+	rm -f ./$(BINARY)
+	rm -f ./*.dll

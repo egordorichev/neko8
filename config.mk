@@ -39,6 +39,6 @@ endif
 
 ifeq ($(OS),windows)
 BINARY:=$(BINARY).exe
-LIBS:=$(LIBS) $(wildcard libs/**/*.lib) $(wildcard libs/**/*.dll)
+LIBS:=$(LIBS) $(wildcard libs/**/*.lib)
 CFLAGS:=$(CFLAGS) -D_REENTRANT
 endif
