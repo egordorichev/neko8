@@ -20,9 +20,9 @@ namespace fs {
 	// Checks, if file exists
 	bool exists(neko *machine, char *name);
 	// Writes data to file
-	bool write(neko *machine, char *name, void *data, unsigned int size);
+	bool write(neko *machine, char *name, char *data, u32 length);
 	// Reads data from file
-	void *read(neko *machine, char *name);
+	char *read(neko *machine, char *name);
 }
 
 #endif

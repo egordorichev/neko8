@@ -72,6 +72,9 @@
 	+ FLAGS_SIZE + MUSIC_SIZE + PERSISTENT_SIZE + CODE_SIZE + DRAW_SIZE \
 	+VRAM_SIZE + OTHER_SIZE)
 
+// Cart size
+#define CART_SIZE (SPRITE_END + MAP_SIZE \
+	+ FLAGS_SIZE + MUSIC_SIZE + PERSISTENT_SIZE + CODE_SIZE)
 
 typedef struct neko_ram {
 	// The actual memory
@@ -81,19 +84,22 @@ typedef struct neko_ram {
 struct neko;
 
 // Basic memory operations
-void memcpy(neko *machine, unsigned int destination, unsigned int src, unsigned int len);
-void memset(neko *machine, unsigned int destination, byte value, unsigned int len);
-void memseta(neko *machine, unsigned int destination, byte *value, unsigned int len);
-byte peek(neko *machine, unsigned int address);
-byte peek4(neko *machine, unsigned int address);
-void poke(neko *machine, unsigned int address, byte value);
-void poke4(neko *machine, unsigned int address, byte value);
+void memcpy(neko *machine, u32 destination, u32 src, u32 len);
+void memset(neko *machine, u32 destination, byte value, u32 len);
+void memseta(neko *machine, u32 destination, byte *value, u32 len);
+byte *memgeta(neko *machine, u32 start, u32 len);
+byte peek(neko *machine, u32 address);
+byte peek4(neko *machine, u32 address);
+void poke(neko *machine, u32 address, byte value);
+void poke4(neko *machine, u32 address, byte value);
 
 namespace ram {
 	// Creates RAM instance
 	neko_ram *init(neko *machine);
+	// Resets RAM
+	void reset(neko *machine);
 	// Free stuff
-	void free(neko_ram *ram);
+	void clean(neko_ram *ram);
 };
 
 #endif

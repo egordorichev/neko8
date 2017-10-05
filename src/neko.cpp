@@ -14,15 +14,16 @@ namespace machine {
 		machine->state = STATE_CONSOLE;
 
 		carts::run(machine);
-		// carts::save(machine, "test.txt");
+		carts::save(machine, "test.txt");
+		carts::load(machine, "test.txt");
 
 		return machine;
 	}
 
 	void free(neko *machine) {
-		ram::free(machine->ram);
-		carts::free(machine->carts);
-		graphics::free(machine->graphics); // Last! Because of SDL stuff
+		ram::clean(machine->ram);
+		carts::clean(machine->carts);
+		graphics::clean(machine->graphics); // Last! Because of SDL stuff
 	}
 
 	void render(neko *machine) {
@@ -37,16 +38,15 @@ namespace machine {
 		// Render VRAM contents
 		int s = machine->graphics->scale;
 
-		for (unsigned int x = 0; x < NEKO_W; x++) {
-			for (unsigned int y = 0; y < NEKO_H; y++) {
+		for (u32 x = 0; x < NEKO_W; x++) {
+			for (u32 y = 0; y < NEKO_H; y++) {
 				// Get pixel at this position
 				byte p = peek4(machine, VRAM_START + x + y * NEKO_W);
-				int v = (int) p.to_ullong();
 
 				SDL_SetRenderDrawColor(machine->graphics->renderer,
-					static_cast<Uint8>(peek(machine, DRAW_START + 0x0009 + v * 3).to_ullong()),
-					static_cast<Uint8>(peek(machine, DRAW_START + 0x0009 + v * 3 + 1).to_ullong()),
-					static_cast<Uint8>(peek(machine, DRAW_START + 0x0009 + v * 3 + 2).to_ullong()), 255
+					static_cast<Uint8>(peek(machine, DRAW_START + 0x0009 + p * 3)),
+					static_cast<Uint8>(peek(machine, DRAW_START + 0x0009 + p * 3 + 1)),
+					static_cast<Uint8>(peek(machine, DRAW_START + 0x0009 + p * 3 + 2)), 255
 				);
 
 				SDL_Rect rect = {(int) x * s, (int) y * s, s, s};

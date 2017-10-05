@@ -1,12 +1,12 @@
 #ifndef neko_carts_hpp
 #define neko_carts_hpp
 
-#include <sol.hpp>
+// #include <sol.hpp>
 
 typedef struct neko_cart {
 	char *code;
-	sol::state lua;
-	sol::environment env;
+	// sol::state lua;
+	// sol::environment env;
 } neko_cart;
 
 typedef struct neko_carts {
@@ -31,7 +31,7 @@ namespace carts {
 	// Saves a cart
 	void save(neko *machine, char *name);
 	// Free all
-	void free(neko_carts *carts);
+	void clean(neko_carts *carts);
 }
 
 #endif

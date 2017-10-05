@@ -1,0 +1,3 @@
+/home/egor/neko8/CMakeFiles/rebuild_cache.dir
+/home/egor/neko8/CMakeFiles/edit_cache.dir
+/home/egor/neko8/CMakeFiles/neko8.dir

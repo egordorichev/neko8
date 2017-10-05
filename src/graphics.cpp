@@ -36,7 +36,7 @@ namespace graphics {
 		return graphics;
 	}
 
-	void free(neko_graphics *graphics) {
+	void clean(neko_graphics *graphics) {
 		// Free renderer
 		SDL_DestroyRenderer(graphics->renderer);
 		// Free window

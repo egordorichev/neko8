@@ -1,15 +1,13 @@
 #ifndef neko_config_hpp
 #define neko_config_hpp
 
-#include <bitset>
+#include <types.hpp>
 
 #define NOT(o) o == NULL
 #define CONFIG_NAME "config.lua"
 
 #define NEKO_W 224
 #define NEKO_H 128
-
-typedef std::bitset<8> byte;
 
 typedef struct neko_config {
 	// Window settings

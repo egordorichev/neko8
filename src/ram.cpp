@@ -2,39 +2,53 @@
 #include <neko.hpp>
 #include <iostream>
 
-void memcpy(neko *machine, unsigned int destination, unsigned int src, unsigned int len) {
+void memcpy(neko *machine, u32 destination, u32 src, u32 len) {
 	if (destination < 0 || destination > RAM_SIZE - 1
 			|| src < 0 || src > RAM_SIZE - 1) {
 		return;
 	}
 
-	for (unsigned int i = 0; (i < len && src + i < RAM_SIZE
+	for (u32 i = 0; (i < len && src + i < RAM_SIZE
 			&& destination + i < RAM_SIZE); i++) {
 		machine->ram->string[destination + i] = machine->ram->string[src + i];
 	}
 }
 
-void memset(neko *machine, unsigned int destination, byte value, unsigned int len) {
+void memset(neko *machine, u32 destination, byte value, u32 len) {
 	if (destination < 0 || destination > RAM_SIZE - 1) {
 		return;
 	}
 
-	for (unsigned int i = 0; (i < len && destination + i < RAM_SIZE); i++) {
+	for (u32 i = 0; (i < len && destination + i < RAM_SIZE); i++) {
 		machine->ram->string[destination + i] = value;
 	}
 }
 
-void memseta(neko *machine, unsigned int destination, byte *value, unsigned int len) {
+void memseta(neko *machine, u32 destination, byte *value, u32 len) {
 	if (destination < 0 || destination > RAM_SIZE - 1) {
 		return;
 	}
 
-	for (unsigned int i = 0; (i < len && destination + i < RAM_SIZE); i++) {
+	for (u32 i = 0; (i < len && destination + i < RAM_SIZE); i++) {
 		machine->ram->string[destination + i] = value[i];
 	}
 }
 
-byte peek(neko *machine, unsigned int address) {
+byte *memgeta(neko *machine, u32 start, u32 len) {
+	if (start < 0 || start > RAM_SIZE - 1) {
+		return NULL;
+	}
+
+	byte *data = (byte *) malloc(sizeof(byte) * len);
+
+	for (u32 i = 0; (i < len && start + i < RAM_SIZE); i++) {
+		data[i] = machine->ram->string[start + i];
+	}
+
+	return data;
+}
+
+byte peek(neko *machine, u32 address) {
 	if (address < 0 || address > RAM_SIZE - 1) {
 		return 0;
 	}
@@ -42,7 +56,7 @@ byte peek(neko *machine, unsigned int address) {
 	return machine->ram->string[address];
 }
 
-byte peek4(neko *machine, unsigned int address) {
+byte peek4(neko *machine, u32 address) {
 	if (address < 0 || address > RAM_SIZE * 2 - 1) {
 		return 0;
 	}
@@ -56,7 +70,7 @@ byte peek4(neko *machine, unsigned int address) {
 	}
 }
 
-void poke(neko *machine, unsigned int address, byte value) {
+void poke(neko *machine, u32 address, byte value) {
 	if (address < 0 || address > RAM_SIZE - 1) {
 		return;
 	}
@@ -64,7 +78,7 @@ void poke(neko *machine, unsigned int address, byte value) {
 	machine->ram->string[address] = value;
 }
 
-void poke4(neko *machine, unsigned int address, byte value) {
+void poke4(neko *machine, u32 address, byte value) {
 	if (address < 0 || address > RAM_SIZE * 2 - 1) {
 		return;
 	}
@@ -85,12 +99,21 @@ void poke4(neko *machine, unsigned int address, byte value) {
 
 namespace ram {
 	neko_ram *init(neko *machine) {
-		neko_ram *ram = new neko_ram;
-		ram->string = (byte *) malloc(RAM_SIZE * sizeof(byte));
+		ram::reset(machine);
+		return machine->ram;
+	}
 
-		// Poke data into memory
+	void reset(neko *machine) {
+		if (machine->ram != nullptr) {
+			// delete machine->ram;
+			// FIXME!
+		}
+
+		neko_ram *ram = new neko_ram;
+		ram->string = new byte[RAM_SIZE];
 		machine->ram = ram; // Lil hack
 
+		// Poke some data into memory
 		poke(machine, DRAW_START, 0); // Pen color
 		poke(machine, DRAW_START + 0x0001, 0); // Camera X
 		poke(machine, DRAW_START + 0x0002, 0); // Camera Y
@@ -102,19 +125,17 @@ namespace ram {
 		poke(machine, DRAW_START + 0x0008, NEKO_H); // Clip H
 
 		// Palette
-		for (unsigned int i = 0; i < 15; i++) {
-			for (unsigned int j = 0; j < 3; j++) {
+		for (u32 i = 0; i < 15; i++) {
+			for (u32 j = 0; j < 3; j++) {
 				poke(machine, DRAW_START + 0x0009 + i * 3 + j, machine->config->palette[i][j]);
 			}
 
 			// Color mapping
 			poke(machine, DRAW_START + 0x0039 + i, i);
 		}
-
-		return ram;
 	}
 
-	void free(neko_ram *ram) {
+	void clean(neko_ram *ram) {
 		free(ram->string);
 		delete ram;
 	}

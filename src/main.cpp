@@ -1,11 +1,9 @@
-
 #include <SDL2/SDL.h>
-#undef main
-#include <LuaJIT/lua.hpp>
 #include <iostream>
-#include <sol.hpp>
 
 #include <neko.hpp>
+
+#undef main
 
 int main() {
 	// Set random seed based on system time
@@ -16,31 +14,7 @@ int main() {
 
 	// Open config
 
-	sol::state lua;
 	neko_config config;
-
-	try {
-		// Run config
-		sol::load_result configState = lua.load_file(CONFIG_NAME);
-		configState();
-
-		if (lua["config"]) {
-			// Config is ok
-			// Read window width
-			if (lua["config"]["window"]["width"]) {
-				config.windowWidth = lua["config"]["window"]["width"];
-			}
-
-			// Read window height
-			if (lua["config"]["window"]["height"]) {
-				config.windowHeight = lua["config"]["window"]["height"];
-			}
-		} else {
-			std::cerr << "Invalid config file\n";
-		}
-	} catch (sol::error error) {
-		std::cout << error.what() << "\n";
-	}
 
 	// Init neko8
 	neko *machine = machine::init(&config);

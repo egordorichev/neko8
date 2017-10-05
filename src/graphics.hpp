@@ -7,14 +7,14 @@
 typedef struct neko_graphics {
 	SDL_Window *window;
 	SDL_Renderer *renderer;
-	unsigned int scale = 3;
+	u32 scale = 3;
 } neko_graphics;
 
 struct neko;
 
 namespace graphics {
 	neko_graphics *init(neko *machine);
-	void free(neko_graphics *graphics);
+	void clean(neko_graphics *graphics);
 }
 
 #endif

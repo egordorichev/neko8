@@ -125,11 +125,11 @@ namespace fs {
 		return false;
 	}
 
-	bool write(neko *machine, char *name, void *data, unsigned int size) {
+	bool write(neko *machine, char *name, char *data, u32 length) {
 		FILE *file = _fopen(UTF8ToString(name), UTF8ToString("wb"));
 
 		if (file) {
-			fwrite(data, 1, size, file);
+			fwrite(data, 1, length, file);
 			fclose(file);
 
 #if defined(__EMSCRIPTEN__)
@@ -142,18 +142,20 @@ namespace fs {
 		return false;
 	}
 
-	void *read(neko *machine, char *name) {
+	char *read(neko *machine, char *name) {
 		FILE *file = _fopen(UTF8ToString(name), UTF8ToString("rb"));
-		void *buffer = NULL;
+		char *buffer = NULL;
 
 		if (file) {
 			fseek(file, 0, SEEK_END);
-			unsigned int size = ftell(file);
+			u32 size = ftell(file);
 			fseek(file, 0, SEEK_SET);
 
-			if((buffer = SDL_malloc(size)) && fread(buffer, size, 1, file)) {
+			if((buffer = (char *) malloc(size + 1)) && fread(buffer, 1, size, file)) {
 				// Nice lil hack :P
 			}
+
+			buffer[size] = '\0';
 
 			fclose(file);
 		}
