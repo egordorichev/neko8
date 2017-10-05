@@ -13,9 +13,9 @@ namespace machine {
 		machine->prevState = STATE_CONSOLE;
 		machine->state = STATE_CONSOLE;
 
+		// carts::save(machine, "test.n8");
+		carts::load(machine, "test.n8");
 		carts::run(machine);
-		carts::save(machine, "test.txt");
-		carts::load(machine, "test.txt");
 
 		return machine;
 	}
