@@ -1,6 +1,4 @@
 
-CC=gcc
-CXX=g++
 STD=c++14
 
 NAME=neko8
@@ -31,12 +29,16 @@ endif
 
 ifeq ($(OS),linux)
 LDFLAGS:=$(LDFLAGS) $(shell sdl2-config --libs) -lluajit-5.1
+CFLAGS:=$(CFLAGS) $(shell sdl2-config --cflags)
 endif
 
 ifeq ($(OS),macos)
 LDFLAGS:=$(LDFLAGS) $(shell sdl2-config --libs) -lluajit-5.1
+CFLAGS:=$(CFLAGS) $(shell sdl2-config --cflags)
 endif
 
 ifeq ($(OS),windows)
-LIBS:=$(LIBS) $(wildcard libs/**/*.lib)
+BINARY:=$(BINARY).exe
+LIBS:=$(LIBS) $(wildcard libs/**/*.lib) $(wildcard libs/**/*.dll)
+CFLAGS:=$(CFLAGS) -D_REENTRANT
 endif
