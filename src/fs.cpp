@@ -97,7 +97,7 @@ namespace fs {
 		strcat(path, name);
 
 #if defined(__WINDOWS__)
-		// Replace / with \\
+		// Replace '/' with '\\'
 		char *ptr = path;
 
 		while (*ptr) {
