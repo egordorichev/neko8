@@ -1,5 +1,6 @@
 
 #include <SDL2/SDL.h>
+#undef main
 #include <LuaJIT/lua.hpp>
 #include <iostream>
 #include <sol.hpp>
