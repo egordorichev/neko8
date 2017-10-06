@@ -1,12 +1,11 @@
 #ifndef neko_carts_hpp
 #define neko_carts_hpp
 
-// #include <sol.hpp>
+#include <luajit-2.0/lua.hpp>
 
 typedef struct neko_cart {
 	char *code;
-	// sol::state lua;
-	// sol::environment env;
+	lua_State *lua;
 } neko_cart;
 
 typedef struct neko_carts {
