@@ -1,2 +1,0 @@
-Options: 
-CMake: 3.8.2@/home/egor/code/apps/clion-2017.2.2/bin/cmake/bin/cmake
