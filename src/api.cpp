@@ -16,7 +16,9 @@ namespace api {
 			return (u32) peek(machine, OTHER_START);
 		}
 
-		poke(machine, OTHER_START, (u32) c); // Poke color
+		std::cout << c << "\n";
+
+		poke(machine, OTHER_START, c % 16); // Poke color
 		return (u32) peek(machine, OTHER_START);
 	}
 

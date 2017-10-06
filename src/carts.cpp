@@ -19,22 +19,31 @@ namespace carts {
 	void render(neko *machine) {
 		carts::triggerCallback(machine, "_update");
 		carts::triggerCallback(machine, "_draw");
+
+	}
+
+	bool checkForLuaFunction(neko *machine, const char *name) {
+		lua_getglobal(machine->carts->loaded->thread, name);
+
+		bool result = lua_isfunction(machine->carts->loaded->thread, -1);
+		lua_pop(machine->carts->loaded->thread, 1);
+
+		return result;
 	}
 
 	void triggerCallback(neko *machine, const char *name) {
-		/* if (machine->state == STATE_RUNNING_CART) {
-			auto callback = machine->carts->loaded->env[name];
-			if (callback != sol::nil) {
-				try {
-					callback();
+		lua_getglobal(machine->carts->loaded->thread, name);
 
-				} catch (sol::error error) {
-					machine->state = STATE_CONSOLE;
-					std::cout << error.what() << "\n";
-					// TODO: output the error in the console
-				}
+		if (lua_isfunction(machine->carts->loaded->thread, -1)) {
+			std::cout << name << "\n";
+
+			int error = lua_pcall(machine->carts->loaded->thread, 0, 0, 0);
+
+			if (error) {
+				// Error :P
+				std::cout << lua_tostring(machine->carts->loaded->thread, -1) << "\n";
 			}
-		}*/
+		}
 	}
 
 	static const luaL_Reg luaLibs[] = {
@@ -53,7 +62,7 @@ namespace carts {
 	neko_cart *createNew(neko *machine) {
 		neko_cart *cart = new neko_cart;
 
-		cart->code = (char *) "test() cls(1) pset(0, 0, 7) pset(223, 127, 7)";
+		cart->code = (char *) "t = 0 function _draw() t = t + 0.004 for i = 0, 99 do x = rnd(224) y = rnd(128) c = x / 30 + y / 20 + t circ(x,y,1,c) end end";
 
 		// Create lua state
 		cart->lua = luaL_newstate();
@@ -87,7 +96,6 @@ namespace carts {
 		if (error) {
 			// Error :P
 			std::cout << lua_tostring(machine->carts->loaded->thread, -1) << "\n";
-			lua_pop(machine->carts->loaded->thread, 1);
 			return;
 		}
 
@@ -96,13 +104,12 @@ namespace carts {
 		if (error) {
 			// Error :P
 			std::cout << lua_tostring(machine->carts->loaded->thread, -1) << "\n";
-			lua_pop(machine->carts->loaded->thread, 1);
 			return;
 		}
 
-		//if (machine->carts->loaded->env["_draw"] == sol::nil && machine->carts->loaded->env["_update"] == sol::nil) {
-		//	machine->state = machine->prevState;
-		//}
+		if (!checkForLuaFunction(machine, "_draw") && !checkForLuaFunction(machine, "_update")) {
+			machine->state = machine->prevState;
+		}
 	}
 
 	char *compressString(char *str) {

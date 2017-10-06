@@ -8,9 +8,9 @@
 #include <fs.hpp>
 
 typedef enum neko_state {
-	STATE_CONSOLE,
-	STATE_CODE_EDITOR,
-	STATE_RUNNING_CART
+	STATE_CONSOLE = 0,
+	STATE_CODE_EDITOR = 1,
+	STATE_RUNNING_CART = 2
 } neko_state;
 
 typedef struct neko {
