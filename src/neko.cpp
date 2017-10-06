@@ -1,5 +1,6 @@
 #include <neko.hpp>
 #include <iostream>
+#include <api.hpp>
 
 namespace machine {
 	neko *init(neko_config *config) {
@@ -12,6 +13,8 @@ namespace machine {
 		machine->fs = fs::init(machine);
 		machine->prevState = STATE_CONSOLE;
 		machine->state = STATE_CONSOLE;
+
+		api::cls(machine, 0);
 
 		carts::createNew(machine);
 		// carts::save(machine, "test.n8");

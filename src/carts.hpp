@@ -6,6 +6,7 @@
 typedef struct neko_cart {
 	char *code;
 	lua_State *lua;
+	lua_State *thread;
 } neko_cart;
 
 typedef struct neko_carts {

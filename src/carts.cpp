@@ -50,11 +50,10 @@ namespace carts {
 		{ NULL, NULL }
 	};
 
-
 	neko_cart *createNew(neko *machine) {
 		neko_cart *cart = new neko_cart;
 
-		cart->code = (char *) "cls(1) pset(0, 0, 7) pset(223, 127, 7)";
+		cart->code = (char *) "test() cls(1) pset(0, 0, 7) pset(223, 127, 7)";
 
 		// Create lua state
 		cart->lua = luaL_newstate();
@@ -81,9 +80,24 @@ namespace carts {
 		machine->prevState = machine->state;
 		machine->state = STATE_RUNNING_CART;
 
-		if (luaL_dostring(machine->carts->loaded->lua, machine->carts->loaded->code)) {
+		machine->carts->loaded->thread = lua_newthread(machine->carts->loaded->lua);
+
+		int error = luaL_loadstring(machine->carts->loaded->thread, machine->carts->loaded->code);
+
+		if (error) {
 			// Error :P
-			std::cout << lua_tostring(machine->carts->loaded->lua, -1) << "\n";
+			std::cout << lua_tostring(machine->carts->loaded->thread, -1) << "\n";
+			lua_pop(machine->carts->loaded->thread, 1);
+			return;
+		}
+
+		error = lua_pcall(machine->carts->loaded->thread, 0, 0, 0);
+
+		if (error) {
+			// Error :P
+			std::cout << lua_tostring(machine->carts->loaded->thread, -1) << "\n";
+			lua_pop(machine->carts->loaded->thread, 1);
+			return;
 		}
 
 		//if (machine->carts->loaded->env["_draw"] == sol::nil && machine->carts->loaded->env["_update"] == sol::nil) {

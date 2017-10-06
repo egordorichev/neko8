@@ -33,4 +33,4 @@ if (ZLIB_FOUND)
   target_link_libraries(neko8 ${ZLIB_LIBRARIES})
 endif(ZLIB_FOUND)
 
-include_directories(src/ include)
+include_directories(src/ libs/include)
