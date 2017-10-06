@@ -1,7 +1,7 @@
 #ifndef neko_carts_hpp
 #define neko_carts_hpp
 
-#include <luajit-2.0/lua.hpp>
+#include <LuaJIT/lua.hpp>
 
 typedef struct neko_cart {
 	char *code;
