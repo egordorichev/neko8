@@ -26,12 +26,11 @@ if(LUAJIT_FOUND)
   target_link_libraries(neko8 ${LUAJIT_LIBRARIES})
 endif()
 
-find_package(Boost COMPONENTS system filesystem REQUIRED)
-#...
-target_link_libraries(
-    neko8
-    ${Boost_FILESYSTEM_LIBRARY}
-    ${Boost_SYSTEM_LIBRARY}
-)
+find_package(ZLIB REQUIRED)
+
+if (ZLIB_FOUND)
+  include_directories(${ZLIB_INCLUDE_DIRS})
+  target_link_libraries(neko8 ${ZLIB_LIBRARIES})
+endif(ZLIB_FOUND)
 
 include_directories(${CMAKE_SOURCE_DIR}/libs/include src/)
