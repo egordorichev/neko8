@@ -5,3 +5,6 @@ neko8.*
 neko8
 neko.cbp
 .idea/
+CMakeFiles/
+CMakeCache*
+cmake_install*
