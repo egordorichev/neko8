@@ -35,8 +35,6 @@ namespace carts {
 		lua_getglobal(machine->carts->loaded->thread, name);
 
 		if (lua_isfunction(machine->carts->loaded->thread, -1)) {
-			std::cout << name << "\n";
-
 			int error = lua_pcall(machine->carts->loaded->thread, 0, 0, 0);
 
 			if (error) {
