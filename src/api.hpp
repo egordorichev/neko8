@@ -2,8 +2,11 @@
 #define neko_api_hpp
 
 #include <config.hpp>
+#include <LuaJIT/lua.hpp>
 
 struct neko;
+
+int defineLuaAPI(neko *n, lua_State *state);
 
 namespace api {
 	void cls(neko *machine, u32 c = 0);

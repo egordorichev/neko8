@@ -1,6 +1,7 @@
 #include <api.hpp>
 #include <ram.hpp>
 #include <neko.hpp>
+#include <iostream>
 
 namespace api {
 	void cls(neko *machine, u32 c) {
@@ -171,7 +172,7 @@ namespace api {
 			return 0;
 		}
 
-		return peek4(machine, VRAM_START + x + y * NEKO_W);
+		return peek4(machine, VRAM_START * 2 + x + y * (NEKO_W / 2));
 	}
 
 	void pset(neko *machine, int x, int y, int c) {
@@ -180,7 +181,7 @@ namespace api {
 			return;
 		}
 
-		poke4(machine, VRAM_START + x + y * NEKO_W, c);
+		poke4(machine, VRAM_START * 2 + x + y * (NEKO_W / 2), c);
 	}
 
 	u32 rnd(neko *machine, u32 a) {

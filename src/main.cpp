@@ -48,7 +48,7 @@ int main() {
 		machine::render(machine);
 		// Sync window
 		SDL_RenderPresent(machine->graphics->renderer);
-		// Calculate FPS
+		// Cap FPS
 		float delay = nextFrame - SDL_GetPerformanceCounter();
 
 		if (delay > 0) {

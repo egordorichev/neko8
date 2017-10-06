@@ -33,4 +33,4 @@ if (ZLIB_FOUND)
   target_link_libraries(neko8 ${ZLIB_LIBRARIES})
 endif(ZLIB_FOUND)
 
-include_directories(${CMAKE_SOURCE_DIR}/libs/include src/)
+include_directories(src/ include)

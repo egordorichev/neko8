@@ -13,8 +13,9 @@ namespace machine {
 		machine->prevState = STATE_CONSOLE;
 		machine->state = STATE_CONSOLE;
 
+		carts::createNew(machine);
 		// carts::save(machine, "test.n8");
-		carts::load(machine, (char *) "test.n8");
+		// carts::load(machine, (char *) "test.n8");
 		carts::run(machine);
 
 		return machine;
@@ -35,13 +36,14 @@ namespace machine {
 				break;
 		}
 
+
 		// Render VRAM contents
 		int s = machine->graphics->scale;
 
 		for (u32 x = 0; x < NEKO_W; x++) {
 			for (u32 y = 0; y < NEKO_H; y++) {
 				// Get pixel at this position
-				byte p = peek4(machine, VRAM_START + x + y * NEKO_W);
+				byte p = peek4(machine, VRAM_START * 2 + x + y * (NEKO_W / 2));
 
 				SDL_SetRenderDrawColor(machine->graphics->renderer,
 					static_cast<Uint8>(peek(machine, DRAW_START + 0x0009 + p * 3)),

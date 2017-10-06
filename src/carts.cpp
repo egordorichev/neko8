@@ -37,18 +37,42 @@ namespace carts {
 		}*/
 	}
 
+	static const luaL_Reg luaLibs[] = {
+		{ "", luaopen_base },
+		{ LUA_LOADLIBNAME, luaopen_package },
+		{ LUA_TABLIBNAME, luaopen_table },
+		{ LUA_OSLIBNAME, luaopen_os },
+		{ LUA_STRLIBNAME, luaopen_string },
+		{ LUA_MATHLIBNAME, luaopen_math },
+		{ LUA_DBLIBNAME, luaopen_debug },
+		{ LUA_BITLIBNAME, luaopen_bit },
+		{ LUA_JITLIBNAME, luaopen_jit },
+		{ NULL, NULL }
+	};
+
+
 	neko_cart *createNew(neko *machine) {
 		neko_cart *cart = new neko_cart;
 
-		cart->code = (char *) "-- test ls ls lsl";
+		cart->code = (char *) "cls(1) pset(1, 1, 7)";
 
-		// Create safe lua sandbox
-		// cart->lua = sol::state();
-		// cart->lua.open_libraries();
-		// cart->env = sol::environment(cart->lua, sol::create);
+		// Create lua state
+		cart->lua = luaL_newstate();
+
+		// Default libs
+		const luaL_Reg *lib;
+
+		for (lib = luaLibs; lib->func; lib++) {
+			lua_pushcfunction(cart->lua, lib->func);
+			lua_pushstring(cart->lua, lib->name);
+			lua_call(cart->lua, 1, 0);
+		}
+
+		lua_pop(cart->lua, 1);
 
 		// Add API
-		// TODO: define it :D
+		defineLuaAPI(machine, cart->lua);
+		luaL_openlibs(cart->lua);
 
 		return cart;
 	}
@@ -56,7 +80,11 @@ namespace carts {
 	void run(neko *machine) {
 		machine->prevState = machine->state;
 		machine->state = STATE_RUNNING_CART;
-		//machine->carts->loaded->lua.script(machine->carts->loaded->code, machine->carts->loaded->env);
+
+		if (luaL_dostring(machine->carts->loaded->lua, machine->carts->loaded->code)) {
+			// Error :P
+			std::cout << lua_tostring(machine->carts->loaded->lua, -1) << "\n";
+		}
 
 		//if (machine->carts->loaded->env["_draw"] == sol::nil && machine->carts->loaded->env["_update"] == sol::nil) {
 		//	machine->state = machine->prevState;
