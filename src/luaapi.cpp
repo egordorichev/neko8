@@ -6,8 +6,42 @@
 
 #define GET_COLOR peek(machine, DRAW_START)
 
-
 neko *machine; // Lil hack :P
+
+static int rnd(lua_State *state) {
+	s32 n = luaL_optint(state, 1, 1);
+	lua_pushinteger(state, api::rnd(machine, n));
+
+	return 1;
+}
+
+static int min(lua_State *state) {
+	float a = luaL_optnumber(state, 1, 0);
+	float b = luaL_optnumber(state, 2, 0);
+
+	lua_pushnumber(state, api::min(machine, a, b));
+
+	return 1;
+}
+
+static int max(lua_State *state) {
+	float a = luaL_optnumber(state, 1, 0);
+	float b = luaL_optnumber(state, 2, 0);
+
+	lua_pushnumber(state, api::max(machine, a, b));
+
+	return 1;
+}
+
+static int mid(lua_State *state) {
+	float a = luaL_optnumber(state, 1, 0);
+	float b = luaL_optnumber(state, 2, 0);
+	float c = luaL_optnumber(state, 3, 0);
+
+	lua_pushnumber(state, api::mid(machine, a, b, c));
+
+	return 1;
+}
 
 static int cls(lua_State *state) {
 	api::cls(machine, luaL_checkinteger(state, 1));
@@ -98,19 +132,28 @@ static int color(lua_State *state) {
 	return 1;
 }
 
-static int rnd(lua_State *state) {
-	s32 n = luaL_optint(state, 1, 1);
-	lua_pushinteger(state, api::rnd(machine, n));
-
-	return 1;
-}
-
 static int flip(lua_State *state) {
 	api::flip(machine);
 	return 0;
 }
 
+static int clip(lua_State *state) {
+	s32 x = luaL_optint(state, 1, 0);
+	s32 y = luaL_optint(state, 2, 0);
+	s32 w = luaL_optint(state, 3, NEKO_W);
+	s32 h = luaL_optint(state, 4, NEKO_H);
+
+	api::clip(machine, x, y, w, h);
+
+	return 0;
+}
+
 std::vector<luaL_Reg> luaAPI = {
+	{ "rnd", rnd },
+	{ "min", min },
+	{ "max", max },
+	{ "mid", mid },
+
 	{ "cls", cls },
 	{ "pset", pset },
 	{ "pget", pget },
@@ -120,9 +163,7 @@ std::vector<luaL_Reg> luaAPI = {
 	{ "rectfill", rectfill },
 	{ "line", line },
 	{ "color", color },
-
-	{ "flip", flip },
-	{ "rnd", rnd },
+	{ "clip", clip },
 };
 
 LUALIB_API int defineLuaAPI(neko *n, lua_State *state) {

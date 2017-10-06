@@ -4,6 +4,32 @@
 #include <iostream>
 
 namespace api {
+	float rnd(neko *machine, float b) {
+		float a = 0;
+		float random = ((float) rand()) / (float) RAND_MAX;
+		float diff = b - a;
+		float r = random * diff;
+		return a + r;
+	}
+
+	float min(neko *machine, float a, float b) {
+		return a > b ? b : a;
+	}
+
+	float max(neko *machine, float a, float b) {
+		return a < b ? b : a;
+	}
+
+	float mid(neko *machine, float a, float b, float c) {
+		if (a > b) {
+			s32 tmp = a;
+			a = b;
+			b = tmp;
+		}
+
+		max(machine, a, min(machine, b, c));
+	}
+
 	void cls(neko *machine, u32 c) {
 		c &= 0xf;
 		c = c << 4 | c;
@@ -184,13 +210,39 @@ namespace api {
 		poke4(machine, VRAM_START * 2 + x + y * NEKO_W, c);
 	}
 
+	void clip(neko *machine, int x, int y, int w, int h) {
+		if (x == -1) {
+			x = 0;
+		}
+
+		if (y == -1) {
+			y = 0;
+		}
+
+		if (w == -1) {
+			w = NEKO_W;
+		}
+
+		if (h == -1) {
+			h = NEKO_H;
+		}
+
+		x = mid(machine, 0, NEKO_W - 1, x);
+		y = mid(machine, 0, NEKO_H - 1, y);
+		w = mid(machine, 0, NEKO_W, w);
+		h = mid(machine, 0, NEKO_H, h);
+
+		poke(machine, DRAW_START + 0x0005, x); // Clip X
+		poke(machine, DRAW_START + 0x0006, y); // Clip Y
+		poke(machine, DRAW_START + 0x0007, w); // Clip W
+		poke(machine, DRAW_START + 0x0008, h); // Clip H
+	}
+
 	// Used for capping FPS
 	float nextFrame = SDL_GetPerformanceCounter();
 	float timePerFrame = SDL_GetPerformanceFrequency() / 60.0f;
 
 	void flip(neko *machine) {
-		// Clear the window
-		SDL_RenderClear(machine->graphics->renderer);
 		// Render neko8
 		machine::render(machine);
 		// Sync window
@@ -203,9 +255,5 @@ namespace api {
 		} else {
 			nextFrame -= delay;
 		}
-	}
-
-	u32 rnd(neko *machine, u32 a) {
-		return rand() % a;
 	}
 };

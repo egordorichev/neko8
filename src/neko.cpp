@@ -39,12 +39,15 @@ namespace machine {
 				break;
 		}
 
+		// Clear the window
+		SDL_SetRenderDrawColor(machine->graphics->renderer, 0, 0, 0, 255);
+		SDL_RenderClear(machine->graphics->renderer);
 
 		// Render VRAM contents
 		int s = machine->graphics->scale;
 
-		for (u32 x = 0; x < NEKO_W; x++) {
-			for (u32 y = 0; y < NEKO_H; y++) {
+		for (u32 x = peek(machine, DRAW_START + 0x0005); x < peek(machine, DRAW_START + 0x0007); x++) {
+			for (u32 y = peek(machine, DRAW_START + 0x0006); y < peek(machine, DRAW_START + 0x0008); y++) {
 				// Get pixel at this position
 				byte p = peek(machine, DRAW_START + 0x0039 + peek4(machine, VRAM_START * 2 + x + y * NEKO_W));
 

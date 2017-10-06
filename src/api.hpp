@@ -9,6 +9,11 @@ struct neko;
 int defineLuaAPI(neko *n, lua_State *state);
 
 namespace api {
+	// Math
+	float rnd(neko *machine, float a = 1);
+	float min(neko *machine, float a, float b);
+	float max(neko *machine, float a, float b);
+	float mid(neko *machine, float a, float b, float c);
 	// Graphics
 	void cls(neko *machine, u32 c = 0);
 	u32 color(neko *machine, int c = 0);
@@ -20,8 +25,7 @@ namespace api {
 	u32 pget(neko *machine, int x = -1, int y = -1);
 	void pset(neko *machine, int x = -1, int y = -1, int c = -1);
 	void flip(neko *machine);
-	// Math
-	u32 rnd(neko *machine, u32 a = 1);
+	void clip(neko *machine, int x = -1, int y = -1, int w = -1, int h = -1);
 }
 
 #endif
