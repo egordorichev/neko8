@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 
-#define GET_COLOR peek(machine, OTHER_START)
+#define GET_COLOR peek(machine, DRAW_START)
 
 
 neko *machine; // Lil hack :P
@@ -105,6 +105,11 @@ static int rnd(lua_State *state) {
 	return 1;
 }
 
+static int flip(lua_State *state) {
+	api::flip(machine);
+	return 0;
+}
+
 std::vector<luaL_Reg> luaAPI = {
 	{ "cls", cls },
 	{ "pset", pset },
@@ -115,6 +120,8 @@ std::vector<luaL_Reg> luaAPI = {
 	{ "rectfill", rectfill },
 	{ "line", line },
 	{ "color", color },
+
+	{ "flip", flip },
 	{ "rnd", rnd },
 };
 

@@ -19,7 +19,6 @@ namespace carts {
 	void render(neko *machine) {
 		carts::triggerCallback(machine, "_update");
 		carts::triggerCallback(machine, "_draw");
-
 	}
 
 	bool checkForLuaFunction(neko *machine, const char *name) {

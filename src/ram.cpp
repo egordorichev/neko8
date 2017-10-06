@@ -125,7 +125,7 @@ namespace ram {
 		poke(machine, DRAW_START + 0x0008, NEKO_H); // Clip H
 
 		// Palette
-		for (u32 i = 0; i < 15; i++) {
+		for (u32 i = 0; i < 16; i++) {
 			for (u32 j = 0; j < 3; j++) {
 				poke(machine, DRAW_START + 0x0009 + i * 3 + j, machine->config->palette[i][j]);
 			}

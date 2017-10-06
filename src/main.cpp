@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include <neko.hpp>
+#include <api.hpp>
 
 #undef main
 
@@ -23,9 +24,6 @@ int main() {
 	SDL_Event event;
 	// If true, neko8 should draw next frame
 	bool running = true;
-	// Used for capping FPS
-	float nextFrame = SDL_GetPerformanceCounter();
-	float timePerFrame = SDL_GetPerformanceFrequency() / 60.0f;
 
 	while (running) {
 		while (SDL_PollEvent(&event)) {
@@ -42,20 +40,7 @@ int main() {
 			}
 		}
 
-		// Clear the window
-		SDL_RenderClear(machine->graphics->renderer);
-		// Render neko8
-		machine::render(machine);
-		// Sync window
-		SDL_RenderPresent(machine->graphics->renderer);
-		// Cap FPS
-		float delay = nextFrame - SDL_GetPerformanceCounter();
-
-		if (delay > 0) {
-			SDL_Delay(delay * 1000 / SDL_GetPerformanceFrequency());
-		} else {
-			nextFrame -= delay;
-		}
+		api::flip(machine);
 	}
 
 	// Free neko

@@ -13,11 +13,11 @@ namespace api {
 
 	u32 color(neko *machine, int c) {
 		if (c < 0) {
-			return (u32) peek(machine, OTHER_START);
+			return (u32) peek(machine, DRAW_START);
 		}
 
-		poke(machine, OTHER_START, c % 16); // Poke color
-		return (u32) peek(machine, OTHER_START);
+		poke(machine, DRAW_START, c % 16); // Poke color
+		return (u32) peek(machine, DRAW_START);
 	}
 
 	void line(neko *machine, u32 x0, u32 y0, u32 x1, u32 y1, int c) {
@@ -168,7 +168,7 @@ namespace api {
 
 	u32 pget(neko *machine, int x, int y) {
 		if (x == -1 || y == -1 || x < 0 || y < 0
-		    || x > NEKO_W || y > NEKO_H) {
+		    || x > NEKO_W - 1 || y > NEKO_H - 1) {
 			return 0;
 		}
 
@@ -177,11 +177,32 @@ namespace api {
 
 	void pset(neko *machine, int x, int y, int c) {
 		if (x == -1 || y == -1 || c == -1 || x < 0
-		    || y < 0 || x > NEKO_W || y > NEKO_H) {
+		    || y < 0 || x > NEKO_W - 1 || y > NEKO_H - 1) {
 			return;
 		}
 
-		poke4(machine,VRAM_START * 2 + x + y * NEKO_W, c);
+		poke4(machine, VRAM_START * 2 + x + y * NEKO_W, c);
+	}
+
+	// Used for capping FPS
+	float nextFrame = SDL_GetPerformanceCounter();
+	float timePerFrame = SDL_GetPerformanceFrequency() / 60.0f;
+
+	void flip(neko *machine) {
+		// Clear the window
+		SDL_RenderClear(machine->graphics->renderer);
+		// Render neko8
+		machine::render(machine);
+		// Sync window
+		SDL_RenderPresent(machine->graphics->renderer);
+		// Cap FPS
+		float delay = nextFrame - SDL_GetPerformanceCounter();
+
+		if (delay > 0) {
+			SDL_Delay(delay * 1000 / SDL_GetPerformanceFrequency());
+		} else {
+			nextFrame -= delay;
+		}
 	}
 
 	u32 rnd(neko *machine, u32 a) {
