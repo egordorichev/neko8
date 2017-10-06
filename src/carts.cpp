@@ -5,6 +5,8 @@
 #include <sstream>
 #include <zlib.h>
 
+#include <helpers.hpp>
+
 #define COMPRESSED_CODE_MAX_SIZE 16384
 
 namespace carts {
@@ -150,7 +152,7 @@ namespace carts {
 	void load(neko *machine, char *name) {
 		ram::reset(machine);
 
-		char *data = fs::read(machine, name);
+		char *data = fs::read(machine, helper::concat(machine->fs->dir, name));
 
 		if (data == nullptr) {
 			return;
@@ -178,7 +180,12 @@ namespace carts {
 		// Write out cart data
 		byte *data = memgeta(machine, 0x0, CART_SIZE);
 
-		fs::write(machine, name, (char *) data, RAM_SIZE);
+		fs::write(machine, helper::concat(machine->fs->dir, name), (char *) data, RAM_SIZE);
+
+		if(fs::exists(machine, helper::concat(machine->fs->dir, name))){
+			std::cout << "saved" << std::endl;
+		}
+
 		free(compressed);
 		free(data);
 	}

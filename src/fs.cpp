@@ -22,7 +22,7 @@
 #include <sys/stat.h>
 #endif
 
-#define NEKO_PACKAGE "egordorichev"
+#define NEKO_PACKAGE "dinoarmy"
 #define NEKO_NAME "neko8"
 
 namespace fs {
@@ -113,8 +113,8 @@ namespace fs {
 		return path;
 	}
 
-	bool exists(neko *machine, char *name) {
-		const char *path = getFilePath(machine, name);
+	bool exists(neko *machine, char *path) {
+		//const char *path = getFilePath(machine, name);
 		FILE *file = _fopen(UTF8ToString(path), UTF8ToString("rb"));
 
 		if (file) {
