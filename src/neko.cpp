@@ -14,7 +14,7 @@ namespace machine {
 		machine->state = STATE_CONSOLE;
 
 		// carts::save(machine, "test.n8");
-		carts::load(machine, "test.n8");
+		carts::load(machine, (char *) "test.n8");
 		carts::run(machine);
 
 		return machine;

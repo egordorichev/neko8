@@ -3,14 +3,16 @@
 
 #include <config.hpp>
 
+#ifndef FILENAME_MAX
 #define FILENAME_MAX 256
+#endif
 
 typedef struct neko_fs {
 	char dir[FILENAME_MAX];
 	char working[FILENAME_MAX];
 } neko_fs;
 
-typedef struct neko;
+//typedef struct neko;
 
 namespace fs {
 	// Create FS
