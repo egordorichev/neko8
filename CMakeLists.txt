@@ -10,7 +10,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
 file(GLOB_RECURSE SOURCE_FILES src/*.cpp src/*.c)
 add_executable(neko8 ${SOURCE_FILES})
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -std=c++14 -std=c++1z -std=c++17")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -std=c++14 -std=c++1z -std=c++17 -std=gnu++17")
 
 find_package(SDL2 REQUIRED)
 

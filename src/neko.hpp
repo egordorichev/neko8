@@ -1,6 +1,8 @@
 #ifndef neko_hpp
 #define neko_hpp
 
+#include <time.h>
+
 #include <config.hpp>
 #include <ram.hpp>
 #include <carts.hpp>
