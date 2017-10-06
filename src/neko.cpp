@@ -43,7 +43,7 @@ namespace machine {
 		for (u32 x = 0; x < NEKO_W; x++) {
 			for (u32 y = 0; y < NEKO_H; y++) {
 				// Get pixel at this position
-				byte p = peek4(machine, VRAM_START * 2 + x + y * (NEKO_W / 2));
+				byte p = peek4(machine, VRAM_START * 2 + x + y * NEKO_W);
 
 				SDL_SetRenderDrawColor(machine->graphics->renderer,
 					static_cast<Uint8>(peek(machine, DRAW_START + 0x0009 + p * 3)),

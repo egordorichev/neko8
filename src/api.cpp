@@ -172,7 +172,7 @@ namespace api {
 			return 0;
 		}
 
-		return peek4(machine, VRAM_START * 2 + x + y * (NEKO_W / 2));
+		return peek4(machine, VRAM_START * 2 + x + y * NEKO_W);
 	}
 
 	void pset(neko *machine, int x, int y, int c) {
@@ -181,7 +181,7 @@ namespace api {
 			return;
 		}
 
-		poke4(machine, VRAM_START * 2 + x + y * (NEKO_W / 2), c);
+		poke4(machine,VRAM_START * 2 + x + y * NEKO_W, c);
 	}
 
 	u32 rnd(neko *machine, u32 a) {

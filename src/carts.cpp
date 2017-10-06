@@ -54,7 +54,7 @@ namespace carts {
 	neko_cart *createNew(neko *machine) {
 		neko_cart *cart = new neko_cart;
 
-		cart->code = (char *) "cls(1) pset(1, 1, 7)";
+		cart->code = (char *) "cls(1) pset(0, 0, 7) pset(223, 127, 7)";
 
 		// Create lua state
 		cart->lua = luaL_newstate();
