@@ -26,6 +26,7 @@ namespace api {
 	void pset(neko *machine, int x = -1, int y = -1, int c = -1);
 	void flip(neko *machine);
 	void clip(neko *machine, int x = -1, int y = -1, int w = -1, int h = -1);
+	void print(neko *machine, char *str, int px = 0, int py = 0, int c = -1);
 }
 
 #endif

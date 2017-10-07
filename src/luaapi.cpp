@@ -148,6 +148,17 @@ static int clip(lua_State *state) {
 	return 0;
 }
 
+static int print(lua_State *state) {
+	char *s = (char *) luaL_optstring(state, 1, "");
+	s32 x = luaL_optint(state, 2, 0);
+	s32 y = luaL_optint(state, 3, 0);
+	s32 c = luaL_optint(state, 4, GET_COLOR);
+
+	api::print(machine, s, x, y, c);
+
+	return 0;
+}
+
 std::vector<luaL_Reg> luaAPI = {
 	{ "rnd", rnd },
 	{ "min", min },
@@ -164,6 +175,7 @@ std::vector<luaL_Reg> luaAPI = {
 	{ "line", line },
 	{ "color", color },
 	{ "clip", clip },
+	{ "printh", print },
 };
 
 LUALIB_API int defineLuaAPI(neko *n, lua_State *state) {
