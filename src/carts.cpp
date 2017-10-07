@@ -47,21 +47,16 @@ namespace carts {
 
 	static const luaL_Reg luaLibs[] = {
 		{ "", luaopen_base },
-		{ LUA_LOADLIBNAME, luaopen_package },
 		{ LUA_TABLIBNAME, luaopen_table },
-		{ LUA_OSLIBNAME, luaopen_os },
 		{ LUA_STRLIBNAME, luaopen_string },
 		{ LUA_MATHLIBNAME, luaopen_math },
-		{ LUA_DBLIBNAME, luaopen_debug },
-		{ LUA_BITLIBNAME, luaopen_bit },
-		{ LUA_JITLIBNAME, luaopen_jit },
 		{ NULL, NULL }
 	};
 
 	neko_cart *createNew(neko *machine) {
 		neko_cart *cart = new neko_cart;
 
-		cart->code = (char *) "printh('hi',1,1,7)"; // "t = 0 function _draw() t = t + 0.002 for i = 0, 99 do x = rnd(224) y = rnd(128) c = (x / 50 + y / 40 + t) % 8 + 8 circ(x,y,1,c) end end";
+		cart->code = (char *) "printh('test') cls(0) t = 0 function _draw() t = t + 0.002 for i = 0, 99 do x = rnd(224) y = rnd(128) c = (x / 50 + y / 40 + t) % 8 + 8 circ(x,y,1,c) end print('neko8 says hi',1,1,7) end";
 
 		// Create lua state
 		cart->lua = luaL_newstate();
@@ -80,6 +75,16 @@ namespace carts {
 		// Add API
 		defineLuaAPI(machine, cart->lua);
 		luaL_openlibs(cart->lua);
+
+
+		static const struct luaL_Reg printLib[] = {
+			{ "print", print},
+			{ NULL, NULL }
+		};
+
+		lua_getglobal(cart->lua, "_G");
+		luaL_register(cart->lua, NULL, printLib);
+		lua_pop(cart->lua, 1);
 
 		return cart;
 	}

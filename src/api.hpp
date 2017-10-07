@@ -7,6 +7,7 @@
 struct neko;
 
 int defineLuaAPI(neko *n, lua_State *state);
+int print(lua_State *state); // Used to re-define lua print
 
 namespace api {
 	// Math

@@ -8,14 +8,15 @@
 
 #undef main
 
-int main(int argc, char* argv[]) {
-
-	for(int i=1; i<argc; i++){
+int main(int argc, char *argv[]) {
+	// Parse args
+	for (int i = 1; i < argc; i++) {
 		std::cout << argv[i] << "\n";
-		if(!strcmp(argv[i], "-h")){
+
+		if (strcmp(argv[i], "-h") == 0) {
 			std::cout << "Help" << "\n";
 			return 0;
-		}else if(!strcmp(argv[i], "-d")){
+		} else if (strcmp(argv[i], "-d") == 0) {
 			globals::debug = 1;
 			std::cout << "debug" << "\n";
 		}

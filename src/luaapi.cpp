@@ -148,13 +148,25 @@ static int clip(lua_State *state) {
 	return 0;
 }
 
-static int print(lua_State *state) {
+int print(lua_State *state) {
 	char *s = (char *) luaL_optstring(state, 1, "");
 	s32 x = luaL_optint(state, 2, 0);
 	s32 y = luaL_optint(state, 3, 0);
 	s32 c = luaL_optint(state, 4, GET_COLOR);
 
 	api::print(machine, s, x, y, c);
+
+	return 0;
+}
+
+int printh(lua_State *state) {
+	int nargs = lua_gettop(state);
+
+	for (int i = 1; i <= nargs; ++i) {
+		std::cout << lua_tostring(state, i) << "\t";
+	}
+
+	std::cout << "\n";
 
 	return 0;
 }
@@ -175,7 +187,12 @@ std::vector<luaL_Reg> luaAPI = {
 	{ "line", line },
 	{ "color", color },
 	{ "clip", clip },
-	{ "printh", print },
+  { "printh", printh },
+};
+
+static const struct luaL_Reg printLib[] = {
+	{ "print", print},
+	{ NULL, NULL }
 };
 
 LUALIB_API int defineLuaAPI(neko *n, lua_State *state) {
