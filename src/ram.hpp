@@ -46,11 +46,14 @@
 /*
  * Draw state memory layout:
  * 0x0000 - pen color (1 byte)
- * 0x0001 - camera position (2 bytes)
+ * 0x0001 - unused
  * 0x0003 - cursor position (2 bytes)
  * 0x0005 - clip rect (4 bytes)
  * 0x0009 - palette (48 bytes)
  * 0x0039 - palette mapping (8 bytes)
+ * 0x0041 - transparent colors (2 bytes)
+ * 0x0043 - camera position (4 bytes)
+ * 0x0047 - camera position inverted (1 byte)
  */
 
 // Video memory

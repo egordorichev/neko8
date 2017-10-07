@@ -115,14 +115,17 @@ namespace ram {
 
 		// Poke some data into memory
 		poke(machine, DRAW_START, 0); // Pen color
-		poke(machine, DRAW_START + 0x0001, 0); // Camera X
-		poke(machine, DRAW_START + 0x0002, 0); // Camera Y
 		poke(machine, DRAW_START + 0x0003, 0); // Cursor X
 		poke(machine, DRAW_START + 0x0004, 0); // Cursor Y
 		poke(machine, DRAW_START + 0x0005, 0); // Clip X
 		poke(machine, DRAW_START + 0x0006, 0); // Clip Y
 		poke(machine, DRAW_START + 0x0007, NEKO_W); // Clip W
 		poke(machine, DRAW_START + 0x0008, NEKO_H); // Clip H
+		poke(machine, DRAW_START + 0x0043, 0); // Camera X (1 byte)
+		poke(machine, DRAW_START + 0x0044, 0); // Camera X (1 byte)
+		poke(machine, DRAW_START + 0x0005, 0); // Camera Y (1 byte)
+		poke(machine, DRAW_START + 0x0006, 0); // Camera Y (2 byte)
+		poke(machine, DRAW_START + 0x0047, 0); // Camera pos inverted
 
 		// Palette
 		for (u32 i = 0; i < 16; i++) {
@@ -131,8 +134,15 @@ namespace ram {
 			}
 
 			// Color mapping
-			poke(machine, DRAW_START + 0x0039 + i, i);
+			poke4(machine, (DRAW_START + 0x0039) * 2 + i, i);
 		}
+
+		// Setup transparent colors
+		byte n = 0;
+		n |= 1 << 7; // 0 is transparent by default
+
+		poke(machine, DRAW_START + 0x0041, n);
+		poke(machine, DRAW_START + 0x0042, 0);
 	}
 
 	void clean(neko_ram *ram) {

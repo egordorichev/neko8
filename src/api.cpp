@@ -207,8 +207,15 @@ namespace api {
 	}
 
 	u32 pget(neko *machine, int x, int y) {
-		if (x == -1 || y == -1 || x < 0 || y < 0
-		    || x > NEKO_W - 1 || y > NEKO_H - 1) {
+		if (x == -1 || y == -1) {
+			return 0;
+		}
+
+		// Apply cam
+		x -= (int) (peek(machine, DRAW_START + 0x0044) | peek(machine, DRAW_START + 0x0043) << 8) * (peek4(machine, (DRAW_START + 0x0047) * 2) == 0 ? 1 : -1);
+		y -= (int) (peek(machine, DRAW_START + 0x0046) | peek(machine, DRAW_START + 0x0045) << 8) * (peek4(machine, (DRAW_START + 0x0047) * 2 + 1) == 0 ? 1 : -1);
+
+		if (x < 0 || y < 0 || x > NEKO_W - 1 || y > NEKO_H - 1) {
 			return 0;
 		}
 
@@ -216,7 +223,15 @@ namespace api {
 	}
 
 	void pset(neko *machine, int x, int y, int c) {
-		if (x == -1 || y == -1 || c == -1 || x < 0
+		if (x == -1 || y == -1) {
+			return;
+		}
+
+		// Apply cam
+		x -= (int) (peek(machine, DRAW_START + 0x0044) | peek(machine, DRAW_START + 0x0043) << 8) * (peek4(machine, (DRAW_START + 0x0047) * 2) == 0 ? 1 : -1);
+		y -= (int) (peek(machine, DRAW_START + 0x0046) | peek(machine, DRAW_START + 0x0045) << 8) * (peek4(machine, (DRAW_START + 0x0047) * 2 + 1) == 0 ? 1 : -1);
+
+		if (c == -1 || x < 0
 		    || y < 0 || x > NEKO_W - 1 || y > NEKO_H - 1) {
 			return;
 		}
@@ -299,5 +314,44 @@ namespace api {
 				}
 			}
 		}
+	}
+
+	void pal(neko *machine, s16 c0, s16 c1) {
+		if (c0 == -1) {
+			// Reset palette
+			for (u32 i = 0; i < 16; i++) {
+				// Color mapping
+				poke4(machine, (DRAW_START + 0x0039) * 2 + i, i);
+			}
+		} else if (c1 == -1) {
+			poke4(machine, (DRAW_START + 0x0039) * 2 + c0 % 16, c0 % 16);
+		} else {
+			poke4(machine, (DRAW_START + 0x0039) * 2 + c0 % 16, c1 % 16);
+		}
+	}
+
+	void palt(neko *machine, s16 c, bool transp) {
+		byte v = peek(machine, DRAW_START + 0x0041 + c % 8);
+
+		if (transp) {
+			v |= 1 << c % 8;
+		} else {
+			v &= ~(1 << c % 8);
+		}
+
+		poke(machine, DRAW_START + 0x0041 + c % 8, v);
+	}
+
+	void camera(neko *machine, s32 x, s32 y) {
+		poke4(machine, (DRAW_START + 0x0047) * 2, x >= 0 ? 0 : 1);
+		poke4(machine, (DRAW_START + 0x0047) * 2 + 1, y >= 0 ? 0 : 1);
+
+		x = abs(x);
+		y = abs(y);
+
+		poke(machine, DRAW_START + 0x0043, (x >> 8 & 0xFF)); // Camera Y (first byte)
+		poke(machine, DRAW_START + 0x0044, x & 0xFF); // Camera X (second byte)
+		poke(machine, DRAW_START + 0x0045, (y >> 8)); // Camera Y (first byte)
+		poke(machine, DRAW_START + 0x0046, y & 0xFF); // Camera X (second byte
 	}
 };

@@ -56,7 +56,7 @@ namespace carts {
 	neko_cart *createNew(neko *machine) {
 		neko_cart *cart = new neko_cart;
 
-		cart->code = (char *) "printh('test') cls(0) t = 0 function _draw() t = t + 0.002 for i = 0, 99 do x = rnd(224) y = rnd(128) c = (x / 50 + y / 40 + t) % 8 + 8 circ(x,y,1,c) end print('neko8 says hi',1,1,7) end";
+		cart->code = (char *) "camera(-10, -10) printh('test') cls(0) t = 0 function _draw() t = t + 0.002 for i = 0, 99 do x = rnd(224) y = rnd(128) c = (x / 50 + y / 40 + t) % 8 + 8 circ(x,y,1,c) end print('neko8 says hi',0,0,0) end";
 
 		// Create lua state
 		cart->lua = luaL_newstate();

@@ -171,6 +171,33 @@ int printh(lua_State *state) {
 	return 0;
 }
 
+int pal(lua_State *state) {
+	s16 c0 = luaL_optint(state, 1, -1);
+	s16 c1 = luaL_optint(state, 2, -1);
+	api::pal(machine, c0, c1);
+
+	return 0;
+}
+
+int palt(lua_State *state) {
+	u16 c = luaL_optint(state, 1, -1);
+	bool transp = luaL_optnumber(state, 2, (peek(machine, DRAW_START + 0x0041 + c % 8) >> c % 8) & 1);
+	// TODO: check if this works fine
+	api::pal(machine, c, transp);
+
+	return 0;
+}
+
+int camera(lua_State *state) {
+	if (!lua_isnumber(state, 1) || !lua_isnumber(state, 2)) {
+		api::camera(machine, 0, 0);
+	} else {
+		api::camera(machine, luaL_optnumber(state, 1, 0), luaL_optnumber(state, 2, 0));
+	}
+
+	return 0;
+}
+
 std::vector<luaL_Reg> luaAPI = {
 	{ "rnd", rnd },
 	{ "min", min },
@@ -188,6 +215,8 @@ std::vector<luaL_Reg> luaAPI = {
 	{ "color", color },
 	{ "clip", clip },
   { "printh", printh },
+  { "pal", pal },
+  { "camera", camera },
 };
 
 static const struct luaL_Reg printLib[] = {
