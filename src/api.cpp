@@ -55,11 +55,11 @@ namespace api {
 	}
 
 	float sin(neko *machine, float a) {
-		return std::sin(a * 180 / PI);
+		return std::sin(a * PI / 180);
 	}
 
 	float cos(neko *machine, float a) {
-		return std::cos(a * 180 / PI);
+		return std::cos(a * PI / 180);
 	}
 
 	void cls(neko *machine, u32 c) {

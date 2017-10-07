@@ -56,7 +56,7 @@ namespace carts {
 	neko_cart *createNew(neko *machine) {
 		neko_cart *cart = new neko_cart;
 
-		cart->code = (char *) "camera() cls(0) t=0 function _draw() for i = 0, 399 do circ(rnd(224),rnd(128),1,0) end t=t+0.1 circfill(sin(t)*64+64,cos(t)*64+64,3,t%8+8) end"; // "function tri(a,b,c,cl) color(cl) line(a.x,a.y,b.x,b.y) line(b.x,b.y,c.x,c.y) line(a.x,a.y,c.x,c.y) end cls(0) t=0 at=0 m=5 function _draw()at=at+0.1 t=t+sin(at/10)/100 for j=1,m do local mj=j*3+1 for i=0,mj do   local d=j*20+cos(t)*10   local am=0.05*(j%2==0 and 1 or -1)   local sd=d-10   local md=0.001   local a=sin(t/100)+i/mj-t*(j%2==0 and 1 or -1)  local ta,tb,tc=    {x=cos(a)*d+64,y=sin(a)*d+64},    {x=cos(a+am)*d+64,y=sin(a+am)*d+64},    {x=cos(a+am)*sd+64,y=sin(a+am)*sd+64}   tri(ta,tb,tc,i%2==0 and 8 or 7)  end  end end";
+		cart->code = (char *) "camera() cls(0) t=0 function _draw() for i = 0, 399 do circ(rnd(224),rnd(128),1,0) end t=t+1 circfill(sin(t)*64+64,cos(t)*64+64,3,t%8+8) end"; // "function tri(a,b,c,cl) color(cl) line(a.x,a.y,b.x,b.y) line(b.x,b.y,c.x,c.y) line(a.x,a.y,c.x,c.y) end cls(0) t=0 at=0 m=5 function _draw()at=at+0.1 t=t+sin(at/10)/100 for j=1,m do local mj=j*3+1 for i=0,mj do   local d=j*20+cos(t)*10   local am=0.05*(j%2==0 and 1 or -1)   local sd=d-10   local md=0.001   local a=sin(t/100)+i/mj-t*(j%2==0 and 1 or -1)  local ta,tb,tc=    {x=cos(a)*d+64,y=sin(a)*d+64},    {x=cos(a+am)*d+64,y=sin(a+am)*d+64},    {x=cos(a+am)*sd+64,y=sin(a+am)*sd+64}   tri(ta,tb,tc,i%2==0 and 8 or 7)  end  end end";
 
 		// Create lua state
 		cart->lua = luaL_newstate();
