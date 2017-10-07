@@ -76,7 +76,6 @@ namespace carts {
 		defineLuaAPI(machine, cart->lua);
 		luaL_openlibs(cart->lua);
 
-
 		static const struct luaL_Reg printLib[] = {
 			{ "print", print},
 			{ NULL, NULL }

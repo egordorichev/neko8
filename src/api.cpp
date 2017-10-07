@@ -18,6 +18,14 @@ static const char *font[] = {
 static const char *letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!?[]({}.,;:<>+=%#^*~/\\\\|$@&`\\\"'-_ ";
 
 namespace api {
+	static int applyCamX(neko *machine, int x) {
+		return x - (int) (peek(machine, DRAW_START + 0x0044) | peek(machine, DRAW_START + 0x0043) << 8) * (peek4(machine, (DRAW_START + 0x0047) * 2) == 0 ? 1 : -1);
+	}
+
+	static int applyCamY(neko *machine, int y) {
+		return y - (int) (peek(machine, DRAW_START + 0x0046) | peek(machine, DRAW_START + 0x0045) << 8) * (peek4(machine, (DRAW_START + 0x0047) * 2 + 1) == 0 ? 1 : -1);
+	}
+
 	float rnd(neko *machine, float b) {
 		float a = 0;
 		float random = ((float) rand()) / (float) RAND_MAX;
@@ -75,6 +83,11 @@ namespace api {
 			y1 = tmp;
 		}
 
+		x0 = applyCamX(machine, x0);
+		y0 = applyCamY(machine, y0);
+		x1 = applyCamY(machine, x1);
+		y1 = applyCamX(machine, y1);
+
 		u32 dx = x1 - x0;
 		u32 dy = y1 - y0;
 
@@ -111,6 +124,11 @@ namespace api {
 			y1 = tmp;
 		}
 
+		x0 = applyCamX(machine, x0);
+		y0 = applyCamY(machine, y0);
+		x1 = applyCamY(machine, x1);
+		y1 = applyCamX(machine, y1);
+
 		line(machine, x0, y0, x1, y0);
 		line(machine, x0, y1, x1, y1);
 		line(machine, x0, y0, x0, y1);
@@ -132,6 +150,11 @@ namespace api {
 			y1 = tmp;
 		}
 
+		x0 = applyCamX(machine, x0);
+		y0 = applyCamY(machine, y0);
+		x1 = applyCamY(machine, x1);
+		y1 = applyCamX(machine, y1);
+
 		for (u32 x = x0; x <= x1; x++) {
 			for (u32 y = y0; y <= y1; y++) {
 				pset(machine, x, y, c);
@@ -141,6 +164,11 @@ namespace api {
 
 	void circ(neko *machine, u32 ox, u32 oy, u32 r, int c) {
 		c = color(machine, c);
+
+
+
+		ox = applyCamX(machine, ox);
+		oy = applyCamY(machine, oy);
 
 		int x = r;
 		int y = 0;
@@ -184,6 +212,9 @@ namespace api {
 	void circfill(neko *machine, u32 cx, u32 cy, u32 r, int c) {
 		color(machine, c);
 
+		cx = applyCamX(machine, cx);
+		cy = applyCamY(machine, cy);
+
 		int x = r;
 		int y = 0;
 		int err = 1 - r;
@@ -207,15 +238,7 @@ namespace api {
 	}
 
 	u32 pget(neko *machine, int x, int y) {
-		if (x == -1 || y == -1) {
-			return 0;
-		}
-
-		// Apply cam
-		x -= (int) (peek(machine, DRAW_START + 0x0044) | peek(machine, DRAW_START + 0x0043) << 8) * (peek4(machine, (DRAW_START + 0x0047) * 2) == 0 ? 1 : -1);
-		y -= (int) (peek(machine, DRAW_START + 0x0046) | peek(machine, DRAW_START + 0x0045) << 8) * (peek4(machine, (DRAW_START + 0x0047) * 2 + 1) == 0 ? 1 : -1);
-
-		if (x < 0 || y < 0 || x > NEKO_W - 1 || y > NEKO_H - 1) {
+		if (x == -1 || y == -1 || x < 0 || y < 0 || x > NEKO_W - 1 || y > NEKO_H - 1) {
 			return 0;
 		}
 
@@ -223,15 +246,7 @@ namespace api {
 	}
 
 	void pset(neko *machine, int x, int y, int c) {
-		if (x == -1 || y == -1) {
-			return;
-		}
-
-		// Apply cam
-		x -= (int) (peek(machine, DRAW_START + 0x0044) | peek(machine, DRAW_START + 0x0043) << 8) * (peek4(machine, (DRAW_START + 0x0047) * 2) == 0 ? 1 : -1);
-		y -= (int) (peek(machine, DRAW_START + 0x0046) | peek(machine, DRAW_START + 0x0045) << 8) * (peek4(machine, (DRAW_START + 0x0047) * 2 + 1) == 0 ? 1 : -1);
-
-		if (c == -1 || x < 0
+		if (x == -1 || y == -1 || c == -1 || x < 0
 		    || y < 0 || x > NEKO_W - 1 || y > NEKO_H - 1) {
 			return;
 		}
@@ -288,6 +303,9 @@ namespace api {
 
 	void print(neko *machine, char *str, int px, int py, int c) {
 		c = color(machine, c);
+		
+		px = applyCamX(machine, px);
+		py = applyCamY(machine, py);
 
 		for (u32 i = 0; i < strlen(str); i++) {
 			char ch = str[i];
