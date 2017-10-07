@@ -2,7 +2,9 @@
 #include <ram.hpp>
 #include <neko.hpp>
 #include <iostream>
+#include <cmath>
 
+#define PI 3.14159265358979323846f
 #define CHECK_BIT(var, pos) ((var) & (1 << (pos)))
 
 static const char *font[] = {
@@ -52,6 +54,14 @@ namespace api {
 		max(machine, a, min(machine, b, c));
 	}
 
+	float sin(neko *machine, float a) {
+		return std::sin(a * 180 / PI);
+	}
+
+	float cos(neko *machine, float a) {
+		return std::cos(a * 180 / PI);
+	}
+
 	void cls(neko *machine, u32 c) {
 		c &= 0xf;
 		c = c << 4 | c;
@@ -83,10 +93,10 @@ namespace api {
 			y1 = tmp;
 		}
 
-		x0 = applyCamX(machine, x0);
+		/*x0 = applyCamX(machine, x0);
 		y0 = applyCamY(machine, y0);
 		x1 = applyCamY(machine, x1);
-		y1 = applyCamX(machine, y1);
+		y1 = applyCamX(machine, y1);*/
 
 		u32 dx = x1 - x0;
 		u32 dy = y1 - y0;
@@ -165,8 +175,6 @@ namespace api {
 	void circ(neko *machine, u32 ox, u32 oy, u32 r, int c) {
 		c = color(machine, c);
 
-
-
 		ox = applyCamX(machine, ox);
 		oy = applyCamY(machine, oy);
 
@@ -196,7 +204,7 @@ namespace api {
 	}
 
 	void horizontalLine(neko *machine, u32 x0, u32 y, u32 x1, u32 c) {
-		for (u32 x = x0; x <= x1; x++) {
+		for (u32 x = max(machine, 0, x0); x <= min(machine, NEKO_W - 1, x1); x++) {
 			pset(machine, x, y, c);
 		}
 	}
@@ -303,7 +311,7 @@ namespace api {
 
 	void print(neko *machine, char *str, int px, int py, int c) {
 		c = color(machine, c);
-		
+
 		px = applyCamX(machine, px);
 		py = applyCamY(machine, py);
 

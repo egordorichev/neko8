@@ -15,6 +15,8 @@ namespace api {
 	float min(neko *machine, float a, float b);
 	float max(neko *machine, float a, float b);
 	float mid(neko *machine, float a, float b, float c);
+	float sin(neko *machine, float a);
+	float cos(neko *machine, float a);
 	// Graphics
 	void cls(neko *machine, u32 c = 0);
 	u32 color(neko *machine, int c = 0);

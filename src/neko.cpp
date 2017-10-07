@@ -17,8 +17,6 @@ namespace machine {
 		api::cls(machine, 0);
 
 		carts::createNew(machine);
-		 carts::save(machine, "test.n8");
-		 carts::load(machine, (char *) "test.n8");
 		carts::run(machine);
 
 		return machine;

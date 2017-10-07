@@ -9,8 +9,8 @@
 neko *machine; // Lil hack :P
 
 static int rnd(lua_State *state) {
-	s32 n = luaL_optint(state, 1, 1);
-	lua_pushinteger(state, api::rnd(machine, n));
+	float n = luaL_optnumber(state, 1, 1);
+	lua_pushnumber(state, api::rnd(machine, n));
 
 	return 1;
 }
@@ -40,6 +40,19 @@ static int mid(lua_State *state) {
 
 	lua_pushnumber(state, api::mid(machine, a, b, c));
 
+	return 1;
+}
+
+static int cos(lua_State *state) {
+	s32 n = luaL_optnumber(state, 1, 1);
+	lua_pushnumber(state, api::cos(machine, n));
+	return 1;
+}
+
+static int sin(lua_State *state) {
+	s32 n = luaL_optnumber(state, 1, 1);
+
+	lua_pushnumber(state, api::sin(machine, n));
 	return 1;
 }
 
@@ -203,6 +216,8 @@ std::vector<luaL_Reg> luaAPI = {
 	{ "min", min },
 	{ "max", max },
 	{ "mid", mid },
+	{ "cos", cos },
+	{ "sin", sin },
 
 	{ "cls", cls },
 	{ "pset", pset },
