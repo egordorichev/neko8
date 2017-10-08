@@ -242,6 +242,12 @@ static const struct luaL_Reg printLib[] = {
 LUALIB_API int defineLuaAPI(neko *n, lua_State *state) {
 	machine = n;
 
+	std::cout << "0: " << api::cos(machine, 0) << "\n";
+	std::cout << "0.25: " << api::cos(machine, 0.25) << "\n";
+	std::cout << "0.5: " << api::cos(machine, 0.5) << "\n";
+	std::cout << "0.75: " << api::cos(machine, 0.75) << "\n";
+	std::cout << "1: " << api::cos(machine, 1) << "\n";
+
 	for (auto fn : luaAPI) {
 		lua_pushcfunction(state, fn.func);
 		lua_setglobal(state, fn.name);
