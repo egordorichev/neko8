@@ -13,10 +13,10 @@ int main(int argc, char *argv[]) {
 	for (int i = 1; i < argc; i++) {
 		std::cout << argv[i] << "\n";
 
-		if (strcmp(argv[i], "-h") == 0) {
+		if (strcmp(argv[i], (strlen(argv[i]) > 2 ? "--help" : "-h")) == 0) {
 			std::cout << "Help" << "\n";
 			return 0;
-		} else if (strcmp(argv[i], "-d") == 0) {
+		} else if (strcmp(argv[i], (strlen(argv[i]) > 2 ? "--debug" : "-d")) == 0) {
 			globals::debug = 1;
 			std::cout << "debug" << "\n";
 		}
@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
 	// If true, neko8 should draw next frame
 	bool running = true;
 
-	std::cout << "Running... " << argc << " arguments\n" << "DEBUG mode " << ((globals::debug) ? "ON" : "OFF") << "\n";
+	std::cout << "Running with DEBUG mode " << ((globals::debug) ? "ON" : "OFF") << "\n";
 
 	while (running) {
 		while (SDL_PollEvent(&event)) {

@@ -116,9 +116,11 @@ namespace fs {
 	bool exists(neko *machine, char *path) {
 		//const char *path = getFilePath(machine, name);
 		FILE *file = _fopen(UTF8ToString(path), UTF8ToString("rb"));
+		std::cout << "open" << "\n";
 
-		if (file) {
+		if (file != nullptr || file) {
 			fclose(file);
+			std::cout << "open" << "\n";
 			return true;
 		}
 
