@@ -184,9 +184,11 @@ namespace carts {
 		// Write out cart data
 		byte *data = memgeta(machine, 0x0, CART_SIZE);
 
-		fs::write(machine, helper::concat(machine->fs->dir, name), (char *) data, RAM_SIZE);
+		char* savepath = helper::concat(machine->fs->dir, name)
 
-		if(fs::exists(machine, helper::concat(machine->fs->dir, name))){
+		fs::write(machine, savepath, (char *) data, RAM_SIZE);
+
+		if(fs::exists(machine, savepath)){
 			std::cout << "saved" << std::endl;
 		}
 
