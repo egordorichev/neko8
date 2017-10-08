@@ -28,36 +28,57 @@
 # 2010 - modified for cronkite to find luajit instead of lua, as it was before.
 #
 
-FIND_PATH(LUAJIT_INCLUDE_DIR lua.h
-  HINTS
-  $ENV{LUAJIT_DIR}
-  PATH_SUFFIXES include/luajit-2.0 include/luajit2.0 include/luajit include
-  PATHS
-  ~/Library/Frameworks
-  /Library/Frameworks
-  /usr/local
-  /usr
-  /sw # Fink
-  /opt/local # DarwinPorts
-  /opt/csw # Blastwave
-  /opt
-)
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    message(STATUS "Windows")
+    FIND_PATH(LUAJIT_INCLUDE_DIR lua.h
+      HINTS
+      $ENV{LUAJIT_DIR}
+      PATH_SUFFIXES include/luajit-2.0 include/luajit2.0 include/luajit include
+      PATHS
+      /usr/i686-w64-mingw32
+    )
 
-FIND_LIBRARY(LUAJIT_LIBRARY 
-  NAMES luajit-51 luajit-5.1 luajit
-  HINTS
-  $ENV{LUAJIT_DIR}
-  PATH_SUFFIXES lib64 lib
-  PATHS
-  ~/Library/Frameworks
-  /Library/Frameworks
-  /usr/local
-  /usr
-  /sw
-  /opt/local
-  /opt/csw
-  /opt
-)
+    FIND_LIBRARY(LUAJIT_LIBRARY 
+      NAMES luajit-51 luajit-5.1 luajit
+      HINTS
+      $ENV{LUAJIT_DIR}
+      PATH_SUFFIXES lib64 lib
+      PATHS
+      /usr/i686-w64-mingw32
+    )
+else()
+    message(STATUS "Linux")
+    FIND_PATH(LUAJIT_INCLUDE_DIR lua.h
+      HINTS
+      $ENV{LUAJIT_DIR}
+      PATH_SUFFIXES include/luajit-2.0 include/luajit2.0 include/luajit include
+      PATHS
+      ~/Library/Frameworks
+      /Library/Frameworks
+      /usr/local
+      /usr
+      /sw # Fink
+      /opt/local # DarwinPorts
+      /opt/csw # Blastwave
+      /opt
+    )
+
+    FIND_LIBRARY(LUAJIT_LIBRARY 
+      NAMES luajit-51 luajit-5.1 luajit
+      HINTS
+      $ENV{LUAJIT_DIR}
+      PATH_SUFFIXES lib64 lib
+      PATHS
+      ~/Library/Frameworks
+      /Library/Frameworks
+      /usr/local
+      /usr
+      /sw
+      /opt/local
+      /opt/csw
+      /opt
+    )
+endif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
 IF(LUAJIT_LIBRARY)
   # include the math library for Unix

@@ -67,7 +67,15 @@
 
 message("<FindSDL2.cmake>")
 
-SET(SDL2_SEARCH_PATHS
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    message(STATUS "Windows")
+    SET(SDL2_SEARCH_PATHS
+    /usr/i686-w64-mingw32
+    ${SDL2_PATH}
+)
+else()
+    message(STATUS "Linux")
+    SET(SDL2_SEARCH_PATHS
     ~/Library/Frameworks
     /Library/Frameworks
     /usr/local
@@ -78,6 +86,9 @@ SET(SDL2_SEARCH_PATHS
     /opt
     ${SDL2_PATH}
 )
+endif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+
+message(STATUS ${CMAKE_SYSTEM_NAME})
 
 FIND_PATH(SDL2_INCLUDE_DIR SDL.h
     HINTS
