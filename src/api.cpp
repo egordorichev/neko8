@@ -95,8 +95,8 @@ namespace api {
 
 		/*x0 = applyCamX(machine, x0);
 		y0 = applyCamY(machine, y0);
-		x1 = applyCamY(machine, x1);
-		y1 = applyCamX(machine, y1);*/
+		x1 = applyCamX(machine, x1);
+		y1 = applyCamY(machine, y1);*/
 
 		u32 dx = x1 - x0;
 		u32 dy = y1 - y0;
@@ -134,10 +134,10 @@ namespace api {
 			y1 = tmp;
 		}
 
-		x0 = applyCamX(machine, x0);
+		/*x0 = applyCamX(machine, x0);
 		y0 = applyCamY(machine, y0);
-		x1 = applyCamY(machine, x1);
-		y1 = applyCamX(machine, y1);
+		x1 = applyCamX(machine, x1);
+		y1 = applyCamY(machine, y1);*/
 
 		line(machine, x0, y0, x1, y0);
 		line(machine, x0, y1, x1, y1);
@@ -160,10 +160,10 @@ namespace api {
 			y1 = tmp;
 		}
 
-		x0 = applyCamX(machine, x0);
+		/*x0 = applyCamX(machine, x0);
 		y0 = applyCamY(machine, y0);
-		x1 = applyCamY(machine, x1);
-		y1 = applyCamX(machine, y1);
+		x1 = applyCamX(machine, x1);
+		y1 = applyCamY(machine, y1);*/
 
 		for (u32 x = x0; x <= x1; x++) {
 			for (u32 y = y0; y <= y1; y++) {
@@ -175,8 +175,8 @@ namespace api {
 	void circ(neko *machine, u32 ox, u32 oy, u32 r, int c) {
 		c = color(machine, c);
 
-		ox = applyCamX(machine, ox);
-		oy = applyCamY(machine, oy);
+		/*ox = applyCamX(machine, ox);
+		oy = applyCamY(machine, oy);*/
 
 		int x = r;
 		int y = 0;
@@ -220,8 +220,8 @@ namespace api {
 	void circfill(neko *machine, u32 cx, u32 cy, u32 r, int c) {
 		color(machine, c);
 
-		cx = applyCamX(machine, cx);
-		cy = applyCamY(machine, cy);
+		/*cx = applyCamX(machine, cx);
+		cy = applyCamY(machine, cy);*/
 
 		int x = r;
 		int y = 0;
@@ -309,12 +309,24 @@ namespace api {
 		}
 	}
 
-	void print(neko *machine, char *str, int px, int py, int c) {
+	static void scroll(neko *machine, int pixels) {
+		// TODO
+	}
+
+	void print(neko *machine, const char *str, int px, int py, int c) {
 		c = color(machine, c);
+		bool canScroll = false;
 
-		px = applyCamX(machine, px);
-		py = applyCamY(machine, py);
+		if (px == -1 && py == -1) {
+			px = peek(machine, DRAW_START + 0x0003);
+			py = peek(machine, DRAW_START + 0x0004);
+			canScroll = true;
+		}
 
+		/*px = applyCamX(machine, px);
+		py = applyCamY(machine, py);*/
+
+		// Actually print the string
 		for (u32 i = 0; i < strlen(str); i++) {
 			char ch = str[i];
 			int id = -1;
@@ -339,6 +351,17 @@ namespace api {
 					}
 				}
 			}
+		}
+
+		if (canScroll) {
+			py += 6;
+
+			if (py > NEKO_H - 6) {
+				py -= 6;
+				scroll(machine, 6);
+			}
+
+			poke(machine, DRAW_START + 0x0004, py);
 		}
 	}
 

@@ -2,12 +2,14 @@
 #define neko_graphics_hpp
 
 #include <SDL2/SDL.h>
-#include <config.hpp>
+#include "config.hpp"
 
 typedef struct neko_graphics {
 	SDL_Window *window;
 	SDL_Renderer *renderer;
-	u32 scale = 3;
+	u16 scale;
+	u16 x;
+	u16 y;
 } neko_graphics;
 
 struct neko;

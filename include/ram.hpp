@@ -1,7 +1,7 @@
 #ifndef neko_ram_hpp
 #define neko_ram_hpp
 
-#include <config.hpp>
+#include "config.hpp"
 
 // Sprite memory
 #define SPRITE_START 0x0

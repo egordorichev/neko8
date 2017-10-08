@@ -114,7 +114,7 @@ namespace ram {
 		machine->ram = ram; // Lil hack
 
 		// Poke some data into memory
-		poke(machine, DRAW_START, 0); // Pen color
+		poke(machine, DRAW_START, 7); // Pen color
 		poke(machine, DRAW_START + 0x0003, 0); // Cursor X
 		poke(machine, DRAW_START + 0x0004, 0); // Cursor Y
 		poke(machine, DRAW_START + 0x0005, 0); // Clip X

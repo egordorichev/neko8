@@ -33,6 +33,13 @@ namespace graphics {
 			exit(2);
 		}
 
+		// Set minimum window size
+		SDL_SetWindowMinimumSize(graphics->window, NEKO_W, NEKO_H);
+
+		graphics->scale = 3;
+		graphics->x = 0;
+		graphics->y = 0;
+
 		return graphics;
 	}
 

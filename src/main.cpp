@@ -1,10 +1,9 @@
-#include <intrin.h>
+// #include <intrin.h>
 
 #include <SDL2/SDL.h>
 #include <iostream>
 
 #include <globals.hpp>
-
 #include <neko.hpp>
 #include <api.hpp>
 
@@ -21,10 +20,8 @@ int main(int argc, char *argv[]) {
 		} else if (strcmp(argv[i], (strlen(argv[i]) > 2 ? "--debug" : "-d")) == 0) {
 			globals::debug = 1;
 			std::cout << "debug" << "\n";
-		} else if (strcmp(argv[i], (strlen(argv[i]) > 2 ? "--loadcart" : "-l")) == 0) {
-			//if (argv[i+1] && argv[i+1]) {
+		} else if (strcmp(argv[i], (strlen(argv[i]) > 2 ? "--cart" : "-c")) == 0) {
 
-			//}
 		}
 	}
 
@@ -50,17 +47,7 @@ int main(int argc, char *argv[]) {
 
 	while (running) {
 		while (SDL_PollEvent(&event)) {
-			// We got some kind-of an event
-			switch (event.type) {
-				case SDL_QUIT:
-					// User closes the window
-					running = false;
-					// TODO: save here
-					break;
-				default:
-					// Something else, that we don't care about
-					break;
-			}
+			running = machine::handleEvent(machine, &event);
 		}
 
 		api::flip(machine);
