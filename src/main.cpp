@@ -1,7 +1,9 @@
+#include <intrin.h>
+
 #include <SDL2/SDL.h>
 #include <iostream>
 
-#include <globals.cpp>
+#include <globals.hpp>
 
 #include <neko.hpp>
 #include <api.hpp>
@@ -19,6 +21,10 @@ int main(int argc, char *argv[]) {
 		} else if (strcmp(argv[i], (strlen(argv[i]) > 2 ? "--debug" : "-d")) == 0) {
 			globals::debug = 1;
 			std::cout << "debug" << "\n";
+		} else if (strcmp(argv[i], (strlen(argv[i]) > 2 ? "--loadcart" : "-l")) == 0) {
+			//if (argv[i+1] && argv[i+1]) {
+
+			//}
 		}
 	}
 
