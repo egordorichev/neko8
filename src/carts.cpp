@@ -184,7 +184,7 @@ namespace carts {
 		// Write out cart data
 		byte *data = memgeta(machine, 0x0, CART_SIZE);
 
-		char* savepath = helper::concat(machine->fs->dir, name)
+		char* savepath = helper::concat(machine->fs->dir, name);
 
 		fs::write(machine, savepath, (char *) data, RAM_SIZE);
 
