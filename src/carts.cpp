@@ -192,6 +192,8 @@ namespace carts {
 			std::cout << "saved" << std::endl;
 		}
 
+		delete[] savepath;
+
 		free(compressed);
 		free(data);
 	}
