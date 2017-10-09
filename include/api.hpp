@@ -19,6 +19,7 @@ namespace api {
 	float cos(neko *machine, float a);
 	// Graphics
 	void cls(neko *machine, u32 c = 0);
+	void cursor(neko *machine, byte x = 0, byte y = 0);
 	u32 color(neko *machine, int c = 0);
 	void line(neko *machine, u32 x0 = 0, u32 y0 = 0, u32 x1 = 0, u32 y1 = 0, int c = -1);
 	void rect(neko *machine, u32 x0 = 0, u32 y0 = 0, u32 x1 = 0, u32 y1 = 0, int c = -1);

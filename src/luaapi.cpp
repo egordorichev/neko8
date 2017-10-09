@@ -57,7 +57,12 @@ static int sin(lua_State *state) {
 }
 
 static int cls(lua_State *state) {
-	api::cls(machine, luaL_checkinteger(state, 1));
+	api::cls(machine, luaL_optint(state, 1, 0));
+	return 0;
+}
+
+static int cursor(lua_State *state) {
+	api::cursor(machine, luaL_optint(state, 1, 0), luaL_optint(state, 1, 0));
 	return 0;
 }
 
@@ -220,6 +225,7 @@ std::vector<luaL_Reg> luaAPI = {
 	{ "sin", sin },
 
 	{ "cls", cls },
+	{ "cursor", cursor },
 	{ "pset", pset },
 	{ "pget", pget },
 	{ "circ", circ },

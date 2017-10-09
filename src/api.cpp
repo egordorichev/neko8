@@ -16,6 +16,7 @@ static const char *font[] = {
 };
 
 static const char *letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!?[]({}.,;:<>+=%#^*~/\\|$@&`\"'-_";
+static int llen = strlen(letters);
 
 namespace api {
 	static int applyCamX(neko *machine, int x) {
@@ -65,6 +66,12 @@ namespace api {
 		c = c << 4 | c;
 
 		memset(machine, VRAM_START, (byte) c, VRAM_SIZE);
+		cursor(machine, 0, 0);
+	}
+
+	void cursor(neko *machine, byte x = 0, byte y = 0) {
+		poke(machine, DRAW_START + 0x0003, x);
+		poke(machine, DRAW_START + 0x0004, y);
 	}
 
 	u32 color(neko *machine, int c) {
@@ -329,7 +336,7 @@ namespace api {
 			char ch = str[i];
 			int id = -1;
 
-			for (int j = 0; j < strlen(letters); j++) {
+			for (int j = 0; j < llen; j++) {
 				if (letters[j] == ch) {
 					id = j;
 					break;
