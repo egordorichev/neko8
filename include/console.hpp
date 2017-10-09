@@ -9,13 +9,12 @@ typedef struct neko_console : neko_state {
 	neko_console(neko *machine);
 
 	void escape(neko *machine);
-	void event(neko *machine, SDL_Event *);
+	void event(neko *machine, SDL_Event *event);
 	void render(neko *machine);
 	void drawPrompt(neko *machine);
 	void runCommand(neko *machine, std::string command);
 
 	std::string input;
-	bool forceDraw;
 	bool cursorState;
 	int t;
 } neko_console;

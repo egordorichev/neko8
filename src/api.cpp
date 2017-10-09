@@ -315,7 +315,7 @@ namespace api {
 	}
 
 	static void scroll(neko *machine, int pixels) {
-		// TODO
+		memcpy(machine, VRAM_START, VRAM_START + 0x70 * pixels, VRAM_SIZE - 0x70 * pixels);
 	}
 
 	void print(neko *machine, const char *str, int px, int py, int c) {
@@ -359,9 +359,10 @@ namespace api {
 		if (canScroll) {
 			py += 6;
 
-			if (py > NEKO_H - 6) {
+			if (py > NEKO_H - 7) {
 				py -= 6;
 				scroll(machine, 6);
+				rectfill(machine, 0, NEKO_H - 7, NEKO_W, NEKO_H, 0);
 			}
 
 			poke(machine, DRAW_START + 0x0004, py);

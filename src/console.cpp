@@ -2,6 +2,7 @@
 #include <api.hpp>
 #include <iostream>
 #include <algorithm>
+#include <carts.hpp>
 
 neko_console::neko_console(neko *machine) {
 	this->input = "";
@@ -59,7 +60,6 @@ void neko_console::event(neko *machine, SDL_Event *event) {
 					api::color(machine, 7);
 
 					this->runCommand(machine, command);
-
 					this->forceDraw = true;
 					break;
 			}
@@ -77,7 +77,9 @@ void neko_console::runCommand(neko *machine, std::string command) {
 	command = trim(command);
 
 	if (command == "help") {
-		api::print(machine, "help is not here yet");
+		api::print(machine, "todo: @PibePlayer, please, implement it ;)");
+	} else if (command == "run") {
+		machine->carts->run(machine);
 	} else {
 		api::color(machine, 8);
 		api::print(machine, "unknown command");
@@ -94,7 +96,5 @@ void neko_console::drawPrompt(neko *machine) {
 	}
 
 	api::color(machine, 6);
-	api::print(machine, (char *) std::string("> " + this->input).c_str()); // TODO
-
-	poke(machine, DRAW_START + 0x004, y);
+	api::print(machine, (char *) std::string("> " + this->input).c_str(), 0, y); // TODO
 }

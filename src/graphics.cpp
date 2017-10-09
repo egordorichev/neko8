@@ -35,6 +35,8 @@ namespace graphics {
 
 		// Set minimum window size
 		SDL_SetWindowMinimumSize(graphics->window, NEKO_W, NEKO_H);
+		// Move window up
+		SDL_RaiseWindow(graphics->window);
 
 		graphics->scale = 3;
 		graphics->x = 0;

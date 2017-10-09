@@ -19,10 +19,10 @@ typedef enum neko_state_id {
 } neko_state_id;
 
 typedef struct neko_state {
-	neko_state_id id;
+	bool forceDraw;
 
 	virtual void escape(neko *machine) {};
-	virtual void event(neko *machine, SDL_Event *) {};
+	virtual void event(neko *machine, SDL_Event *event) {};
 	virtual void render(neko *machine) {};
 } neko_state;
 
@@ -30,10 +30,11 @@ typedef struct neko {
 	neko_ram *ram;
 	neko_graphics *graphics;
 	neko_state_id state;
-	neko_state **states;
 	neko_state_id prevState;
+	neko_state **states;
 	neko_config *config;
 	neko_fs *fs;
+	neko_carts *carts;
 } neko;
 
 namespace machine {

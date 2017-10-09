@@ -2,6 +2,7 @@
 #include <api.hpp>
 #include <carts.hpp>
 #include <console.hpp>
+#include <iostream>
 
 namespace machine {
 	neko *init(neko_config *config) {
@@ -9,17 +10,17 @@ namespace machine {
 
 		machine->config = config;
 		machine->ram = ram::init(machine);
+		machine->prevState = STATE_CONSOLE;
+		machine->state = STATE_CONSOLE;
 
 		api::cls(machine, 0);
 
 		machine->graphics = graphics::init(machine);
 		machine->fs = fs::init(machine);
-		machine->prevState = STATE_CONSOLE;
-		machine->state = STATE_CONSOLE;
 
 		machine->states = new neko_state *[STATE_SIZE];
 		machine->states[STATE_CONSOLE] = new neko_console(machine);
-		machine->states[STATE_RUNNING_CART] = new neko_carts(machine);
+		machine->states[STATE_RUNNING_CART] = machine->carts = new neko_carts(machine);
 
 		updateCanvas(machine);
 		SDL_StartTextInput();
@@ -93,7 +94,19 @@ namespace machine {
 				return false;
 			case SDL_KEYDOWN:
 				// Text input
-				// TODO: hot keys
+				switch (event->key.keysym.sym) {
+					case SDLK_ESCAPE:
+						machine->prevState = machine->state;
+
+						if (machine->state == STATE_RUNNING_CART) {
+							machine->state = STATE_CONSOLE;
+						} else if (machine->state == STATE_CONSOLE) {
+							// TODO: code editor
+						}
+
+						machine->states[machine->state]->forceDraw = true;
+						break;
+				}
 				break;
 			case SDL_WINDOWEVENT:
 				switch(event->window.event) {
@@ -102,9 +115,6 @@ namespace machine {
 						updateCanvas(machine);
 						break;
 				}
-				break;
-			default:
-				// Something else, that we don't care about
 				break;
 		}
 
