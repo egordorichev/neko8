@@ -32,9 +32,9 @@ namespace machine {
 			if (machine->states[i] != nullptr) {
 				delete machine->states[i];
 			}
-
-			delete [] machine->states;
 		}
+
+		delete [] machine->states;
 
 		ram::clean(machine->ram);
 		graphics::clean(machine->graphics); // Last! Because of SDL stuff
