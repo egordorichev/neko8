@@ -1,6 +1,7 @@
 #include <neko.hpp>
-#include <iostream>
 #include <api.hpp>
+#include <carts.hpp>
+#include <console.hpp>
 
 namespace machine {
 	neko *init(neko_config *config) {
@@ -8,39 +9,39 @@ namespace machine {
 
 		machine->config = config;
 		machine->ram = ram::init(machine);
-		machine->carts = carts::init(machine);
+
+		api::cls(machine, 0);
+
 		machine->graphics = graphics::init(machine);
 		machine->fs = fs::init(machine);
 		machine->prevState = STATE_CONSOLE;
 		machine->state = STATE_CONSOLE;
 
+		machine->states = new neko_state *[STATE_SIZE];
+		machine->states[STATE_CONSOLE] = new neko_console(machine);
+		machine->states[STATE_RUNNING_CART] = new neko_carts(machine);
+
 		updateCanvas(machine);
-
-		api::cls(machine, 0);
-
-		machine->console = console::init(machine);
+		SDL_StartTextInput();
 
 		return machine;
 	}
 
 	void free(neko *machine) {
+		for (int i = 0; i < STATE_SIZE; i++) {
+			if (machine->states[i] != nullptr) {
+				delete machine->states[i];
+			}
+
+			delete [] machine->states;
+		}
+
 		ram::clean(machine->ram);
-		carts::clean(machine->carts);
-		console::clean(machine->console);
 		graphics::clean(machine->graphics); // Last! Because of SDL stuff
 	}
 
 	void render(neko *machine) {
-		switch (machine->state) {
-			case STATE_RUNNING_CART:
-				carts::render(machine);
-				break;
-			case STATE_CONSOLE:
-				console::render(machine);
-				break;
-			default:
-				break;
-		}
+		machine->states[machine->state]->render(machine);
 
 		// Clear the window
 		SDL_SetRenderDrawColor(machine->graphics->renderer, 0, 0, 0, 255);
@@ -73,7 +74,7 @@ namespace machine {
 
 		SDL_GetWindowSize(machine->graphics->window, &width, &height);
 
-		float size = floor(api::min(
+		int size = floor(api::min(
 			machine,
 			((float) width) / NEKO_W,
 			((float) height) / NEKO_H
@@ -92,7 +93,7 @@ namespace machine {
 				return false;
 			case SDL_KEYDOWN:
 				// Text input
-
+				// TODO: hot keys
 				break;
 			case SDL_WINDOWEVENT:
 				switch(event->window.event) {
@@ -106,6 +107,8 @@ namespace machine {
 				// Something else, that we don't care about
 				break;
 		}
+
+		machine->states[machine->state]->event(machine, event);
 
 		return true;
 	}

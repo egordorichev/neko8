@@ -5,27 +5,35 @@
 
 #include <config.hpp>
 #include <ram.hpp>
-#include <console.hpp>
 #include <graphics.hpp>
 #include <fs.hpp>
-#include <carts.hpp>
 
-typedef enum neko_state {
+struct neko_carts;
+struct neko_console;
+
+typedef enum neko_state_id {
 	STATE_CONSOLE = 0,
 	STATE_RUNNING_CART = 1,
-	STATE_CODE_EDITOR = 2
+
+	STATE_SIZE = 2
+} neko_state_id;
+
+typedef struct neko_state {
+	neko_state_id id;
+
+	virtual void escape(neko *machine) {};
+	virtual void event(neko *machine, SDL_Event *) {};
+	virtual void render(neko *machine) {};
 } neko_state;
 
 typedef struct neko {
 	neko_ram *ram;
 	neko_graphics *graphics;
-	neko_carts *carts;
-	neko_state state;
-	neko_state prevState;
+	neko_state_id state;
+	neko_state **states;
+	neko_state_id prevState;
 	neko_config *config;
 	neko_fs *fs;
-
-	neko_console *console;
 } neko;
 
 namespace machine {

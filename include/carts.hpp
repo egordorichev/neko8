@@ -2,6 +2,7 @@
 #define neko_carts_hpp
 
 #include <LuaJIT/lua.hpp>
+#include <neko.hpp>
 
 typedef struct neko_cart {
 	char *code;
@@ -9,29 +10,21 @@ typedef struct neko_cart {
 	lua_State *thread;
 } neko_cart;
 
-typedef struct neko_carts {
+typedef struct neko_carts : neko_state {
+	neko_carts(neko *machine);
+
+	void escape(neko *machine);
+	void event(neko *machine, SDL_Event *);
+	void render(neko *machine);
+
+	bool checkForLuaFunction(neko *machine, const char *name);
+	void triggerCallback(neko *machine, const char *callback); // TODO: add args
+	neko_cart *createNew(neko *machine);
+	void run(neko *machine);
+	void load(neko *machine, char *name);
+	void save(neko *machine, char *name);
+
 	neko_cart *loaded;
 } neko_carts;
-
-struct neko;
-
-namespace carts {
-	// Inits carts
-	neko_carts *init(neko *machine);
-	// Renders current
-	void render(neko *machine);
-	// Attemps to call a callback in cart
-	void triggerCallback(neko *machine, const char *callback); // TODO: add args
-	// Creates new cart
-	neko_cart *createNew(neko *machine);
-	// Runs current loaded cart
-	void run(neko *machine);
-	// Loads a cart
-	void load(neko *machine, char *name);
-	// Saves a cart
-	void save(neko *machine, char *name);
-	// Free all
-	void clean(neko_carts *carts);
-}
 
 #endif
