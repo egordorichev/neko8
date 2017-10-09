@@ -336,16 +336,14 @@ namespace api {
 				}
 			}
 
-			if (id == -1) {
-				continue; // Char is not found
-			}
+			if (id >= 0) {
+				for (byte y = 0; y < 5; y++) {
+					for (byte x = 0; x < 4; x++) {
+						const char *b = font[y];
 
-			for (byte y = 0; y < 5; y++) {
-				for (byte x = 0; x < 4; x++) {
-				const char *b = font[y];
-
-					if (b[id * 4 + x] == '1') {
-						pset(machine, px + x + i * 4, py + y, c);
+						if (b[id * 4 + x] == '1') {
+							pset(machine, px + x + i * 4, py + y, c);
+						}
 					}
 				}
 			}
