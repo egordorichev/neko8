@@ -319,6 +319,29 @@ namespace api {
 		memcpy(machine, VRAM_START, VRAM_START + 0x70 * pixels, VRAM_SIZE - 0x70 * pixels);
 	}
 
+	void printChar(neko *machine, const char ch, int px, int py, byte c) {
+		int id = -1;
+
+		for (int j = 0; j < llen; j++) {
+			if (letters[j] == ch) {
+				id = j;
+				break;
+			}
+		}
+
+		if (id >= 0) {
+			for (byte y = 0; y < 5; y++) {
+				for (byte x = 0; x < 4; x++) {
+					const char *b = font[y];
+
+					if (b[id * 4 + x] == '1') {
+						pset(machine, px + x, py + y, c);
+					}
+				}
+			}
+		}
+	}
+
 	void print(neko *machine, const char *str, int px, int py, int c) {
 		c = color(machine, c);
 		bool canScroll = false;
@@ -335,26 +358,7 @@ namespace api {
 		// Actually print the string
 		for (u32 i = 0; i < strlen(str); i++) {
 			char ch = str[i];
-			int id = -1;
-
-			for (int j = 0; j < llen; j++) {
-				if (letters[j] == ch) {
-					id = j;
-					break;
-				}
-			}
-
-			if (id >= 0) {
-				for (byte y = 0; y < 5; y++) {
-					for (byte x = 0; x < 4; x++) {
-						const char *b = font[y];
-
-						if (b[id * 4 + x] == '1') {
-							pset(machine, px + x + i * 4, py + y, c);
-						}
-					}
-				}
-			}
+			printChar(machine, ch, px + i * 4, py, c);
 		}
 
 		if (canScroll) {

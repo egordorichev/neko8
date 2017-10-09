@@ -30,6 +30,7 @@ namespace api {
 	void pset(neko *machine, int x = -1, int y = -1, int c = -1);
 	void flip(neko *machine);
 	void clip(neko *machine, int x = -1, int y = -1, int w = -1, int h = -1);
+	void printChar(neko *machine, const char ch, int px = -1, int py = -1, byte c = 7);
 	void print(neko *machine, const char *str, int px = -1, int py = -1, int c = -1);
 	void pal(neko *machine, s16 c0 = -1, s16 c1 = -1);
 	void palt(neko *machine, s16 c, bool transp);

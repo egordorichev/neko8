@@ -1,6 +1,7 @@
 #include <code.hpp>
 #include <api.hpp>
 #include <carts.hpp>
+#include <iostream>
 
 neko_code::neko_code(neko *machine) {
 
@@ -27,8 +28,7 @@ void neko_code::render(neko *machine) {
 
 	while (*pointer) {
 		char c = *pointer;
-
-		api::print(machine, &c, x + 1, y + 7, 7);
+		api::printChar(machine, c, x + 1, y + 8, 7);
 
 		if (c == '\n') {
 			x = 0;
