@@ -87,14 +87,18 @@ void neko_console::runCommand(neko *machine, std::string command) {
 }
 
 void neko_console::drawPrompt(neko *machine) {
-	int y = peek(machine, DRAW_START + 0x004); // Cursor Y
+	int y = peek(machine, DRAW_START + 0x002); // Cursor Y
+	int y1 = y - 1;
 
-	api::rectfill(machine, 0, y - 1, this->input.size() * 4 + 16, y + 4, 0);
-
-	if (this->cursorState) {
-		api::rectfill(machine, this->input.size() * 4 + 8, y - 1, this->input.size() * 4 + 11, y + 4, 8);
+	if (y1 < 0) {
+		y1 = 0;
 	}
 
-	api::color(machine, 6);
-	api::print(machine, (char *) std::string("> " + this->input).c_str(), 0, y); // TODO
+	api::rectfill(machine, 0, y1, this->input.size() * 4 + 16, y + 4, 0);
+
+	if (this->cursorState) {
+		api::rectfill(machine, this->input.size() * 4 + 8, y1, this->input.size() * 4 + 11, y + 4, 8);
+	}
+
+	api::print(machine, (char *) std::string("> " + this->input).c_str(), 0, y, 6);
 }

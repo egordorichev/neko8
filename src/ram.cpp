@@ -115,8 +115,8 @@ namespace ram {
 
 		// Poke some data into memory
 		poke(machine, DRAW_START, 7); // Pen color
-		poke(machine, DRAW_START + 0x0003, 0); // Cursor X
-		poke(machine, DRAW_START + 0x0004, 0); // Cursor Y
+		poke(machine, DRAW_START + 0x0001, 0); // Cursor X
+		poke(machine, DRAW_START + 0x0002, 0); // Cursor Y
 		poke(machine, DRAW_START + 0x0005, 0); // Clip X
 		poke(machine, DRAW_START + 0x0006, 0); // Clip Y
 		poke(machine, DRAW_START + 0x0007, NEKO_W); // Clip W

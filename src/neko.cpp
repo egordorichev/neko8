@@ -1,8 +1,8 @@
 #include <neko.hpp>
 #include <api.hpp>
 #include <carts.hpp>
+#include <code.hpp>
 #include <console.hpp>
-#include <iostream>
 
 namespace machine {
 	neko *init(neko_config *config) {
@@ -21,6 +21,7 @@ namespace machine {
 		machine->states = new neko_state *[STATE_SIZE];
 		machine->states[STATE_CONSOLE] = new neko_console(machine);
 		machine->states[STATE_RUNNING_CART] = machine->carts = new neko_carts(machine);
+		machine->states[STATE_CODE_EDITOR] = new neko_code(machine);
 
 		updateCanvas(machine);
 		SDL_StartTextInput();
@@ -62,7 +63,7 @@ namespace machine {
 					static_cast<Uint8>(peek(machine, DRAW_START + 0x0009 + p * 3 + 2)), 255
 				);
 
-				SDL_Rect rect = {(int) x * s + machine->graphics->x, (int) y * s + machine->graphics->y, s, s};
+				SDL_Rect rect = { (int) x * s + machine->graphics->x, (int) y * s + machine->graphics->y, s, s };
 				// And draw it
 				SDL_RenderFillRect(machine->graphics->renderer, &rect);
 			}
@@ -96,12 +97,15 @@ namespace machine {
 				// Text input
 				switch (event->key.keysym.sym) {
 					case SDLK_ESCAPE:
+						machine->states[machine->state]->escape(machine);
 						machine->prevState = machine->state;
 
 						if (machine->state == STATE_RUNNING_CART) {
 							machine->state = STATE_CONSOLE;
 						} else if (machine->state == STATE_CONSOLE) {
-							// TODO: code editor
+							machine->state = STATE_CODE_EDITOR;
+						} else if (machine->state == STATE_CODE_EDITOR) {
+							machine->state = STATE_CONSOLE;
 						}
 
 						machine->states[machine->state]->forceDraw = true;
