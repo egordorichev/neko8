@@ -35,8 +35,9 @@ void neko_console::event(neko *machine, SDL_Event *event) {
 		case SDL_KEYDOWN:
 			switch (event->key.type) {
 				case SDLK_BACKSPACE:
+					std::cout << "backspace\n";
 					if (this->input.size() > 0) {
-						this->input = this->input; // TODO
+						this->input = this->input.substr(0, this->input.size() - 1);
 					}
 					break;
 			}

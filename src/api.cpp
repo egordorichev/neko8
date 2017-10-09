@@ -69,7 +69,7 @@ namespace api {
 		cursor(machine, 0, 0);
 	}
 
-	void cursor(neko *machine, byte x = 0, byte y = 0) {
+	void cursor(neko *machine, byte x, byte y) {
 		poke(machine, DRAW_START + 0x0003, x);
 		poke(machine, DRAW_START + 0x0004, y);
 	}
