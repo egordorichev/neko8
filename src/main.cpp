@@ -37,14 +37,13 @@ int main(int argc, char *argv[]) {
 
 	// Used to get info about events
 	SDL_Event event;
-	// If true, neko8 should draw next frame
-	bool running = true;
 
+	// Prints debug state
 	std::cout << "Running with DEBUG mode " << ((globals::debug) ? "ON" : "OFF") << "\n";
 
-	while (running) {
+	while (machine->running) {
 		while (SDL_PollEvent(&event)) {
-			running = machine::handleEvent(machine, &event);
+			machine->running = machine::handleEvent(machine, &event) & machine->running;
 		}
 
 		api::flip(machine);

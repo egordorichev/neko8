@@ -1,3 +1,4 @@
+#include <globals.hpp>
 #include <console.hpp>
 #include <api.hpp>
 #include <iostream>
@@ -83,6 +84,8 @@ void neko_console::runCommand(neko *machine, std::string command) {
 		api::print(machine, "help           prints this help");
 	} else if (command == "run") {
 		machine->carts->run(machine);
+	} else if (command == "shutdown") {
+		machine->running = false;
 	} else {
 		api::color(machine, 8);
 		api::print(machine, "unknown command");

@@ -36,6 +36,7 @@ typedef struct neko {
 	neko_config *config;
 	neko_fs *fs;
 	neko_carts *carts;
+	bool running;
 } neko;
 
 namespace machine {
