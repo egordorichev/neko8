@@ -4,9 +4,17 @@
 #include <LuaJIT/lua.hpp>
 #include <neko.hpp>
 
+typedef enum neko_lang {
+	LANG_LUA,
+	LANG_MOONSCRIPT,
+	LANG_ASM,
+	LANG_BASIC
+} neko_lang;
+
 typedef struct neko_cart {
 	char *code;
 	bool initDone = false;
+	neko_lang lang;
 	lua_State *lua;
 	lua_State *thread;
 } neko_cart;

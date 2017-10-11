@@ -47,7 +47,8 @@ namespace graphics {
 
 	void clean(neko_graphics *graphics) {
 		// Free renderer
-		SDL_DestroyRenderer(graphics->renderer);
+		// FIXME: free it (it SEGFAUILs)
+		// SDL_DestroyRenderer(graphics->renderer);
 		// Free window
 		SDL_DestroyWindow(graphics->window);
 
