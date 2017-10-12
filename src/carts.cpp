@@ -58,7 +58,7 @@ neko_cart *neko_carts::createNew(neko *machine) {
 	cart->lang = LANG_LUA;
 	cart->code = (char *) malloc(CODE_SIZE);
 
-	char *s = "cls(1)\n-- comment\n\0";
+	char *s = "cls(1)\n-- comment\n";
 	memcpy(cart->code, s, strlen(s)); // todo: free it
 
 	// Create lua state

@@ -348,9 +348,11 @@ static void deleteChar(neko *machine, neko_code *code) {
 }
 
 static void backspaceChar(neko *machine, neko_code *code) {
-	char *pos = --code->cursorPosition;
-	memmove(pos, pos + 1, strlen(pos));
-	parseSyntax(machine, code);
+	if (code->cursorPosition > code->code) {
+		char *pos = --code->cursorPosition;
+		memmove(pos, pos + 1, strlen(pos));
+		parseSyntax(machine, code);
+	}
 }
 
 static void insertNewLine(neko *machine, neko_code *code) {
@@ -487,9 +489,12 @@ static void renderCode(neko *machine, neko_code *code) {
 		*color++;
 	}
 
-	if (cx >= 0 && cy >= 0) {
-		drawCursor(machine, cx, cy);
+	if (cx == -1 || cy == -1) {
+		cx = x;
+		cy = y;
 	}
+
+	drawCursor(machine, cx, cy);
 }
 
 void neko_code::render(neko *machine) {
