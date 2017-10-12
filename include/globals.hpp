@@ -1,3 +1,3 @@
 namespace globals{
-	bool debug = 0;
+	extern bool debug;
 }

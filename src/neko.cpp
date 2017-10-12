@@ -12,6 +12,7 @@ namespace machine {
 		machine->ram = ram::init(machine);
 		machine->prevState = STATE_CONSOLE;
 		machine->state = STATE_CONSOLE;
+		machine->running = true;
 
 		api::cls(machine, 0);
 

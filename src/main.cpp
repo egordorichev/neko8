@@ -1,5 +1,3 @@
-// #include <intrin.h>
-
 #include <SDL2/SDL.h>
 #include <iostream>
 
@@ -32,7 +30,6 @@ int main(int argc, char *argv[]) {
 	SDL_Init(SDL_INIT_VIDEO);
 
 	// Open config
-
 	neko_config config;
 
 	// Init neko8
@@ -40,14 +37,13 @@ int main(int argc, char *argv[]) {
 
 	// Used to get info about events
 	SDL_Event event;
-	// If true, neko8 should draw next frame
-	bool running = true;
 
+	// Prints debug state
 	std::cout << "Running with DEBUG mode " << ((globals::debug) ? "ON" : "OFF") << "\n";
 
-	while (running) {
+	while (machine->running) {
 		while (SDL_PollEvent(&event)) {
-			running = machine::handleEvent(machine, &event);
+			machine->running = machine::handleEvent(machine, &event) & machine->running;
 		}
 
 		api::flip(machine);
