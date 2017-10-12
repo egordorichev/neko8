@@ -322,7 +322,7 @@ static void moveCursorRight(neko *machine, neko_code *code) {
 	}
 }
 
-static void inputSymbol(neko *machine, neko_code *code, char sym) {
+static void inputSymbol(neko *machine, neko_code *code, char sym, bool parse = true) {
 	if (strlen(code->code) >= CODE_SIZE) {
 		return;
 	}
@@ -334,7 +334,42 @@ static void inputSymbol(neko *machine, neko_code *code, char sym) {
 	// history(code);
 
 	updateCursorX(code);
+
+	if (parse) {
+		parseSyntax(machine, code);
+	}
+}
+
+
+static void deleteChar(neko *machine, neko_code *code) {
+	char *pos = code->cursorPosition;
+	memmove(pos, pos + 1, strlen(pos));
 	parseSyntax(machine, code);
+}
+
+static void backspaceChar(neko *machine, neko_code *code) {
+	char *pos = --code->cursorPosition;
+	memmove(pos, pos + 1, strlen(pos));
+	parseSyntax(machine, code);
+}
+
+static void insertNewLine(neko *machine, neko_code *code) {
+	char *ptr = getLine(code);
+	size_t size = 0;
+
+	while (*ptr == ' ') {
+		ptr++, size++;
+	}
+
+	if (ptr > code->cursorPosition) {
+		size -= ptr - code->cursorPosition;
+	}
+
+	inputSymbol(machine, code, '\n', false);
+
+	for (size_t i = 0; i < size + 1; i++) {
+		inputSymbol(machine, code, ' ');
+	}
 }
 
 static void drawToolBars(neko *machine, neko_code *code) {
@@ -363,7 +398,7 @@ static void drawToolBars(neko *machine, neko_code *code) {
 
 
 	std::string lines = std::string("line ") + std::to_string(y + 1) + "/" + std::to_string(getLinesCount(code))
-		+ " col " + std::to_string(x);
+											+ " col " + std::to_string(x);
 	api::print(machine, lines.c_str(), 1, NEKO_H - 6, 7);
 	api::print(machine, "neko8", 1, 1, 7);
 }
@@ -393,6 +428,14 @@ void neko_code::event(neko *machine, SDL_Event *event) {
 				case SDLK_RIGHT:
 					moveCursorRight(machine, this);
 					break;
+				case SDLK_DELETE:
+					deleteChar(machine, this);
+					break;
+				case SDLK_RETURN:
+					insertNewLine(machine, this);
+				case SDLK_BACKSPACE:
+					backspaceChar(machine, this);
+					break;
 			}
 
 			this->forceDraw = true;
@@ -419,9 +462,13 @@ static void renderCode(neko *machine, neko_code *code) {
 	char *pointer = code->code;
 	byte *color = code->colors;
 
-	while (*pointer && *pointer != '\0') {
+	int cx = -1;
+	int cy = -1;
+
+	while (*pointer) {
 		if (pointer == code->cursorPosition) {
-			drawCursor(machine, x, y);
+			cx = x;
+			cy = y;
 		}
 
 		char ch = *pointer;
@@ -438,6 +485,10 @@ static void renderCode(neko *machine, neko_code *code) {
 
 		*pointer++;
 		*color++;
+	}
+
+	if (cx >= 0 && cy >= 0) {
+		drawCursor(machine, cx, cy);
 	}
 }
 
