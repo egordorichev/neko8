@@ -196,6 +196,8 @@ static void parseSyntax(neko *machine, neko_code *code) {
 		highlightAPI(code);
 		highlightNumbers(code);
 		highlightSigns(code);
+		highlightStrings(code, code->code, code->colors, '\"');
+		highlightStrings(code, code->code, code->colors, '\'');
 		highlightCommentsBase(code, "--", "\n", 0);
 	}
 }
