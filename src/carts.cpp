@@ -56,7 +56,10 @@ neko_cart *neko_carts::createNew(neko *machine) {
 	neko_cart *cart = new neko_cart;
 
 	cart->lang = LANG_LUA;
-	cart->code = (char *) "cls(1)\nt=0\nfunction _draw()\n for i = 0, 399 do\n  circ(rnd(224),rnd(128),1,0)\n end\n t=t+1\nlocal c=(t/0.1)%8+8\ncircfill(sin(t+180)*50+64,cos(t+180)*50+64,3,c)\ncircfill(sin(t+270)*50+64,cos(t+270)*50+64,3,c+1)\ncircfill(sin(t+90)*50+64,cos(t+90)*50+64,3,c+2)\ncircfill(sin(t)*50+64,cos(t)*50+64,3,c+3)\nend";
+	cart->code = (char *) malloc(CODE_SIZE);
+
+	char *s = "cls(1)\n-- comment\n\0";
+	memcpy(cart->code, s, strlen(s)); // todo: free it
 
 	// Create lua state
 	cart->lua = luaL_newstate();

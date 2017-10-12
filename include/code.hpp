@@ -16,6 +16,9 @@ typedef struct neko_code : neko_state {
 
 	bool cursorState;
 	int t;
+	s32 cursorX;
+	s32 cursorY;
+	char *cursorPosition;
 	byte *colors = nullptr;
 	char *code;
 } neko_code;
