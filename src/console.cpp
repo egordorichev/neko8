@@ -2,6 +2,7 @@
 #include <console.hpp>
 #include <api.hpp>
 #include <iostream>
+#include <cctype>
 #include <algorithm>
 #include <carts.hpp>
 
