@@ -24,7 +24,7 @@ neko_console::neko_console(neko *machine) {
 void neko_console::render(neko *machine) {
 	this->t += 1;
 
-	bool newState = (t < 60 || t % 60 > 30);
+	bool newState = (t < 30 || t % 30 > 15);
 
 	if (this->forceDraw || this->cursorState != newState) {
 		this->cursorState = newState;

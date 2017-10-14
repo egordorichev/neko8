@@ -301,6 +301,7 @@ namespace api {
 	float timePerFrame = SDL_GetPerformanceFrequency() / 60.0f;
 
 	void flip(neko *machine) {
+		nextFrame += timePerFrame;
 		// Render neko8
 		machine::render(machine);
 		// Sync window
