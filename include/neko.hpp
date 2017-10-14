@@ -8,6 +8,8 @@
 #include <graphics.hpp>
 #include <fs.hpp>
 
+#define NEKO_VERSION_STRING "neko8 v0.0.1 c++ dev"
+
 struct neko_carts;
 struct neko_console;
 

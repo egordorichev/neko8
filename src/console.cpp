@@ -13,7 +13,7 @@ neko_console::neko_console(neko *machine) {
 	this->cursorState = true;
 
 	api::color(machine, 7); // Just in case
-	api::print(machine, "neko8 v0.1.0");
+	api::print(machine, NEKO_VERSION_STRING);
 	api::print(machine, "");
 	api::print(machine, "by @egordorichev and other");
 	api::print(machine, "");
@@ -80,6 +80,7 @@ void neko_console::runCommand(neko *machine, std::string command) {
 
 	if (command == "help") {
 		api::color(machine, 6);
+		api::print(machine, NEKO_VERSION_STRING);
 		api::print(machine, "Command  Description");
 		api::print(machine, "-------  -----------");
 		api::color(machine, 7);

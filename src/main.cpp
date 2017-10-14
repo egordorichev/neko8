@@ -10,14 +10,10 @@
 int main(int argc, char *argv[]) {
 	// Parse args
 	for (int i = 1; i < argc; i++) {
-		std::cout << argv[i] << "\n";
-
 		if (strcmp(argv[i], (strlen(argv[i]) > 2 ? "--help" : "-h")) == 0) {
-			std::cout << "Help" << "\n";
 			return 0;
 		} else if (strcmp(argv[i], (strlen(argv[i]) > 2 ? "--debug" : "-d")) == 0) {
 			globals::debug = 1;
-			std::cout << "debug" << "\n";
 		} else if (strcmp(argv[i], (strlen(argv[i]) > 2 ? "--cart" : "-c")) == 0) {
 
 		}

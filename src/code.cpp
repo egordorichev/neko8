@@ -220,6 +220,13 @@ neko_code::~neko_code() {
 
 void neko_code::escape(neko *machine) {
 	api::cls(machine, 0);
+
+	// Export code
+	machine->carts->loaded->code = this->code;
+	char *compressed = compressString(this->code);
+
+	// Copy it to memory
+	memseta(machine, CODE_START, (byte *) compressed, COMPRESSED_CODE_MAX_SIZE);
 }
 
 static char *getLineByPosition(neko_code *code, char *pos) {

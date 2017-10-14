@@ -7,8 +7,6 @@
 #include <zlib.h>
 #include <csetjmp>
 
-#define COMPRESSED_CODE_MAX_SIZE 16384
-
 neko_carts::neko_carts(neko *machine) {
 	this->loaded = this->createNew(machine);
 }
@@ -56,10 +54,16 @@ neko_cart *neko_carts::createNew(neko *machine) {
 	neko_cart *cart = new neko_cart;
 
 	cart->lang = LANG_LUA;
-	cart->code = (char *) malloc(CODE_SIZE);
+	cart->code = (char *) malloc(CODE_SIZE + 1);
 
-	char *s = "cls(1)\n-- comment\n";
-	memcpy(cart->code, s, strlen(s)); // todo: free it
+	char *s = "cls(1)\n-- comment\0";
+	int size = strlen(s);
+
+	for (int i = 0; i < size; i++) {
+		cart->code[i] = s[i];
+	}
+
+	cart->code[size] = '\0';
 
 	// Create lua state
 	cart->lua = luaL_newstate();
@@ -95,6 +99,8 @@ void neko_carts::run(neko *machine) {
 	machine->state = STATE_RUNNING_CART;
 
 	this->loaded->thread = lua_newthread(this->loaded->lua);
+
+	std::cout << this->loaded->code << "\n";
 
 	int error = luaL_loadstring(this->loaded->thread, this->loaded->code);
 

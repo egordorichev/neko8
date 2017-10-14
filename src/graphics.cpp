@@ -2,8 +2,6 @@
 #include <iostream>
 
 #include <neko.hpp>
-#include <graphics.hpp>
-#include <config.hpp>
 
 namespace graphics {
 	neko_graphics *init(neko *machine) {
@@ -11,7 +9,7 @@ namespace graphics {
 
 		// Attempt to open a centred window
 		graphics->window = SDL_CreateWindow(
-			"neko8", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+			NEKO_VERSION_STRING, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 			machine->config->windowWidth, machine->config->windowHeight,
 			SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE
 		);

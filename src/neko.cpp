@@ -3,7 +3,6 @@
 #include <carts.hpp>
 #include <code.hpp>
 #include <console.hpp>
-#include <iostream>
 
 namespace machine {
 	neko *init(neko_config *config) {
@@ -57,7 +56,7 @@ namespace machine {
 		for (int i = 0; i < 48; i++) {
 			palette[i] = peek(machine, DRAW_START + 0x0009 + i);
 		}
-		
+
 		// Render VRAM contents to texture
 		int pitch = 0;
 

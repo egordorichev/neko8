@@ -4,6 +4,8 @@
 #include <LuaJIT/lua.hpp>
 #include <neko.hpp>
 
+#define COMPRESSED_CODE_MAX_SIZE 16384
+
 typedef enum neko_lang {
 	LANG_LUA,
 	LANG_MOONSCRIPT,
@@ -18,6 +20,9 @@ typedef struct neko_cart {
 	lua_State *lua;
 	lua_State *thread;
 } neko_cart;
+
+char *compressString(char *str);
+char *decompressString(char *str);
 
 typedef struct neko_carts : neko_state {
 	neko_carts(neko *machine);
