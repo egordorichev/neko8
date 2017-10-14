@@ -3,6 +3,7 @@
 #include <carts.hpp>
 #include <code.hpp>
 #include <console.hpp>
+#include <iostream>
 
 namespace machine {
 	neko *init(neko_config *config) {
@@ -50,25 +51,42 @@ namespace machine {
 		SDL_SetRenderDrawColor(machine->graphics->renderer, 0, 0, 0, 255);
 		SDL_RenderClear(machine->graphics->renderer);
 
-		// Render VRAM contents
-		int s = machine->graphics->scale;
+		// Get palette
+		Uint8 palette[48] = {};
 
-		for (u32 x = peek(machine, DRAW_START + 0x0005); x < peek(machine, DRAW_START + 0x0007); x++) {
-			for (u32 y = peek(machine, DRAW_START + 0x0006); y < peek(machine, DRAW_START + 0x0008); y++) {
+		for (int i = 0; i < 48; i++) {
+			palette[i] = peek(machine, DRAW_START + 0x0009 + i);
+		}
+		
+		// Render VRAM contents to texture
+		int pitch = 0;
+
+		Uint8 *pixels = NULL;
+		Uint32 *px;
+
+		SDL_LockTexture(machine->graphics->buffer, NULL, (void**) &px, &pitch);
+
+		for (u32 y = peek(machine, DRAW_START + 0x0006); y < peek(machine, DRAW_START + 0x0008); y++) {
+			pixels = (Uint8 *) px + (y * pitch);
+
+			for (u32 x = peek(machine, DRAW_START + 0x0005); x < peek(machine, DRAW_START + 0x0007); x++) {
 				// Get pixel at this position
 				byte p = peek4(machine, (DRAW_START + 0x0039) * 2 + peek4(machine, VRAM_START * 2 + x + y * NEKO_W));
 
-				SDL_SetRenderDrawColor(machine->graphics->renderer,
-					static_cast<Uint8>(peek(machine, DRAW_START + 0x0009 + p * 3)),
-					static_cast<Uint8>(peek(machine, DRAW_START + 0x0009 + p * 3 + 1)),
-					static_cast<Uint8>(peek(machine, DRAW_START + 0x0009 + p * 3 + 2)), 255
-				);
-
-				SDL_Rect rect = { (int) x * s + machine->graphics->x, (int) y * s + machine->graphics->y, s, s };
-				// And draw it
-				SDL_RenderFillRect(machine->graphics->renderer, &rect);
+				pixels[x * 4 + 2] = palette[p * 3];
+				pixels[x * 4 + 1] = palette[p * 3 + 1];
+				pixels[x * 4] = palette[p * 3 + 2];
+				pixels[x * 4 + 3] = 255;
 			}
 		}
+
+		SDL_UnlockTexture(machine->graphics->buffer);
+
+		// Draw the texture
+		SDL_Rect nativeSize = { 0, 0, NEKO_W, NEKO_H };
+		SDL_Rect outSize = { machine->graphics->x, machine->graphics->y, machine->graphics->scale * NEKO_W, machine->graphics->scale * NEKO_H };
+
+		SDL_RenderCopy(machine->graphics->renderer, machine->graphics->buffer, &nativeSize, &outSize);
 	}
 
 	void updateCanvas(neko *machine) {

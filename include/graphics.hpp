@@ -7,6 +7,7 @@
 typedef struct neko_graphics {
 	SDL_Window *window;
 	SDL_Renderer *renderer;
+	SDL_Texture *buffer;
 	u16 scale;
 	u16 x;
 	u16 y;

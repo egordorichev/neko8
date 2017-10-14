@@ -42,6 +42,13 @@ namespace graphics {
 		graphics->x = 0;
 		graphics->y = 0;
 
+		graphics->buffer = SDL_CreateTexture(graphics->renderer,
+			SDL_GetWindowPixelFormat(graphics->window),
+			SDL_TEXTUREACCESS_STREAMING,
+			NEKO_W,
+			NEKO_H
+		);
+
 		return graphics;
 	}
 
