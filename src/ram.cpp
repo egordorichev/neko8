@@ -105,8 +105,7 @@ namespace ram {
 
 	void reset(neko *machine) {
 		if (machine->ram != nullptr) {
-			// delete machine->ram;
-			// FIXME!
+			 delete [] machine->ram;
 		}
 
 		neko_ram *ram = new neko_ram;

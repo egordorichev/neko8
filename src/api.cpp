@@ -51,7 +51,7 @@ namespace api {
 			b = tmp;
 		}
 
-		max(machine, a, min(machine, b, c));
+		return max(machine, a, min(machine, b, c));
 	}
 
 	float sin(neko *machine, float a) {
