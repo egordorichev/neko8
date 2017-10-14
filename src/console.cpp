@@ -79,14 +79,20 @@ void neko_console::runCommand(neko *machine, std::string command) {
 	command = trim(command);
 
 	if (command == "help") {
-		api::print(machine, "Command        Description");
-		api::print(machine, "-------        -----------");
-		api::print(machine, "run            runs the loaded cart");
-		api::print(machine, "help           prints this help");
+		api::color(machine, 6);
+		api::print(machine, "Command  Description");
+		api::print(machine, "-------  -----------");
+		api::color(machine, 7);
+		api::print(machine, "run      runs the loaded cart");
+		api::print(machine, "help     prints this help");
+		api::print(machine, "cls      clears the screen");
+		api::print(machine, "shutdown quits neko8");
 	} else if (command == "run") {
 		machine->carts->run(machine);
 	} else if (command == "shutdown") {
 		machine->running = false;
+	} else if (command == "cls") {
+		api::cls(machine, 0);
 	} else {
 		api::color(machine, 8);
 		api::print(machine, "unknown command");
@@ -101,7 +107,7 @@ void neko_console::drawPrompt(neko *machine) {
 		y1 = 0;
 	}
 
-	api::rectfill(machine, 0, y1, this->input.size() * 4 + 16, y + 4, 0);
+	api::rectfill(machine, 0, y1, this->input.size() * 4 + 16, y + 5, 0);
 
 	if (this->cursorState) {
 		api::rectfill(machine, this->input.size() * 4 + 8, y1, this->input.size() * 4 + 11, y + 4, 8);

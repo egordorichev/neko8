@@ -321,6 +321,7 @@ namespace api {
 	}
 
 	void printChar(neko *machine, const char ch, int px, int py, byte c) {
+		c = color(machine, c);
 		int id = -1;
 
 		for (int j = 0; j < llen; j++) {
@@ -359,7 +360,13 @@ namespace api {
 		// Actually print the string
 		for (u32 i = 0; i < strlen(str); i++) {
 			char ch = str[i];
-			printChar(machine, ch, px + i * 4, py, c);
+			int x = px + i * 4;
+
+			if (canScroll) {
+				rectfill(machine, x, py, x + 4, py + 5, 0);
+			}
+
+			printChar(machine, ch, x, py, c);
 		}
 
 		if (canScroll) {
@@ -369,6 +376,7 @@ namespace api {
 				py -= 6;
 				scroll(machine, 6);
 				rectfill(machine, 0, NEKO_H - 7, NEKO_W, NEKO_H, 0);
+				color(machine, c); // Reset color
 			}
 
 			poke(machine, DRAW_START + 0x0002, py);
