@@ -1,8 +1,8 @@
 #include <neko.hpp>
 #include <api.hpp>
 #include <carts.hpp>
-#include <code.hpp>
 #include <console.hpp>
+#include <editors.hpp>
 
 namespace machine {
 	neko *init(neko_config *config) {
@@ -22,7 +22,7 @@ namespace machine {
 		machine->states = new neko_state *[STATE_SIZE];
 		machine->states[STATE_CONSOLE] = new neko_console(machine);
 		machine->states[STATE_RUNNING_CART] = machine->carts = new neko_carts(machine);
-		machine->states[STATE_CODE_EDITOR] = new neko_code(machine);
+		machine->states[STATE_IN_EDITOR] = new neko_editors(machine);
 
 		updateCanvas(machine);
 		SDL_StartTextInput();
@@ -121,8 +121,8 @@ namespace machine {
 						if (machine->state == STATE_RUNNING_CART) {
 							machine->state = STATE_CONSOLE;
 						} else if (machine->state == STATE_CONSOLE) {
-							machine->state = STATE_CODE_EDITOR;
-						} else if (machine->state == STATE_CODE_EDITOR) {
+							machine->state = STATE_IN_EDITOR;
+						} else if (machine->state == STATE_IN_EDITOR) {
 							machine->state = STATE_CONSOLE;
 						}
 

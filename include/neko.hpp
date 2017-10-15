@@ -16,7 +16,7 @@ struct neko_console;
 typedef enum neko_state_id {
 	STATE_CONSOLE = 0,
 	STATE_RUNNING_CART = 1,
-	STATE_CODE_EDITOR = 2,
+	STATE_IN_EDITOR = 2,
 
 	STATE_SIZE = 3
 } neko_state_id;

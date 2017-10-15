@@ -2,10 +2,12 @@
 #define neko_code_hpp
 
 #include <string>
-#include <neko.hpp>
 #include <SDL_events.h>
 
-typedef struct neko_code : neko_state {
+#include <neko.hpp>
+#include <editors.hpp>
+
+typedef struct neko_code : neko_editor_state {
 	neko_code(neko *machine);
 	~neko_code();
 
