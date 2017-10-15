@@ -205,6 +205,8 @@ static void parseSyntax(neko *machine, neko_code *code) {
 neko_code::neko_code(neko *machine) {
 	this->cursorX = 0;
 	this->cursorY = 0;
+	this->t = 0;
+	this->cursorState = true;
 
 	this->code = machine->carts->loaded->code;
 	this->cursorPosition = this->code;
@@ -260,7 +262,7 @@ static s32 getLinesCount(neko_code *code) {
 		}
 	}
 
-	return count;
+	return count + 1;
 }
 
 static char *getPrevLine(neko_code *code) {
@@ -419,6 +421,8 @@ void neko_code::event(neko *machine, SDL_Event *event) {
 
 	switch (event->type) {
 		case SDL_KEYDOWN:
+			this->t = 0;
+
 			switch (event->key.keysym.sym) {
 				case SDLK_LCTRL:
 				case SDLK_RCTRL:
@@ -503,11 +507,19 @@ static void renderCode(neko *machine, neko_code *code) {
 		cy = y;
 	}
 
-	drawCursor(machine, cx, cy);
+	if (code->cursorState) {
+		drawCursor(machine, cx, cy);
+	}
 }
 
 void neko_code::render(neko *machine) {
-	if (this->forceDraw) {
+	this->t += 1;
+
+	bool newState = t < 15 || t % 30 < 15;
+
+	if (this->forceDraw || this->cursorState != newState) {
+		this->cursorState = newState;
+
 		api::cls(machine, 2);
 
 		renderCode(machine, this);
